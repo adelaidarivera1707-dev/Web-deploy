@@ -1,8 +1,9 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, initializeFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { getStorage } from 'firebase/storage';
 import { getFunctions } from 'firebase/functions'; // 👈 Importar Functions
+import { initializeApp, getApps, getApp } from 'firebase/app';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyAOGDqjKHDZ9T_4stYWN2aW2I4shcJRQEg',
@@ -16,7 +17,7 @@ const firebaseConfig = {
 // ✅ Inicializar Firebase de forma segura
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
-export const db = getFirestore(app);
+export const db = initializeFirestore(app, { experimentalForceLongPolling: true, useFetchStreams: false });
 export const auth = getAuth(app);
 export const storage = getStorage(app);
 export const functions = getFunctions(app, 'us-central1'); // 👈 Exportar Functions en us-central1
