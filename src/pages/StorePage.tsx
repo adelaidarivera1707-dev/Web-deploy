@@ -213,7 +213,9 @@ const StorePage: React.FC = () => {
                 <div className="p-4 flex flex-col h-full">
                   <div className="flex items-start justify-between gap-3">
                     <h3 className="font-semibold">{p.name}</h3>
-                    <span className="text-primary font-bold">{formatPrice(p.price)}</span>
+                    {((Array.isArray(p.variantes) && p.variantes.length > 0) || (Array.isArray(p.variants) && p.variants.length > 0)) ? null : (
+                      <span className="text-primary font-bold">{formatPrice(p.price)}</span>
+                    )}
                   </div>
                   {p.description ? (
                     <p className="text-gray-600 text-sm mt-1 line-clamp-2">{p.description}</p>
