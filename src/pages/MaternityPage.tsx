@@ -183,6 +183,7 @@ const MaternityPage = () => {
                 description: p.description,
                 features: p.features || [],
                 image: p.image_url,
+                recommended: Boolean((p as any).recommended),
                 __db: p as DBPackage
               }))
               : maternityPackages
@@ -194,7 +195,7 @@ const MaternityPage = () => {
               return sortBy==='asc' ? pa - pb : pb - pa;
             })
             .map((pkg: any) => (
-              <div key={pkg.id} className="card flex flex-col h-full relative max-h-screen lg:max-h-[85vh] overflow-x-hidden min-h-0">
+              <div key={pkg.id} className={`card flex flex-col h-full relative max-h-screen lg:max-h-[85vh] overflow-x-hidden min-h-0 ${pkg.__db?.recommended ? 'ring-2 ring-secondary shadow-md' : ''}`}>
                 {user && pkg.__db && (
                   <button
                     className="absolute top-2 right-2 p-2 rounded-full bg-white shadow hover:bg-gray-50"
@@ -203,6 +204,9 @@ const MaternityPage = () => {
                   >
                     <Eye size={18} className="text-gray-700" />
                   </button>
+                )}
+                {pkg.__db?.recommended && (
+                  <span className="absolute -top-3 left-3 bg-secondary text-white text-xs px-2 py-1 rounded">Recomendado</span>
                 )}
                 <div className="h-48 md:h-56 overflow-hidden mb-4 relative">
                   <img
