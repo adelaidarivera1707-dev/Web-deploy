@@ -467,7 +467,8 @@ const EventsPage = () => {
                 return sortCivil==='asc' ? pa - pb : pb - pa;
               })
               .map((pkg) => (
-              <div key={pkg.id} className="card flex flex-col h-full relative max-h-screen lg:max-h-[85vh] overflow-x-hidden min-h-0">
+              <div key={pkg.id} className={`card flex flex-col h-full relative max-h-screen lg:max-h-[85vh] overflow-x-hidden min-h-0 ${pkg.recommended ? 'ring-2 ring-secondary shadow-md' : ''}`}>
+                {pkg.recommended && (<span className="absolute -top-3 left-3 bg-secondary text-white text-xs px-2 py-1 rounded">Recomendado</span>)}
                 <div className="h-48 md:h-56 overflow-hidden mb-4 relative">
                   <img loading="lazy"
                     src={pkg.image}
