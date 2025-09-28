@@ -229,7 +229,7 @@ const MaternityPage = () => {
                   <span className="text-gray-500 text-sm">/{pkg.duration}</span>
                 </div>
                 <ul className="mb-6 flex-grow overflow-visible md:overflow-auto">
-                  {pkg.features.map((feature, i) => (
+                  {pkg.features.map((feature: any, i: number) => (
                     <li key={i} className="flex items-start mb-2">
                       <ChevronRight size={16} className="text-secondary mt-1 mr-2 flex-shrink-0" />
                       <span className="text-xs md:text-sm text-gray-700 break-words">{feature}</span>
