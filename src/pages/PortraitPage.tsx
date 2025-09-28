@@ -211,7 +211,7 @@ const PortraitPage = () => {
                   </button>
                 )}
                 {pkg.__db?.recommended && (
-                  <span className="absolute -top-3 left-3 bg-secondary text-white text-xs px-2 py-1 rounded">Recomendado</span>
+                  <span className="absolute top-2 left-3 z-10 bg-secondary text-white text-xs px-2 py-1 rounded">Recomendado</span>
                 )}
                 <div className="h-48 md:h-56 overflow-hidden mb-4 relative">
                   <img loading="lazy"
