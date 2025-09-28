@@ -65,7 +65,7 @@ const AddPackageModal: React.FC<AddPackageModalProps> = ({ isOpen, onClose, pkg,
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" role="dialog" aria-modal>
-      <div className="bg-white rounded-xl w-full max-w-xl overflow-hidden relative">
+      <div className="bg-white rounded-xl w-full max-w-lg md:max-w-xl max-h-[85vh] overflow-auto relative">
         <button onClick={onClose} className="absolute top-3 right-3 bg-white border rounded-full p-1 shadow hover:bg-gray-50" aria-label="Fechar">
           <X size={18} />
         </button>
@@ -74,7 +74,7 @@ const AddPackageModal: React.FC<AddPackageModalProps> = ({ isOpen, onClose, pkg,
           {pkg.description && <p className="text-sm text-gray-600">{pkg.description}</p>}
           {pkg.image && (
             <div className="mt-3 rounded-lg overflow-hidden">
-              <img loading="lazy" src={pkg.image} alt={pkg.title} className="w-full h-48 object-cover" />
+              <img loading="lazy" src={pkg.image} alt={pkg.title} className="w-full h-40 md:h-48 object-cover" />
             </div>
           )}
         </div>
