@@ -105,7 +105,7 @@ const StorePage: React.FC = () => {
     setModalOpen(true);
   };
 
-  const bestForProduct = (p: StoreProduct) => {
+  const getVariantPricing = (p: StoreProduct) => {
     const base = Number(p.price || 0);
     const variants: { label: string; price: number }[] = [];
     if (Array.isArray(p.variantes) && p.variantes.length) {
@@ -117,6 +117,11 @@ const StorePage: React.FC = () => {
       }
     }
     if (variants.length === 0) variants.push({ label: '', price: base });
+    return variants;
+  };
+
+  const bestForProduct = (p: StoreProduct) => {
+    const variants = getVariantPricing(p);
     let best = { coupon: null as DBCoupon | null, discount: 0, label: '' };
     for (const opt of variants) {
       const item = { id: String(p.id), name: p.name, type: 'store', price: opt.price, variantName: opt.label } as any;
@@ -124,6 +129,17 @@ const StorePage: React.FC = () => {
       if (r.discount > best.discount) best = { coupon: r.coupon, discount: r.discount, label: '' };
     }
     return best;
+  };
+
+  const variantDiscountCount = (p: StoreProduct) => {
+    const variants = getVariantPricing(p);
+    let count = 0;
+    for (const opt of variants) {
+      const item = { id: String(p.id), name: p.name, type: 'store', price: opt.price, variantName: opt.label } as any;
+      const r = bestCouponForItem(coupons, item);
+      if (r.discount > 0) count++;
+    }
+    return count;
   };
 
   const handleAddFromModal = (payload: { id: string; name: string; priceNumber: number; image?: string; variantName?: string; customText?: string; customImageDataUrl?: string | null; customAudioDataUrl?: string | null; appliedCoupon?: { id: string; code: string; discount: number; discountType: 'percentage' | 'fixed' | 'full'; discountValue?: number }; }) => {
@@ -177,7 +193,10 @@ const StorePage: React.FC = () => {
               <div key={p.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden h-full flex flex-col">
                 <div className="relative">
                   <img loading="lazy" src={p.image_url} alt={p.name} className="w-full h-44 object-cover" />
-                  {(() => { const b = bestForProduct(p); return (b.coupon && b.discount>0) ? (
+                  {(() => { const b = bestForProduct(p); const dcount = variantDiscountCount(p); if (dcount > 1) {
+                    return (<span className="absolute top-2 left-2 bg-green-600 text-white text-[11px] px-2 py-1 rounded">com desconto</span>);
+                  }
+                  return (b.coupon && b.discount>0) ? (
                     <span className="absolute top-2 left-2 bg-red-600 text-white text-[11px] px-2 py-1 rounded">-{formatPrice(b.discount)}</span>
                   ) : null; })()}
                 </div>
