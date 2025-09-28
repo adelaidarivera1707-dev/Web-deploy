@@ -72,6 +72,11 @@ const AddPackageModal: React.FC<AddPackageModalProps> = ({ isOpen, onClose, pkg,
         <div className="p-4 border-b">
           <h3 className="text-lg font-semibold">{pkg.title}</h3>
           {pkg.description && <p className="text-sm text-gray-600">{pkg.description}</p>}
+          {pkg.image && (
+            <div className="mt-3 rounded-lg overflow-hidden">
+              <img loading="lazy" src={pkg.image} alt={pkg.title} className="w-full h-48 object-cover" />
+            </div>
+          )}
         </div>
         <div className="p-4 space-y-4">
           <div className="flex items-center justify-between">
