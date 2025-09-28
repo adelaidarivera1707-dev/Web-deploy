@@ -258,7 +258,7 @@ const EventsPage = () => {
                   })()}
                 </div>
                 <h3 className="text-lg md:text-xl font-playfair font-medium mb-2">{pkg.title}</h3>
-                <p className="text-gray-600 text-sm md:text-base mb-2 break-words">{pkg.description}</p>
+                {/* descrição oculta no card */}
                 
                 <div className="flex items-center space-x-2 mb-4">
                   <span className="text-xl md:text-2xl font-playfair text-primary">{pkg.price}</span>
@@ -381,7 +381,7 @@ const EventsPage = () => {
                   })()}
                 </div>
                 <h3 className="text-lg md:text-xl font-playfair font-medium mb-2">{pkg.title}</h3>
-                <p className="text-gray-600 text-sm md:text-base mb-2 break-words">{pkg.description}</p>
+                {/* descrição oculta no card */}
                 
                 <div className="flex items-center space-x-2 mb-4">
                   <span className="text-xl md:text-2xl font-playfair text-primary">{pkg.price}</span>
@@ -474,7 +474,7 @@ const EventsPage = () => {
                   />
                 </div>
                 <h3 className="text-lg md:text-xl font-playfair font-medium mb-2">{pkg.title}</h3>
-                <p className="text-gray-600 text-sm md:text-base mb-2 break-words">{pkg.description}</p>
+                {/* descrição oculta no card */}
                 <div className="flex items-center space-x-2 mb-4">
                   <span className="text-xl md:text-2xl font-playfair text-primary">{pkg.price}</span>
                   <span className="text-gray-500 text-sm">/{pkg.duration}</span>
