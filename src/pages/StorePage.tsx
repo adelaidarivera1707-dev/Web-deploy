@@ -201,7 +201,7 @@ const StorePage: React.FC = () => {
             {filtered.map((p) => (
               <div key={p.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden h-full flex flex-col">
                 <div className="relative">
-                  <img loading="lazy" src={p.image_url} alt={p.name} className="w-full h-44 object-cover" />
+                  <img loading="lazy" src={p.image_url} alt={p.name} className="w-full h-48 object-cover" />
                   {(() => { const b = bestForProduct(p); const dcount = variantDiscountCount(p); if (dcount > 1) {
                     return (<span className="absolute top-2 left-2 bg-green-600 text-white text-[11px] px-2 py-1 rounded">com desconto</span>);
                   }
