@@ -103,7 +103,8 @@ const EventsPage = () => {
         duration: p.duration,
         description: p.description,
         features: p.features || [],
-        image: p.image_url
+        image: p.image_url,
+        recommended: Boolean((p as any).recommended)
       }))
     : eventPackages.filter(pkg => pkg.id.startsWith('prewedding'))
   );
@@ -116,7 +117,8 @@ const EventsPage = () => {
         duration: p.duration,
         description: p.description,
         features: p.features || [],
-        image: p.image_url
+        image: p.image_url,
+        recommended: Boolean((p as any).recommended)
       }))
     : eventPackages.filter(pkg => pkg.id.startsWith('wedding'))
   );
@@ -129,7 +131,8 @@ const EventsPage = () => {
         duration: p.duration,
         description: p.description,
         features: p.features || [],
-        image: p.image_url
+        image: p.image_url,
+        recommended: Boolean((p as any).recommended)
       }))
     : []
   );
