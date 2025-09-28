@@ -10,6 +10,8 @@ export interface PackageLike {
   image?: string;
   priceNumber: number;
   type: 'portrait' | 'maternity' | 'events';
+  features?: string[];
+  includes?: { label: string; quantity: number }[];
 }
 
 interface AddPackageModalProps {
@@ -92,6 +94,26 @@ const AddPackageModal: React.FC<AddPackageModalProps> = ({ isOpen, onClose, pkg,
                   Total com desconto: <span className="font-semibold">{formatPrice(effectivePrice)}</span>
                 </div>
               )}
+            </div>
+          )}
+
+          {Array.isArray(pkg.features) && pkg.features.length > 0 && (
+            <div>
+              <div className="text-sm font-medium mb-2">O que inclui</div>
+              <ul className="list-disc pl-5 text-sm text-gray-700 space-y-1">
+                {pkg.features.map((f, i) => (<li key={i}>{f}</li>))}
+              </ul>
+            </div>
+          )}
+
+          {Array.isArray(pkg.includes) && pkg.includes.length > 0 && (
+            <div>
+              <div className="text-sm text-gray-600 mb-1">Produtos incluídos</div>
+              <ul className="list-disc pl-5 text-sm text-gray-700 space-y-1">
+                {pkg.includes.map((it, i) => (
+                  <li key={i}>{it.label} x{Number(it.quantity || 0)}</li>
+                ))}
+              </ul>
             </div>
           )}
         </div>
