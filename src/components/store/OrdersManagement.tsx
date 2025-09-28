@@ -225,7 +225,7 @@ const OrdersManagement = () => {
     const doneSet = new Set(
       deliveryCat.tasks.filter(t => t.done).map(t => normalize(t.title))
     );
-    const productNames = items.map(it => String(it.name || it.product_id || it.productId || ''));
+    const productNames = items.map((it: any) => String(it.name || it.product_id || it.productId || ''));
     return productNames.every(n => doneSet.has(normalize(`entregar ${n}`)));
   }
 
