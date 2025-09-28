@@ -427,8 +427,8 @@ const BookingForm: React.FC<BookingFormProps> = ({ initialData, packages, onSubm
                 formData.cartItems.map((item, index) => (
                   <section key={`service-${index}`}>
                     <h2 className="text-xl font-medium mb-6 pb-2 border-b">
-                      Informações do Serviço {formData.cartItems.length > 1 ? `#${index + 1}` : ''}
-                      {formData.cartItems.length > 1 && (
+                      Informações do Serviço {(formData.cartItems && formData.cartItems.length > 1) ? `#${index + 1}` : ''}
+                      {(formData.cartItems && formData.cartItems.length > 1) && (
                         <span className="text-base font-normal text-gray-600 ml-2">
                           ({item.name})
                         </span>

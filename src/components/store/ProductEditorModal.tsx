@@ -15,7 +15,7 @@ export interface ProductInput {
   active?: boolean;
   allow_name?: boolean;
   allow_custom_image?: boolean;
-  variants?: { name: string; priceDelta: number }[];
+  variants?: { name: string; priceDelta?: number; price?: number }[];
 }
 
 interface Props {

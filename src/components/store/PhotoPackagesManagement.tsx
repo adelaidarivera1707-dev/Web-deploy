@@ -69,9 +69,8 @@ const PhotoPackagesManagement = () => {
   };
 
   const handleToggle = async (p: DBPackage) => {
-    // @ts-expect-error allow
     const newActive = !(p as any).active;
-    await updatePackage(p.id, { /* @ts-expect-error */ active: newActive });
+    await updatePackage(p.id, { active: newActive } as any);
     await load();
   };
 
@@ -161,7 +160,6 @@ const PhotoPackagesManagement = () => {
         description: '',
         features: [],
         image_url: '',
-        // @ts-expect-error allow
         active: true,
       });
       const all = await fetchPackages();

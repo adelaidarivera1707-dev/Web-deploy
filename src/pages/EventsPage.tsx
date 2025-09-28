@@ -178,7 +178,7 @@ const EventsPage = () => {
       }
     } catch (error) {
       console.error('📱 EventsPage: Error adding to cart:', error);
-      window.dispatchEvent(new CustomEvent('adminToast', { detail: { message: 'Error al agregar al carrito: ' + error.message, type: 'error' } }));
+      window.dispatchEvent(new CustomEvent('adminToast', { detail: { message: 'Error al agregar al carrito: ' + (error as any)?.message, type: 'error' } }));
     }
   };
 

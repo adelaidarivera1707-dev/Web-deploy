@@ -200,8 +200,8 @@ const ClientDashboardPage: React.FC = () => {
       
       document.body.appendChild(contractElement);
       
-      const pdfUrl = await generatePDF(contractElement);
-      
+      const pdfUrl = String(await generatePDF(contractElement, { returnType: 'url' }));
+
       const link = document.createElement('a');
       link.href = pdfUrl;
       link.download = `contrato-wild-pictures-${contract.clientName.toLowerCase().replace(/\s+/g, '-')}.pdf`;
