@@ -552,14 +552,21 @@ const EventsPage = () => {
       <AddPackageModal
         isOpen={pkgModalOpen}
         onClose={() => setPkgModalOpen(false)}
-        pkg={selectedPkg ? {
-          id: selectedPkg.id,
-          title: selectedPkg.title,
-          description: selectedPkg.description,
-          image: selectedPkg.image,
-          priceNumber: selectedPkg.__db && selectedPkg.__db.price != null ? Number(selectedPkg.__db.price) : (Number.isFinite(Number(selectedPkg.price)) ? Number(selectedPkg.price) : parsePrice(selectedPkg.price)),
-          type: (selectedPkg.__db?.type || 'events')
-        } : null}
+        pkg={selectedPkg ? (() => {
+          const dbPkg: DBPackage | undefined = selectedPkg.__db as any;
+          const includes = (dbPkg && Array.isArray((dbPkg as any).storeItemsIncluded)) ? (dbPkg as any).storeItemsIncluded as { productId: string; quantity: number; variantName?: string }[] : [];
+          const includesLabels = includes.map(it => ({ label: `${storeProducts[it.productId]?.name || it.productId}${it.variantName ? ` — ${it.variantName}` : ''}`, quantity: Number(it.quantity || 0) }));
+          return {
+            id: selectedPkg.id,
+            title: selectedPkg.title,
+            description: selectedPkg.description,
+            image: selectedPkg.image,
+            priceNumber: selectedPkg.__db && selectedPkg.__db.price != null ? Number(selectedPkg.__db.price) : (Number.isFinite(Number(selectedPkg.price)) ? Number(selectedPkg.price) : parsePrice(selectedPkg.price)),
+            type: (selectedPkg.__db?.type || 'events'),
+            features: Array.isArray(selectedPkg.features) ? selectedPkg.features : [],
+            includes: includesLabels,
+          };
+        })() : null}
         onAdd={({ id, name, priceNumber, image }) => {
           const pkg = selectedPkg;
           if (!pkg) return;
