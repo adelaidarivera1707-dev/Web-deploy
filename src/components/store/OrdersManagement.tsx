@@ -267,7 +267,7 @@ const OrdersManagement = () => {
     setViewing(o);
     const base = (o.workflow && o.workflow.length) ? o.workflow : [];
     const items = getDisplayItems(o);
-    const names = items.map(it => String(it.name || it.product_id || it.productId || ''));
+    const names = items.map((it: any) => String(it.name || it.product_id || it.productId || ''));
     const wf = ensureDeliveryTasks(base, names);
     setWorkflow(JSON.parse(JSON.stringify(wf)));
     if (templates.length === 0) await fetchTemplates();
@@ -308,7 +308,7 @@ const OrdersManagement = () => {
             const contract = { id: cSnap.id, ...(cSnap.data() as any) } as any;
             const base = (contract.workflow && contract.workflow.length) ? contract.workflow : [];
             const items = getDisplayItems(viewing);
-            const names = items.map(it => String(it.name || it.product_id || it.productId || ''));
+            const names = items.map((it: any) => String(it.name || it.product_id || it.productId || ''));
             const merged = ensureDeliveryTasks(base, names);
             const ordDeliveryCat = (workflow as WorkflowCategory[]).find(c => normalize(c.name).includes('entrega'));
             if (ordDeliveryCat) {
