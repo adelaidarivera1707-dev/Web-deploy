@@ -103,7 +103,8 @@ const EventsPage = () => {
         duration: p.duration,
         description: p.description,
         features: p.features || [],
-        image: p.image_url
+        image: p.image_url,
+        recommended: Boolean((p as any).recommended)
       }))
     : eventPackages.filter(pkg => pkg.id.startsWith('prewedding'))
   );
@@ -116,7 +117,8 @@ const EventsPage = () => {
         duration: p.duration,
         description: p.description,
         features: p.features || [],
-        image: p.image_url
+        image: p.image_url,
+        recommended: Boolean((p as any).recommended)
       }))
     : eventPackages.filter(pkg => pkg.id.startsWith('wedding'))
   );
@@ -129,7 +131,8 @@ const EventsPage = () => {
         duration: p.duration,
         description: p.description,
         features: p.features || [],
-        image: p.image_url
+        image: p.image_url,
+        recommended: Boolean((p as any).recommended)
       }))
     : []
   );
@@ -178,7 +181,7 @@ const EventsPage = () => {
       }
     } catch (error) {
       console.error('📱 EventsPage: Error adding to cart:', error);
-      window.dispatchEvent(new CustomEvent('adminToast', { detail: { message: 'Error al agregar al carrito: ' + error.message, type: 'error' } }));
+      window.dispatchEvent(new CustomEvent('adminToast', { detail: { message: 'Error al agregar al carrito: ' + (error as any)?.message, type: 'error' } }));
     }
   };
 
@@ -225,7 +228,8 @@ const EventsPage = () => {
                 return sortPre==='asc' ? pa - pb : pb - pa;
               })
               .map((pkg) => (
-              <div key={pkg.id} className="bg-accent/20 shadow-sm p-5 md:p-6 flex flex-col h-full relative max-h-screen lg:max-h-[85vh] overflow-x-hidden min-h-0">
+              <div key={pkg.id} className={`bg-accent/20 shadow-sm p-5 md:p-6 flex flex-col h-full relative max-h-screen lg:max-h-[85vh] overflow-x-hidden min-h-0 ${pkg.recommended ? 'ring-2 ring-secondary shadow-md' : ''}`}>
+                {pkg.recommended && (<span className="absolute top-2 left-3 z-10 bg-secondary text-white text-xs px-2 py-1 rounded">Recomendado</span>)}
                 {user && dbEvents && (
                   <button
                     className="absolute top-2 right-2 p-2 rounded-full bg-white shadow hover:bg-gray-50"
@@ -258,7 +262,7 @@ const EventsPage = () => {
                   })()}
                 </div>
                 <h3 className="text-lg md:text-xl font-playfair font-medium mb-2">{pkg.title}</h3>
-                <p className="text-gray-600 text-sm md:text-base mb-2 break-words">{pkg.description}</p>
+                {/* descrição oculta no card */}
                 
                 <div className="flex items-center space-x-2 mb-4">
                   <span className="text-xl md:text-2xl font-playfair text-primary">{pkg.price}</span>
@@ -345,10 +349,8 @@ const EventsPage = () => {
               })
               .slice(0,4)
               .map((pkg, idx) => (
-              <div key={pkg.id} className={`card flex flex-col h-full relative max-h-screen lg:max-h-[85vh] overflow-x-hidden min-h-0 ${typeof idx !== 'undefined' && idx===1 ? 'ring-2 ring-secondary shadow-md' : ''}`}>
-                {typeof idx !== 'undefined' && idx===1 && (
-                  <span className="absolute -top-3 left-3 bg-secondary text-white text-xs px-2 py-1 rounded">Recomendado</span>
-                )}
+              <div key={pkg.id} className={`card flex flex-col h-full relative max-h-screen lg:max-h-[85vh] overflow-x-hidden min-h-0 ${pkg.recommended ? 'ring-2 ring-secondary shadow-md' : ''}`}>
+                {pkg.recommended && (<span className="absolute top-2 left-3 z-10 bg-secondary text-white text-xs px-2 py-1 rounded">Recomendado</span>)}
                 {user && dbEvents && (
                   <button
                     className="absolute top-2 right-2 p-2 rounded-full bg-white shadow hover:bg-gray-50"
@@ -381,7 +383,7 @@ const EventsPage = () => {
                   })()}
                 </div>
                 <h3 className="text-lg md:text-xl font-playfair font-medium mb-2">{pkg.title}</h3>
-                <p className="text-gray-600 text-sm md:text-base mb-2 break-words">{pkg.description}</p>
+                {/* descrição oculta no card */}
                 
                 <div className="flex items-center space-x-2 mb-4">
                   <span className="text-xl md:text-2xl font-playfair text-primary">{pkg.price}</span>
@@ -465,7 +467,8 @@ const EventsPage = () => {
                 return sortCivil==='asc' ? pa - pb : pb - pa;
               })
               .map((pkg) => (
-              <div key={pkg.id} className="card flex flex-col h-full relative max-h-screen lg:max-h-[85vh] overflow-x-hidden min-h-0">
+              <div key={pkg.id} className={`card flex flex-col h-full relative max-h-screen lg:max-h-[85vh] overflow-x-hidden min-h-0 ${pkg.recommended ? 'ring-2 ring-secondary shadow-md' : ''}`}>
+                {pkg.recommended && (<span className="absolute top-2 left-3 z-10 bg-secondary text-white text-xs px-2 py-1 rounded">Recomendado</span>)}
                 <div className="h-48 md:h-56 overflow-hidden mb-4 relative">
                   <img loading="lazy"
                     src={pkg.image}
@@ -474,7 +477,7 @@ const EventsPage = () => {
                   />
                 </div>
                 <h3 className="text-lg md:text-xl font-playfair font-medium mb-2">{pkg.title}</h3>
-                <p className="text-gray-600 text-sm md:text-base mb-2 break-words">{pkg.description}</p>
+                {/* descrição oculta no card */}
                 <div className="flex items-center space-x-2 mb-4">
                   <span className="text-xl md:text-2xl font-playfair text-primary">{pkg.price}</span>
                   <span className="text-gray-500 text-sm">/{pkg.duration}</span>
@@ -552,14 +555,21 @@ const EventsPage = () => {
       <AddPackageModal
         isOpen={pkgModalOpen}
         onClose={() => setPkgModalOpen(false)}
-        pkg={selectedPkg ? {
-          id: selectedPkg.id,
-          title: selectedPkg.title,
-          description: selectedPkg.description,
-          image: selectedPkg.image,
-          priceNumber: selectedPkg.__db && selectedPkg.__db.price != null ? Number(selectedPkg.__db.price) : (Number.isFinite(Number(selectedPkg.price)) ? Number(selectedPkg.price) : parsePrice(selectedPkg.price)),
-          type: (selectedPkg.__db?.type || 'events')
-        } : null}
+        pkg={selectedPkg ? (() => {
+          const dbPkg: DBPackage | undefined = selectedPkg.__db as any;
+          const includes = (dbPkg && Array.isArray((dbPkg as any).storeItemsIncluded)) ? (dbPkg as any).storeItemsIncluded as { productId: string; quantity: number; variantName?: string }[] : [];
+          const includesLabels = includes.map(it => ({ label: `${storeProducts[it.productId]?.name || it.productId}${it.variantName ? ` — ${it.variantName}` : ''}`, quantity: Number(it.quantity || 0) }));
+          return {
+            id: selectedPkg.id,
+            title: selectedPkg.title,
+            description: selectedPkg.description,
+            image: selectedPkg.image,
+            priceNumber: selectedPkg.__db && selectedPkg.__db.price != null ? Number(selectedPkg.__db.price) : (Number.isFinite(Number(selectedPkg.price)) ? Number(selectedPkg.price) : parsePrice(selectedPkg.price)),
+            type: (selectedPkg.__db?.type || 'events'),
+            features: Array.isArray(selectedPkg.features) ? selectedPkg.features : [],
+            includes: includesLabels,
+          };
+        })() : null}
         onAdd={({ id, name, priceNumber, image }) => {
           const pkg = selectedPkg;
           if (!pkg) return;

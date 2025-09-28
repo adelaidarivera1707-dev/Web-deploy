@@ -183,6 +183,7 @@ const MaternityPage = () => {
                 description: p.description,
                 features: p.features || [],
                 image: p.image_url,
+                recommended: Boolean((p as any).recommended),
                 __db: p as DBPackage
               }))
               : maternityPackages
@@ -194,7 +195,7 @@ const MaternityPage = () => {
               return sortBy==='asc' ? pa - pb : pb - pa;
             })
             .map((pkg: any) => (
-              <div key={pkg.id} className="card flex flex-col h-full relative max-h-screen lg:max-h-[85vh] overflow-x-hidden min-h-0">
+              <div key={pkg.id} className={`card flex flex-col h-full relative max-h-screen lg:max-h-[85vh] overflow-x-hidden min-h-0 ${pkg.__db?.recommended ? 'ring-2 ring-secondary shadow-md' : ''}`}>
                 {user && pkg.__db && (
                   <button
                     className="absolute top-2 right-2 p-2 rounded-full bg-white shadow hover:bg-gray-50"
@@ -203,6 +204,9 @@ const MaternityPage = () => {
                   >
                     <Eye size={18} className="text-gray-700" />
                   </button>
+                )}
+                {pkg.__db?.recommended && (
+                  <span className="absolute top-2 left-3 z-10 bg-secondary text-white text-xs px-2 py-1 rounded">Recomendado</span>
                 )}
                 <div className="h-48 md:h-56 overflow-hidden mb-4 relative">
                   <img
@@ -223,13 +227,13 @@ const MaternityPage = () => {
                   })()}
                 </div>
                 <h3 className="text-lg md:text-xl font-playfair font-medium mb-2">{pkg.title}</h3>
-                <p className="text-gray-600 text-sm md:text-base mb-2 break-words">{pkg.description}</p>
+                {/* descrição oculta no card */}
                 <div className="flex items-center space-x-2 mb-4">
                   <span className="text-xl md:text-2xl font-playfair text-primary">{pkg.price}</span>
                   <span className="text-gray-500 text-sm">/{pkg.duration}</span>
                 </div>
                 <ul className="mb-6 flex-grow overflow-visible md:overflow-auto">
-                  {pkg.features.map((feature, i) => (
+                  {pkg.features.map((feature: any, i: number) => (
                     <li key={i} className="flex items-start mb-2">
                       <ChevronRight size={16} className="text-secondary mt-1 mr-2 flex-shrink-0" />
                       <span className="text-xs md:text-sm text-gray-700 break-words">{feature}</span>
@@ -310,14 +314,21 @@ const MaternityPage = () => {
     <AddPackageModal
       isOpen={pkgModalOpen}
       onClose={() => setPkgModalOpen(false)}
-      pkg={selectedPkg ? {
-        id: selectedPkg.id,
-        title: selectedPkg.title,
-        description: selectedPkg.description,
-        image: selectedPkg.image,
-        priceNumber: selectedPkg.__db && selectedPkg.__db.price != null ? Number(selectedPkg.__db.price) : (Number.isFinite(Number(selectedPkg.price)) ? Number(selectedPkg.price) : parsePrice(selectedPkg.price)),
-        type: (selectedPkg.__db?.type || 'maternity')
-      } : null}
+      pkg={selectedPkg ? (() => {
+        const dbPkg: DBPackage | undefined = selectedPkg.__db as any;
+        const includes = (dbPkg && Array.isArray((dbPkg as any).storeItemsIncluded)) ? (dbPkg as any).storeItemsIncluded as { productId: string; quantity: number; variantName?: string }[] : [];
+        const includesLabels = includes.map(it => ({ label: `${storeProducts[it.productId]?.name || it.productId}${it.variantName ? ` — ${it.variantName}` : ''}`, quantity: Number(it.quantity || 0) }));
+        return {
+          id: selectedPkg.id,
+          title: selectedPkg.title,
+          description: selectedPkg.description,
+          image: selectedPkg.image,
+          priceNumber: selectedPkg.__db && selectedPkg.__db.price != null ? Number(selectedPkg.__db.price) : (Number.isFinite(Number(selectedPkg.price)) ? Number(selectedPkg.price) : parsePrice(selectedPkg.price)),
+          type: (selectedPkg.__db?.type || 'maternity'),
+          features: Array.isArray(selectedPkg.features) ? selectedPkg.features : [],
+          includes: includesLabels,
+        };
+      })() : null}
       onAdd={({ id, name, priceNumber, image }) => {
         const pkg = selectedPkg;
         if (!pkg) return;

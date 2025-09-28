@@ -28,6 +28,7 @@ export interface DBPackage {
   created_at?: any;
   updated_at?: any;
   active?: boolean;
+  recommended?: boolean;
   sections?: string[];
   storeItemsIncluded?: { productId: string; quantity: number; variantName?: string }[];
 }
@@ -46,6 +47,7 @@ function coercePackage(id: string, data: any): DBPackage {
     created_at: data?.created_at ?? null,
     updated_at: data?.updated_at ?? null,
     active: data?.active ?? true,
+    recommended: Boolean(data?.recommended ?? false),
     sections: Array.isArray(data?.sections) ? data.sections.map((x: any) => String(x)) : undefined,
     storeItemsIncluded: (() => {
       const raw = Array.isArray(data?.storeItemsIncluded)
@@ -107,6 +109,7 @@ export async function createPackage(data: CreatePackageInput): Promise<string> {
   if (typeof data.image_url === 'string') optional.image_url = data.image_url;
   if (data.category != null && data.category !== '') optional.category = data.category;
   if (Array.isArray(data.sections)) optional.sections = data.sections;
+  if (typeof (data as any).recommended === 'boolean') optional.recommended = Boolean((data as any).recommended);
   if (Array.isArray((data as any).storeItemsIncluded)) optional.storeItemsIncluded = (data as any).storeItemsIncluded;
   const payload = { ...base, ...optional };
   const maxAttempts = 3;
@@ -135,6 +138,7 @@ export async function updatePackage(id: string, updates: Partial<DBPackage>): Pr
   if (payload.price != null) payload.price = Number(payload.price);
   if (payload.features && !Array.isArray(payload.features)) payload.features = [];
   if (payload.category === '') delete payload.category;
+  if (payload.recommended != null) payload.recommended = Boolean(payload.recommended);
   if (payload.storeItemsIncluded && !Array.isArray(payload.storeItemsIncluded)) delete payload.storeItemsIncluded;
   // Remove any keys with undefined values to avoid Firestore errors
   for (const k of Object.keys(payload)) {

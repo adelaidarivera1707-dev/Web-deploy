@@ -105,7 +105,7 @@ const StorePage: React.FC = () => {
     setModalOpen(true);
   };
 
-  const bestForProduct = (p: StoreProduct) => {
+  const getVariantPricing = (p: StoreProduct) => {
     const base = Number(p.price || 0);
     const variants: { label: string; price: number }[] = [];
     if (Array.isArray(p.variantes) && p.variantes.length) {
@@ -117,6 +117,11 @@ const StorePage: React.FC = () => {
       }
     }
     if (variants.length === 0) variants.push({ label: '', price: base });
+    return variants;
+  };
+
+  const bestForProduct = (p: StoreProduct) => {
+    const variants = getVariantPricing(p);
     let best = { coupon: null as DBCoupon | null, discount: 0, label: '' };
     for (const opt of variants) {
       const item = { id: String(p.id), name: p.name, type: 'store', price: opt.price, variantName: opt.label } as any;
@@ -124,6 +129,26 @@ const StorePage: React.FC = () => {
       if (r.discount > best.discount) best = { coupon: r.coupon, discount: r.discount, label: '' };
     }
     return best;
+  };
+
+  const variantDiscountCount = (p: StoreProduct) => {
+    const variants = getVariantPricing(p);
+    let count = 0;
+    for (const opt of variants) {
+      const item = { id: String(p.id), name: p.name, type: 'store', price: opt.price, variantName: opt.label } as any;
+      const r = bestCouponForItem(coupons, item);
+      if (r.discount > 0) count++;
+    }
+    return count;
+  };
+
+  const discountBadgeText = (p: StoreProduct): string | null => {
+    const b = bestForProduct(p);
+    if (!b.coupon || b.discount <= 0) return null;
+    const t = b.coupon.discountType;
+    if (t === 'percentage') return `-${Number(b.coupon.discountValue || 0)}%`;
+    if (t === 'full') return '-100%';
+    return `-${formatPrice(b.discount)}`;
   };
 
   const handleAddFromModal = (payload: { id: string; name: string; priceNumber: number; image?: string; variantName?: string; customText?: string; customImageDataUrl?: string | null; customAudioDataUrl?: string | null; appliedCoupon?: { id: string; code: string; discount: number; discountType: 'percentage' | 'fixed' | 'full'; discountValue?: number }; }) => {
@@ -176,15 +201,21 @@ const StorePage: React.FC = () => {
             {filtered.map((p) => (
               <div key={p.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden h-full flex flex-col">
                 <div className="relative">
-                  <img loading="lazy" src={p.image_url} alt={p.name} className="w-full h-44 object-cover" />
-                  {(() => { const b = bestForProduct(p); return (b.coupon && b.discount>0) ? (
-                    <span className="absolute top-2 left-2 bg-red-600 text-white text-[11px] px-2 py-1 rounded">-{formatPrice(b.discount)}</span>
+                  <img loading="lazy" src={p.image_url} alt={p.name} className="w-full h-48 object-cover" />
+                  {(() => { const b = bestForProduct(p); const dcount = variantDiscountCount(p); if (dcount > 1) {
+                    return (<span className="absolute top-2 left-2 bg-green-600 text-white text-[11px] px-2 py-1 rounded">com desconto</span>);
+                  }
+                  const txt = discountBadgeText(p);
+                  return txt ? (
+                    <span className="absolute top-2 left-2 bg-green-600 text-white text-[11px] px-2 py-1 rounded">{txt}</span>
                   ) : null; })()}
                 </div>
                 <div className="p-4 flex flex-col h-full">
                   <div className="flex items-start justify-between gap-3">
                     <h3 className="font-semibold">{p.name}</h3>
-                    <span className="text-primary font-bold">{formatPrice(p.price)}</span>
+                    {((Array.isArray(p.variantes) && p.variantes.length > 0) || (Array.isArray(p.variants) && p.variants.length > 0)) ? null : (
+                      <span className="text-primary font-bold">{formatPrice(p.price)}</span>
+                    )}
                   </div>
                   {p.description ? (
                     <p className="text-gray-600 text-sm mt-1 line-clamp-2">{p.description}</p>
