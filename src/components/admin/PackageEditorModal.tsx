@@ -26,6 +26,7 @@ const PackageEditorModal: React.FC<PackageEditorModalProps> = ({ open, onClose, 
   const [newSection, setNewSection] = useState('');
   const [selectedSection, setSelectedSection] = useState<string | undefined>('');
   const [saving, setSaving] = useState(false);
+  const [recommended, setRecommended] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -53,6 +54,7 @@ const PackageEditorModal: React.FC<PackageEditorModalProps> = ({ open, onClose, 
     setFeaturesText((pkg.features || []).join('\n'));
     setImageUrl(pkg.image_url || '');
     setCategory(pkg.category || '');
+    setRecommended(Boolean((pkg as any).recommended || false));
     // load sections if present
     const s = Array.isArray((pkg as any).sections) ? (pkg as any).sections.slice() : [];
     setSections(s);
@@ -112,12 +114,13 @@ const PackageEditorModal: React.FC<PackageEditorModalProps> = ({ open, onClose, 
           .filter(Boolean),
         image_url: imageUrl,
         category: category || undefined,
+        recommended: Boolean(recommended),
       } as Partial<DBPackage>;
       (updates as any).sections = sections;
       (updates as any).storeItemsIncluded = Object.entries(included).map(([rawKey, quantity]) => { const { id, variantName } = parseKey(rawKey); return { productId: id, quantity: Number(quantity||0), ...(variantName ? { variantName } : {}) }; }).filter(x => x.quantity > 0);
       await updatePackage(pkg.id, updates);
       console.log('PackageEditorModal: package saved');
-      const updated: DBPackage = { ...pkg, ...updates, sections } as DBPackage;
+      const updated: DBPackage = { ...pkg, ...updates, sections, recommended: Boolean(recommended) } as DBPackage;
       onSaved && onSaved(updated);
       setSuccessMessage('Datos guardados correctamente');
     } catch (e: any) {
@@ -206,6 +209,11 @@ const PackageEditorModal: React.FC<PackageEditorModalProps> = ({ open, onClose, 
           <div>
             <label className="block text-sm text-gray-700 mb-1">Categoria (opcional)</label>
             <input value={category || ''} onChange={e => setCategory(e.target.value)} className="w-full px-3 py-2 border rounded" />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <input id="pkg-recommended" type="checkbox" checked={recommended} onChange={(e)=> setRecommended(e.target.checked)} />
+            <label htmlFor="pkg-recommended" className="text-sm text-gray-700">Marcar como recomendado (destaca o card e mostra etiqueta)</label>
           </div>
 
           {/* Sections selector and management */}
