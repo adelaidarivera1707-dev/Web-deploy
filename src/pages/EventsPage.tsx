@@ -346,7 +346,8 @@ const EventsPage = () => {
               })
               .slice(0,4)
               .map((pkg, idx) => (
-              <div key={pkg.id} className={`card flex flex-col h-full relative max-h-screen lg:max-h-[85vh] overflow-x-hidden min-h-0 ${typeof idx !== 'undefined' && idx===1 ? 'ring-2 ring-secondary shadow-md' : ''}`}>
+              <div key={pkg.id} className={`card flex flex-col h-full relative max-h-screen lg:max-h-[85vh] overflow-x-hidden min-h-0 ${pkg.recommended ? 'ring-2 ring-secondary shadow-md' : ''}`}>
+                {pkg.recommended && (<span className="absolute -top-3 left-3 bg-secondary text-white text-xs px-2 py-1 rounded">Recomendado</span>)}
                 {typeof idx !== 'undefined' && idx===1 && (
                   <span className="absolute -top-3 left-3 bg-secondary text-white text-xs px-2 py-1 rounded">Recomendado</span>
                 )}
