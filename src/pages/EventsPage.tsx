@@ -225,7 +225,8 @@ const EventsPage = () => {
                 return sortPre==='asc' ? pa - pb : pb - pa;
               })
               .map((pkg) => (
-              <div key={pkg.id} className="bg-accent/20 shadow-sm p-5 md:p-6 flex flex-col h-full relative max-h-screen lg:max-h-[85vh] overflow-x-hidden min-h-0">
+              <div key={pkg.id} className={`bg-accent/20 shadow-sm p-5 md:p-6 flex flex-col h-full relative max-h-screen lg:max-h-[85vh] overflow-x-hidden min-h-0 ${pkg.recommended ? 'ring-2 ring-secondary shadow-md' : ''}`}>
+                {pkg.recommended && (<span className="absolute -top-3 left-3 bg-secondary text-white text-xs px-2 py-1 rounded">Recomendado</span>)}
                 {user && dbEvents && (
                   <button
                     className="absolute top-2 right-2 p-2 rounded-full bg-white shadow hover:bg-gray-50"
