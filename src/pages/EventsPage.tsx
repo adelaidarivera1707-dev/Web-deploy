@@ -229,7 +229,7 @@ const EventsPage = () => {
               })
               .map((pkg) => (
               <div key={pkg.id} className={`bg-accent/20 shadow-sm p-5 md:p-6 flex flex-col h-full relative max-h-screen lg:max-h-[85vh] overflow-x-hidden min-h-0 ${pkg.recommended ? 'ring-2 ring-secondary shadow-md' : ''}`}>
-                {pkg.recommended && (<span className="absolute -top-3 left-3 bg-secondary text-white text-xs px-2 py-1 rounded">Recomendado</span>)}
+                {pkg.recommended && (<span className="absolute top-2 left-3 z-10 bg-secondary text-white text-xs px-2 py-1 rounded">Recomendado</span>)}
                 {user && dbEvents && (
                   <button
                     className="absolute top-2 right-2 p-2 rounded-full bg-white shadow hover:bg-gray-50"
@@ -350,7 +350,7 @@ const EventsPage = () => {
               .slice(0,4)
               .map((pkg, idx) => (
               <div key={pkg.id} className={`card flex flex-col h-full relative max-h-screen lg:max-h-[85vh] overflow-x-hidden min-h-0 ${pkg.recommended ? 'ring-2 ring-secondary shadow-md' : ''}`}>
-                {pkg.recommended && (<span className="absolute -top-3 left-3 bg-secondary text-white text-xs px-2 py-1 rounded">Recomendado</span>)}
+                {pkg.recommended && (<span className="absolute top-2 left-3 z-10 bg-secondary text-white text-xs px-2 py-1 rounded">Recomendado</span>)}
                 {user && dbEvents && (
                   <button
                     className="absolute top-2 right-2 p-2 rounded-full bg-white shadow hover:bg-gray-50"
@@ -468,7 +468,7 @@ const EventsPage = () => {
               })
               .map((pkg) => (
               <div key={pkg.id} className={`card flex flex-col h-full relative max-h-screen lg:max-h-[85vh] overflow-x-hidden min-h-0 ${pkg.recommended ? 'ring-2 ring-secondary shadow-md' : ''}`}>
-                {pkg.recommended && (<span className="absolute -top-3 left-3 bg-secondary text-white text-xs px-2 py-1 rounded">Recomendado</span>)}
+                {pkg.recommended && (<span className="absolute top-2 left-3 z-10 bg-secondary text-white text-xs px-2 py-1 rounded">Recomendado</span>)}
                 <div className="h-48 md:h-56 overflow-hidden mb-4 relative">
                   <img loading="lazy"
                     src={pkg.image}
