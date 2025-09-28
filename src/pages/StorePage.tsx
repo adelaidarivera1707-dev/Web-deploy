@@ -142,6 +142,15 @@ const StorePage: React.FC = () => {
     return count;
   };
 
+  const discountBadgeText = (p: StoreProduct): string | null => {
+    const b = bestForProduct(p);
+    if (!b.coupon || b.discount <= 0) return null;
+    const t = b.coupon.discountType;
+    if (t === 'percentage') return `-${Number(b.coupon.discountValue || 0)}%`;
+    if (t === 'full') return '-100%';
+    return `-${formatPrice(b.discount)}`;
+  };
+
   const handleAddFromModal = (payload: { id: string; name: string; priceNumber: number; image?: string; variantName?: string; customText?: string; customImageDataUrl?: string | null; customAudioDataUrl?: string | null; appliedCoupon?: { id: string; code: string; discount: number; discountType: 'percentage' | 'fixed' | 'full'; discountValue?: number }; }) => {
     console.log('StorePage handleAddFromModal received:', payload);
     if (payload.appliedCoupon) {
@@ -196,8 +205,9 @@ const StorePage: React.FC = () => {
                   {(() => { const b = bestForProduct(p); const dcount = variantDiscountCount(p); if (dcount > 1) {
                     return (<span className="absolute top-2 left-2 bg-green-600 text-white text-[11px] px-2 py-1 rounded">com desconto</span>);
                   }
-                  return (b.coupon && b.discount>0) ? (
-                    <span className="absolute top-2 left-2 bg-red-600 text-white text-[11px] px-2 py-1 rounded">-{formatPrice(b.discount)}</span>
+                  const txt = discountBadgeText(p);
+                  return txt ? (
+                    <span className="absolute top-2 left-2 bg-green-600 text-white text-[11px] px-2 py-1 rounded">{txt}</span>
                   ) : null; })()}
                 </div>
                 <div className="p-4 flex flex-col h-full">
