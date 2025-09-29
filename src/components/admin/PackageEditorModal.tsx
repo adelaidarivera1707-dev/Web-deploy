@@ -68,7 +68,11 @@ const PackageEditorModal: React.FC<PackageEditorModalProps> = ({ open, onClose, 
     setSelectedSection(s[0] || '');
     const incArr = Array.isArray((pkg as any).storeItemsIncluded) ? (pkg as any).storeItemsIncluded as any[] : [];
     const map: Record<string, number> = {};
-    incArr.forEach(x => { if (x?.productId) map[String(x.productId)] = Number(x.quantity||1); });
+    incArr.forEach(x => {
+      if (!x?.productId) return;
+      const key = x?.variantName ? `${String(x.productId)}||${String(x.variantName)}` : String(x.productId);
+      map[key] = Number(x.quantity || 1);
+    });
     setIncluded(map);
   }, [pkg]);
 
