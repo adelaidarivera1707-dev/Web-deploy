@@ -292,7 +292,35 @@ const PackageEditorModal: React.FC<PackageEditorModalProps> = ({ open, onClose, 
 
           <div>
             <label className="block text-sm text-gray-700 mb-1">Categoria (opcional)</label>
-            <input value={category || ''} onChange={e => setCategory(e.target.value)} className="w-full px-3 py-2 border rounded" />
+            <div className="flex items-center gap-2">
+              <select
+                value={category || ''}
+                onChange={(e)=> setCategory(e.target.value || undefined)}
+                className="px-3 py-2 border rounded flex-1"
+              >
+                <option value="">Sin categoría</option>
+                {availableCategories.map(c => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+              <button type="button" title="Nueva categoría" onClick={()=>{ setShowNewCategory(true); setNewCategory(''); }} className="p-2 border rounded text-gray-600">
+                <Plus size={14} />
+              </button>
+            </div>
+            {showNewCategory && (
+              <div className="mt-2 flex items-center gap-2">
+                <input value={newCategory} onChange={e=> setNewCategory(e.target.value)} className="px-3 py-2 border rounded-md flex-1" placeholder="Nueva categoría" />
+                <button type="button" onClick={()=>{
+                  const v = (newCategory||'').trim();
+                  if (!v) return;
+                  if (!availableCategories.includes(v)) setAvailableCategories(prev => [...prev, v].sort((a,b)=>a.localeCompare(b)));
+                  setCategory(v);
+                  setShowNewCategory(false);
+                  setNewCategory('');
+                }} className="p-2 bg-primary text-white rounded"><Plus size={14} /></button>
+                <button type="button" onClick={()=>{ setShowNewCategory(false); setNewCategory(''); }} className="p-2 border rounded text-gray-600"><X size={14} /></button>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-2">
