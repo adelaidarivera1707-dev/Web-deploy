@@ -163,6 +163,7 @@ const PackageEditorModal: React.FC<PackageEditorModalProps> = ({ open, onClose, 
       const updated: DBPackage = { ...pkg, ...updates, sections, recommended: Boolean(recommended) } as DBPackage;
       onSaved && onSaved(updated);
       setSuccessMessage('Datos guardados correctamente');
+      onClose && onClose();
     } catch (e: any) {
       console.error('PackageEditorModal: save error', e);
       const msg = e?.message || 'Erro ao salvar pacote';
