@@ -107,7 +107,7 @@ const PackageEditorModal: React.FC<PackageEditorModalProps> = ({ open, onClose, 
   useEffect(() => {
     const loadAvailableSections = async () => {
       try {
-        if (typeof navigator !== 'undefined' && !navigator.onLine) { setAvailableSections([]); return; }
+        if (typeof navigator !== 'undefined' && !navigator.onLine) { setAvailableSections([]); setAvailableCategories([]); return; }
         const snap = await getDocs(collection(db, 'packages'));
         const all = snap.docs
           .flatMap(d => {
@@ -124,12 +124,18 @@ const PackageEditorModal: React.FC<PackageEditorModalProps> = ({ open, onClose, 
           if (!seen.has(key)) { seen.add(key); unique.push(s); }
         }
         setAvailableSections(unique);
+        // build categories from packages + products
+        const catSet = new Set<string>();
+        snap.docs.forEach(d => { const data = d.data() as any; const c = String(data?.category || '').trim(); if (c) catSet.add(c); });
+        (products || []).forEach((p: any) => { const c = String(p?.category || '').trim(); if (c) catSet.add(c); });
+        setAvailableCategories(Array.from(catSet).sort((a,b)=>a.localeCompare(b)));
       } catch {
         setAvailableSections([]);
+        setAvailableCategories([]);
       }
     };
     if (open) loadAvailableSections();
-  }, [open]);
+  }, [open, products]);
 
   const handleSave = async () => {
     if (!pkg) return;
