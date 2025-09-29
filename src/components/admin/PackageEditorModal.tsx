@@ -25,6 +25,7 @@ const PackageEditorModal: React.FC<PackageEditorModalProps> = ({ open, onClose, 
   const [showNewSection, setShowNewSection] = useState(false);
   const [newSection, setNewSection] = useState('');
   const [selectedSection, setSelectedSection] = useState<string | undefined>('');
+  const [availableSections, setAvailableSections] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
   const [recommended, setRecommended] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -95,6 +96,33 @@ const PackageEditorModal: React.FC<PackageEditorModalProps> = ({ open, onClose, 
       }
     };
     if (open) loadProducts();
+  }, [open]);
+
+  useEffect(() => {
+    const loadAvailableSections = async () => {
+      try {
+        if (typeof navigator !== 'undefined' && !navigator.onLine) { setAvailableSections([]); return; }
+        const snap = await getDocs(collection(db, 'packages'));
+        const all = snap.docs
+          .flatMap(d => {
+            const data = d.data() as any;
+            const arr = Array.isArray(data?.sections) ? data.sections : [];
+            return arr;
+          })
+          .map((s: any) => String(s || '').trim())
+          .filter(Boolean);
+        const seen = new Set<string>();
+        const unique: string[] = [];
+        for (const s of all) {
+          const key = s.toLowerCase();
+          if (!seen.has(key)) { seen.add(key); unique.push(s); }
+        }
+        setAvailableSections(unique);
+      } catch {
+        setAvailableSections([]);
+      }
+    };
+    if (open) loadAvailableSections();
   }, [open]);
 
   const handleSave = async () => {
@@ -264,9 +292,22 @@ const PackageEditorModal: React.FC<PackageEditorModalProps> = ({ open, onClose, 
           <div>
             <label className="block text-sm text-gray-700 mb-1">Sección</label>
             <div className="flex items-center gap-2">
-              <select value={selectedSection || ''} onChange={e => setSelectedSection(e.target.value)} className="px-3 py-2 border rounded flex-1">
+              <select
+                value={selectedSection || ''}
+                onChange={e => {
+                  const v = e.target.value;
+                  setSelectedSection(v);
+                  if (v && !sections.includes(v)) setSections(prev => [...prev, v]);
+                }}
+                className="px-3 py-2 border rounded flex-1"
+              >
                 <option value="">Sin sección</option>
-                {sections.map(s => <option key={s} value={s}>{s}</option>)}
+                {Array.from(new Set([...(availableSections || []), ...(sections || [])]))
+                  .filter(Boolean)
+                  .sort((a, b) => a.localeCompare(b))
+                  .map(s => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
               </select>
 
               <button type="button" title="Agregar" onClick={() => { setShowNewSection(true); setNewSection(''); }} className="p-2 border rounded text-gray-600">
