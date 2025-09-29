@@ -124,6 +124,23 @@ const PortraitPage = () => {
       for (const inc of includes) {
         if (!inc?.productId || Number(inc.quantity||0) <= 0) continue;
         try {
+          const isPkg = String(inc.productId).startsWith('pkg:');
+          if (isPkg) {
+            const pkgId = String(inc.productId).slice(4);
+            const psnap = await getDoc(doc(db, 'packages', pkgId));
+            const pkgData = psnap.exists() ? (psnap.data() as any) : null;
+            if (!pkgData) continue;
+            const item = {
+              id: String(inc.productId),
+              type: 'store' as const,
+              name: String(pkgData.title || 'Paquete'),
+              price: 'R$ 0',
+              duration: '',
+              image: String(pkgData.image_url || ''),
+            };
+            for (let i = 0; i < Number(inc.quantity||0); i++) addToCart(item);
+            continue;
+          }
           const snap = await getDoc(doc(db, 'products', inc.productId));
           const p = snap.exists() ? (snap.data() as any) : null;
           if (!p) continue;
