@@ -421,18 +421,22 @@ const PackageEditorModal: React.FC<PackageEditorModalProps> = ({ open, onClose, 
               <div className="flex items-center gap-2">
                 <select value={serviceId} onChange={e=>setServiceId(e.target.value)} className="px-2 py-1 border rounded text-sm flex-1">
                   <option value="">Selecciona un servicio…</option>
-                  {products
-                    .filter(p => normalize(p.category) === 'servicios')
-                    .flatMap(p => {
-                      const labelBase = String(p.name||p.id);
-                      const variants = getVariantNames(p);
-                      if (variants.length) {
-                        return variants.map(v => (
-                          <option key={`${p.id}||${v}`} value={`${p.id}||${v}`}>{labelBase} — {v}</option>
-                        ));
-                      }
-                      return [<option key={p.id} value={p.id}>{labelBase}</option>];
-                    })}
+                  {(() => {
+                    const key = normalize(category || '');
+                    if (!key) return [];
+                    return products
+                      .filter(p => normalize(p.category) === key)
+                      .flatMap(p => {
+                        const labelBase = String(p.name||p.id);
+                        const variants = getVariantNames(p);
+                        if (variants.length) {
+                          return variants.map(v => (
+                            <option key={`${p.id}||${v}`} value={`${p.id}||${v}`}>{labelBase} — {v}</option>
+                          ));
+                        }
+                        return [<option key={p.id} value={p.id}>{labelBase}</option>];
+                      });
+                  })()}
                 </select>
                 <input type="number" min={1} value={serviceQty} onChange={e=> setServiceQty(Math.max(1, Number(e.target.value||1)))} className="w-24 px-2 py-1 border rounded text-sm" />
                 <button type="button" onClick={()=>{ if(!serviceId) return; setIncluded(prev=> ({ ...prev, [serviceId]: serviceQty })); }} className="px-3 py-1 bg-primary text-white rounded text-sm">Agregar</button>
