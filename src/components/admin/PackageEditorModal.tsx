@@ -436,26 +436,13 @@ const PackageEditorModal: React.FC<PackageEditorModalProps> = ({ open, onClose, 
                 <select value={serviceId} onChange={e=>setServiceId(e.target.value)} className="px-2 py-1 border rounded text-sm flex-1">
                   <option value="">Selecciona un servicio…</option>
                   {(() => {
-                    const key = normalize(category || '');
-                    if (!key) return [];
-                    const productOptions = products
-                      .filter(p => normalize(p.category) === key)
-                      .flatMap(p => {
-                        const labelBase = String(p.name||p.id);
-                        const variants = getVariantNames(p);
-                        if (variants.length) {
-                          return variants.map(v => (
-                            <option key={`prod:${p.id}||${v}`} value={`${p.id}||${v}`}>{labelBase} — {v}</option>
-                          ));
-                        }
-                        return [<option key={`prod:${p.id}`} value={p.id}>{labelBase}</option>];
-                      });
+                    const key = 'servicios';
                     const packageOptions = availablePkgs
                       .filter(pk => normalize(pk.category || '') === key && pk.active !== false)
                       .map(pk => (
                         <option key={`pkg:${pk.id}`} value={`pkg:${pk.id}`}>{pk.title}</option>
                       ));
-                    return [...productOptions, ...packageOptions];
+                    return packageOptions;
                   })()}
                 </select>
                 <input type="number" min={1} value={serviceQty} onChange={e=> setServiceQty(Math.max(1, Number(e.target.value||1)))} className="w-24 px-2 py-1 border rounded text-sm" />
