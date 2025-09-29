@@ -36,6 +36,7 @@ const PackageEditorModal: React.FC<PackageEditorModalProps> = ({ open, onClose, 
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [products, setProducts] = useState<any[]>([]);
+  const [availablePkgs, setAvailablePkgs] = useState<{ id: string; title: string; category?: string; active?: boolean }[]>([]);
   const [productSearch, setProductSearch] = useState('');
   // key format: productId or productId||Variant Name
   const [included, setIncluded] = useState<Record<string, number>>({});
@@ -130,12 +131,20 @@ const PackageEditorModal: React.FC<PackageEditorModalProps> = ({ open, onClose, 
         setAvailableSections(unique);
         // build categories from packages + products
         const catSet = new Set<string>();
-        snap.docs.forEach(d => { const data = d.data() as any; const c = String(data?.category || '').trim(); if (c) catSet.add(c); });
+        const pkgs: { id: string; title: string; category?: string; active?: boolean }[] = [];
+        snap.docs.forEach(d => {
+          const data = d.data() as any;
+          const c = String(data?.category || '').trim();
+          if (c) catSet.add(c);
+          pkgs.push({ id: d.id, title: String(data?.title || d.id), category: c || undefined, active: data?.active });
+        });
+        setAvailablePkgs(pkgs);
         (products || []).forEach((p: any) => { const c = String(p?.category || '').trim(); if (c) catSet.add(c); });
         setAvailableCategories(Array.from(catSet).sort((a,b)=>a.localeCompare(b)));
       } catch {
         setAvailableSections([]);
         setAvailableCategories([]);
+        setAvailablePkgs([]);
       }
     };
     if (open) loadAvailableSections();
@@ -429,18 +438,24 @@ const PackageEditorModal: React.FC<PackageEditorModalProps> = ({ open, onClose, 
                   {(() => {
                     const key = normalize(category || '');
                     if (!key) return [];
-                    return products
+                    const productOptions = products
                       .filter(p => normalize(p.category) === key)
                       .flatMap(p => {
                         const labelBase = String(p.name||p.id);
                         const variants = getVariantNames(p);
                         if (variants.length) {
                           return variants.map(v => (
-                            <option key={`${p.id}||${v}`} value={`${p.id}||${v}`}>{labelBase} — {v}</option>
+                            <option key={`prod:${p.id}||${v}`} value={`${p.id}||${v}`}>{labelBase} — {v}</option>
                           ));
                         }
-                        return [<option key={p.id} value={p.id}>{labelBase}</option>];
+                        return [<option key={`prod:${p.id}`} value={p.id}>{labelBase}</option>];
                       });
+                    const packageOptions = availablePkgs
+                      .filter(pk => normalize(pk.category || '') === key && pk.active !== false)
+                      .map(pk => (
+                        <option key={`pkg:${pk.id}`} value={`pkg:${pk.id}`}>{pk.title}</option>
+                      ));
+                    return [...productOptions, ...packageOptions];
                   })()}
                 </select>
                 <input type="number" min={1} value={serviceQty} onChange={e=> setServiceQty(Math.max(1, Number(e.target.value||1)))} className="w-24 px-2 py-1 border rounded text-sm" />
@@ -454,8 +469,10 @@ const PackageEditorModal: React.FC<PackageEditorModalProps> = ({ open, onClose, 
                 <ul className="grid grid-cols-1 gap-2">
                   {Object.entries(included).map(([rawKey, qty]) => {
                     const { id, variantName } = parseKey(rawKey);
-                    const base = products.find(p=>p.id===id);
-                    const display = variantName ? `${base?.name || id} — ${variantName}` : (base?.name || id);
+                    const base = id.startsWith('pkg:') ? null : products.find(p=>p.id===id);
+                    const pkgBase = id.startsWith('pkg:') ? availablePkgs.find(p=>`pkg:${p.id}`===id) : null;
+                    const baseName = base ? (base.name || id) : (pkgBase ? (pkgBase.title || id) : id);
+                    const display = variantName ? `${baseName} — ${variantName}` : baseName;
                     return (
                       <li key={rawKey} className="flex items-center justify-between gap-2">
                         <div className="text-sm">{display}</div>
