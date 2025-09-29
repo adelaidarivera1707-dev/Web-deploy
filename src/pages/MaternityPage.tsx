@@ -336,31 +336,6 @@ const MaternityPage = () => {
         const pkg = selectedPkg;
         if (!pkg) return;
         handleAddToCart(pkg, priceNumber);
-        const dbPkg: DBPackage | undefined = pkg.__db;
-        const includes = (dbPkg && Array.isArray((dbPkg as any).storeItemsIncluded)) ? (dbPkg as any).storeItemsIncluded as { productId: string; quantity: number; variantName?: string }[] : [];
-        includes.forEach(async (inc) => {
-          if (!inc?.productId || Number(inc.quantity||0) <= 0) return;
-          try {
-            const snap = await getDoc(doc(db, 'products', inc.productId));
-            const p = snap.exists() ? (snap.data() as any) : null;
-            if (!p) return;
-            const variant = inc.variantName ? String(inc.variantName) : '';
-            const displayName = variant ? `${p.name || 'Producto'} — ${variant}` : (p.name || 'Producto');
-            const compositeId = variant ? `${inc.productId}||${variant}` : inc.productId;
-            const item = {
-              id: compositeId,
-              type: 'store' as const,
-              name: displayName,
-              price: 'R$ 0',
-              duration: '',
-              image: p.image_url || '',
-              features: [] as any
-            } as any;
-            for (let i = 0; i < Number(inc.quantity||0); i++) {
-              addToCart(item);
-            }
-          } catch {}
-        });
       }}
     />
     </>
