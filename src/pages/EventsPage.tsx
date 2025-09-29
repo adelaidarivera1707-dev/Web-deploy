@@ -159,17 +159,20 @@ const EventsPage = () => {
       setTimeout(() => console.log('📱 EventsPage: Checking cart after add'), 100);
 
       const dbPkg: DBPackage | undefined = (dbEvents || [])?.find(d => d.id === pkg.id);
-      const includes = (dbPkg && Array.isArray((dbPkg as any).storeItemsIncluded)) ? (dbPkg as any).storeItemsIncluded as { productId: string; quantity: number }[] : [];
+      const includes = (dbPkg && Array.isArray((dbPkg as any).storeItemsIncluded)) ? (dbPkg as any).storeItemsIncluded as { productId: string; quantity: number; variantName?: string }[] : [];
       for (const inc of includes) {
         if (!inc?.productId || Number(inc.quantity||0) <= 0) continue;
         try {
           const snap = await getDoc(doc(db, 'products', inc.productId));
           const p = snap.exists() ? (snap.data() as any) : null;
           if (!p) continue;
+          const variant = inc.variantName ? String(inc.variantName) : '';
+          const displayName = variant ? `${p.name || 'Producto'} — ${variant}` : (p.name || 'Producto');
+          const compositeId = variant ? `${inc.productId}||${variant}` : inc.productId;
           const item = {
-            id: inc.productId,
+            id: compositeId,
             type: 'store' as const,
-            name: p.name || 'Producto',
+            name: displayName,
             price: 'R$ 0',
             duration: '',
             image: p.image_url || '',
@@ -575,17 +578,20 @@ const EventsPage = () => {
           if (!pkg) return;
           handleAddToCart(pkg, priceNumber);
           const dbPkg: DBPackage | undefined = pkg.__db;
-          const includes = (dbPkg && Array.isArray((dbPkg as any).storeItemsIncluded)) ? (dbPkg as any).storeItemsIncluded as { productId: string; quantity: number }[] : [];
+          const includes = (dbPkg && Array.isArray((dbPkg as any).storeItemsIncluded)) ? (dbPkg as any).storeItemsIncluded as { productId: string; quantity: number; variantName?: string }[] : [];
           includes.forEach(async (inc) => {
             if (!inc?.productId || Number(inc.quantity||0) <= 0) return;
             try {
               const snap = await getDoc(doc(db, 'products', inc.productId));
               const p = snap.exists() ? (snap.data() as any) : null;
               if (!p) return;
+              const variant = inc.variantName ? String(inc.variantName) : '';
+              const displayName = variant ? `${p.name || 'Producto'} — ${variant}` : (p.name || 'Producto');
+              const compositeId = variant ? `${inc.productId}||${variant}` : inc.productId;
               const item = {
-                id: inc.productId,
+                id: compositeId,
                 type: 'store' as const,
-                name: p.name || 'Producto',
+                name: displayName,
                 price: 'R$ 0',
                 duration: '',
                 image: p.image_url || '',
