@@ -180,11 +180,10 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
           onClick={onClose}
         />
         
-        {/* Bottom drawer */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white shadow-2xl z-50 transform transition-all duration-300 ease-out"
-             style={{ height: '70vh', maxHeight: '500px' }}>
-          {/* Handle bar and summary */}
-          <div 
+        {/* Right full-screen drawer on mobile */}
+        <div className="fixed inset-0 right-0 bg-white z-50 flex flex-col overflow-hidden transform transition-transform duration-300 ease-out">
+          {/* Header / summary */}
+          <div
             className="p-4 border-b bg-white"
           >
             {/* Handle bar */}
