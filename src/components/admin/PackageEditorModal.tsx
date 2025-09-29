@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { X, Plus, Trash2, Search, CheckCircle } from 'lucide-react';
-import { DBPackage, updatePackage } from '../../utils/packagesService';
+import { DBPackage, updatePackage, createPackage } from '../../utils/packagesService';
 import { storage } from '../../utils/firebaseClient';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, getDoc, doc } from 'firebase/firestore';
 import { db } from '../../utils/firebaseClient';
 
 interface PackageEditorModalProps {
@@ -127,6 +127,50 @@ const PackageEditorModal: React.FC<PackageEditorModalProps> = ({ open, onClose, 
       console.error('PackageEditorModal: save error', e);
       const msg = e?.message || 'Erro ao salvar pacote';
       setError(msg);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDuplicate = async () => {
+    if (!pkg) return;
+    try {
+      setSaving(true);
+      setError(null);
+      const baseFeatures = featuresText
+        .split('\n')
+        .map((f) => f.trim())
+        .filter(Boolean);
+      const payload: any = {
+        type: pkg.type,
+        title: `${title || pkg.title} (Copia)`,
+        price: Number(price) || 0,
+        duration: duration || '',
+        description: description || '',
+        features: baseFeatures,
+        image_url: imageUrl || '',
+        category: category || undefined,
+        sections: sections,
+        recommended: Boolean(recommended),
+        storeItemsIncluded: Object.entries(included).map(([rawKey, quantity]) => {
+          const [id, variantName] = rawKey.split('||');
+          return { productId: id, quantity: Number(quantity || 0), ...(variantName ? { variantName } : {}) };
+        }).filter((x) => x.quantity > 0),
+        active: true,
+      };
+      const newId = await createPackage(payload);
+      try {
+        const ref = doc(db, 'packages', newId);
+        const snap = await getDoc(ref);
+        if (snap.exists()) {
+          const created = { id: snap.id, ...(snap.data() as any) } as DBPackage;
+          onSaved && onSaved(created);
+        }
+      } catch (_) {}
+      setSuccessMessage('Copia creada correctamente');
+      window.dispatchEvent(new CustomEvent('adminToast', { detail: { message: 'Copia creada', type: 'success', refresh: true } }));
+    } catch (e: any) {
+      setError(e?.message || 'No se pudo duplicar el paquete');
     } finally {
       setSaving(false);
     }
@@ -315,11 +359,16 @@ const PackageEditorModal: React.FC<PackageEditorModalProps> = ({ open, onClose, 
           <div className="text-xs text-gray-500 mt-1">Estos productos se añadirán automáticamente al carrito como items individuales al seleccionar este paquete (precio R$ 0 recomendado para evitar doble cobro).</div>
         </div>
 
-        <div className="border-t p-4 flex justify-end gap-2">
-          <button onClick={onClose} className="px-4 py-2 rounded border">Cancelar</button>
-          <button type="button" onClick={handleSave} disabled={saving || uploading} className="px-4 py-2 rounded bg-primary text-white disabled:opacity-50">
-            {saving ? 'Salvando...' : 'Salvar'}
+        <div className="border-t p-4 flex justify-between gap-2">
+          <button type="button" onClick={handleDuplicate} disabled={saving || uploading} className="px-4 py-2 rounded border-2 border-secondary text-secondary hover:bg-secondary hover:text-white disabled:opacity-50">
+            Duplicar paquete
           </button>
+          <div className="flex gap-2">
+            <button onClick={onClose} className="px-4 py-2 rounded border">Cancelar</button>
+            <button type="button" onClick={handleSave} disabled={saving || uploading} className="px-4 py-2 rounded bg-primary text-white disabled:opacity-50">
+              {saving ? 'Salvando...' : 'Salvar'}
+            </button>
+          </div>
         </div>
       </div>
     </div>
