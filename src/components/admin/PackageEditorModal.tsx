@@ -38,7 +38,10 @@ const PackageEditorModal: React.FC<PackageEditorModalProps> = ({ open, onClose, 
   const [included, setIncluded] = useState<Record<string, number>>({});
   const [manualId, setManualId] = useState<string>('');
   const [manualQty, setManualQty] = useState<number>(1);
+  const [serviceId, setServiceId] = useState<string>('');
+  const [serviceQty, setServiceQty] = useState<number>(1);
   const parseKey = (key: string) => { const [id, variantName] = key.split('||'); return { id, variantName }; };
+  const normalize = (s: any) => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
   const getVariantNames = (p: any): string[] => {
     const names: string[] = [];
     if (Array.isArray(p.variantes) && p.variantes.length) { names.push(...p.variantes.map((v: any) => String(v?.nombre||'').trim()).filter(Boolean)); }
@@ -374,6 +377,31 @@ const PackageEditorModal: React.FC<PackageEditorModalProps> = ({ open, onClose, 
               <input type="number" min={1} value={manualQty} onChange={e=> setManualQty(Math.max(1, Number(e.target.value||1)))} className="w-24 px-2 py-1 border rounded text-sm" />
               <button type="button" onClick={()=>{ if(!manualId) return; setIncluded(prev=> ({ ...prev, [manualId]: manualQty })); }} className="px-3 py-1 bg-primary text-white rounded text-sm">Agregar</button>
             </div>
+
+            {/* Servicios (categoría 'Servicios') */}
+            <div className="mt-4">
+              <div className="text-xs text-gray-600 mb-1">Añadir servicio al paquete</div>
+              <div className="flex items-center gap-2">
+                <select value={serviceId} onChange={e=>setServiceId(e.target.value)} className="px-2 py-1 border rounded text-sm flex-1">
+                  <option value="">Selecciona un servicio…</option>
+                  {products
+                    .filter(p => normalize(p.category) === 'servicios')
+                    .flatMap(p => {
+                      const labelBase = String(p.name||p.id);
+                      const variants = getVariantNames(p);
+                      if (variants.length) {
+                        return variants.map(v => (
+                          <option key={`${p.id}||${v}`} value={`${p.id}||${v}`}>{labelBase} — {v}</option>
+                        ));
+                      }
+                      return [<option key={p.id} value={p.id}>{labelBase}</option>];
+                    })}
+                </select>
+                <input type="number" min={1} value={serviceQty} onChange={e=> setServiceQty(Math.max(1, Number(e.target.value||1)))} className="w-24 px-2 py-1 border rounded text-sm" />
+                <button type="button" onClick={()=>{ if(!serviceId) return; setIncluded(prev=> ({ ...prev, [serviceId]: serviceQty })); }} className="px-3 py-1 bg-primary text-white rounded text-sm">Agregar</button>
+              </div>
+            </div>
+
             {Object.keys(included).length > 0 && (
               <div className="mt-3 p-3 bg-gray-50 rounded border border-gray-200">
                 <div className="text-xs text-gray-600 mb-2">Productos seleccionados</div>
