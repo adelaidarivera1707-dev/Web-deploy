@@ -65,7 +65,7 @@ const PortraitPage = () => {
       try {
         setLoading(true);
         const data = await fetchPackages();
-        setDbPackages(data.filter(p => (p as any).active !== false && (p.type === 'portrait' || (p.category || '').toLowerCase().includes('portrait'))));
+        setDbPackages(data.filter(p => (p as any).active !== false && (p.type === 'portrait')));
       } catch (e) {
         console.warn('PortraitPage: falling back to static packages');
         setDbPackages(null);
