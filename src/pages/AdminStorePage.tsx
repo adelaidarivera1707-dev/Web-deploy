@@ -168,7 +168,11 @@ const AdminStorePage: React.FC = () => {
                 ))}
               </div>
 
-              <ProductEditorModal open={editorOpen} onClose={() => setEditorOpen(false)} product={editingProduct as any} onSaved={fetchProducts} />
+              {productFilter==='dresses' ? (
+                <DressEditorModal open={dressEditorOpen} onClose={() => setDressEditorOpen(false)} dress={editingDress as any} onSaved={fetchProducts} />
+              ) : (
+                <ProductEditorModal open={editorOpen} onClose={() => setEditorOpen(false)} product={editingProduct as any} onSaved={fetchProducts} />
+              )}
             </div>
           )}
 
@@ -243,7 +247,11 @@ const AdminStorePage: React.FC = () => {
                       </div>
                     ))}
                   </div>
-                  <ProductEditorModal open={editorOpen} onClose={() => setEditorOpen(false)} product={editingProduct as any} onSaved={fetchProducts} />
+                  {productFilter==='dresses' ? (
+                    <DressEditorModal open={dressEditorOpen} onClose={() => setDressEditorOpen(false)} dress={editingDress as any} onSaved={fetchProducts} />
+                  ) : (
+                    <ProductEditorModal open={editorOpen} onClose={() => setEditorOpen(false)} product={editingProduct as any} onSaved={fetchProducts} />
+                  )}
                 </div>
               )}
 
