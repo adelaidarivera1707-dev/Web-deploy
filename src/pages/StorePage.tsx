@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import AddToCartModal from '../components/store/AddToCartModal';
 import type { Product as StoreProductType } from '../types/store';
 import { db } from '../utils/firebaseClient';
