@@ -112,6 +112,7 @@ const StorePage: React.FC = () => {
     return products
       .filter((p) => p.active !== false)
       .filter((p) => selectedCategory === 'all' ? true : (p.category || 'General') === selectedCategory)
+      .filter((p) => !isDressCategory(p.category))
       .filter((p) => {
         const s = search.trim().toLowerCase();
         if (!s) return true;
