@@ -133,7 +133,7 @@ const AdminStorePage: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <button onClick={() => setProductFilter('products')} className={`px-3 py-2 rounded-none border ${productFilter==='products' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Productos</button>
                   <button onClick={() => setProductFilter('dresses')} className={`px-3 py-2 rounded-none border ${productFilter==='dresses' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Vestidos</button>
-                  <button onClick={() => { if (productFilter==='dresses') { setEditingProduct({ name: '', price: 0, category: 'vestidos', image_url: '', tags: [] }); } else { setEditingProduct(null); } setEditorOpen(true); }} className="px-4 py-2 rounded-none border-2 border-black text-black hover:bg-black hover:text-white transition-colors">+ Agregar {productFilter==='dresses' ? 'Vestido' : 'Producto'}</button>
+                  <button onClick={() => { if (productFilter==='dresses') { setEditingDress(null); setDressEditorOpen(true); } else { setEditingProduct(null); setEditorOpen(true); } }} className="px-4 py-2 rounded-none border-2 border-black text-black hover:bg-black hover:text-white transition-colors">+ Agregar {productFilter==='dresses' ? 'Vestido' : 'Producto'}</button>
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -209,7 +209,7 @@ const AdminStorePage: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <button onClick={() => setProductFilter('products')} className={`px-3 py-2 rounded-none border ${productFilter==='products' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Productos</button>
                   <button onClick={() => setProductFilter('dresses')} className={`px-3 py-2 rounded-none border ${productFilter==='dresses' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Vestidos</button>
-                  <button onClick={() => { if (productFilter==='dresses') { setEditingProduct({ name: '', price: 0, category: 'vestidos', image_url: '', tags: [] }); } else { setEditingProduct(null); } setEditorOpen(true); }} className="px-4 py-2 rounded-none border-2 border-black text-black hover:bg-black hover:text-white transition-colors">+ Agregar {productFilter==='dresses' ? 'Vestido' : 'Producto'}</button>
+                  <button onClick={() => { if (productFilter==='dresses') { setEditingDress(null); setDressEditorOpen(true); } else { setEditingProduct(null); setEditorOpen(true); } }} className="px-4 py-2 rounded-none border-2 border-black text-black hover:bg-black hover:text-white transition-colors">+ Agregar {productFilter==='dresses' ? 'Vestido' : 'Producto'}</button>
                 </div>
               </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
