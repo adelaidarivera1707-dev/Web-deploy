@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 // https://vitejs.dev/config/
-export default defineConfig(async ({ mode }) => {
+export default defineConfig(async () => {
   const plugins: any[] = [react()];
 
   if (process.env.REPORT || process.env.npm_config_report) {
