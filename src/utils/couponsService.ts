@@ -10,7 +10,6 @@ import {
   serverTimestamp,
   updateDoc,
   where,
-  getDoc,
   increment,
 } from 'firebase/firestore';
 
