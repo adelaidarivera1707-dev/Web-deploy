@@ -199,6 +199,19 @@ const StorePage: React.FC = () => {
           />
         </div>
 
+        {(fromBooking && !hasStoreItems) && (
+          <div className="mb-6 p-4 border-2 border-yellow-300 bg-yellow-50 rounded-lg">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+              <div>
+                <p className="text-sm text-yellow-800">Você veio da reserva. Esta etapa é opcional para adicionar produtos da loja.</p>
+              </div>
+              <div className="flex gap-2">
+                <button onClick={() => navigate('/booking', { state: { skipStorePopup: true } })} className="px-4 py-2 rounded-none border-2 border-black text-black hover:bg-black hover:text-white">Continuar sem comprar</button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {loading ? (
           <div className="text-gray-500">Carregando...</div>
         ) : filtered.length === 0 ? (
