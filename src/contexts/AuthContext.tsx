@@ -60,6 +60,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setIsAdmin(false);
         return false;
       }
+      // If offline, skip token refresh to avoid fetch errors
+      if (typeof navigator !== 'undefined' && navigator && navigator.onLine === false) {
+        setIsAdmin(false);
+        return false;
+      }
       // Try to refresh token claims; if network fails, return false and keep user signed in but not admin
       try {
         const idTokenResult = await current.getIdTokenResult(true);
