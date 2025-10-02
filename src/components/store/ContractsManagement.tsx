@@ -327,6 +327,96 @@ const ContractsManagement = () => {
               <button onClick={()=>setViewing(null)} className="text-gray-500 hover:text-gray-900">✕</button>
             </div>
           </div>
+          {/* Offscreen PDF content */}
+          {viewing && (
+            <div style={{ position:'fixed', left:-99999, top:0, width:'800px', background:'#fff' }}>
+              <div ref={pdfRef} className="bg-white">
+                <div className="bg-primary text-white p-8 text-center relative">
+                  <h1 className="text-2xl font-semibold mb-1">Contrato de Prestación de Servicios Fotográficos</h1>
+                  <p className="text-white/80">Wild Pictures Studio</p>
+                </div>
+                <div className="p-6 space-y-6">
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div><span className="text-gray-600">Nombre:</span> <span className="font-medium">{viewing.clientName || '-'}</span></div>
+                    <div><span className="text-gray-600">Email:</span> <span className="font-medium">{viewing.clientEmail || '-'}</span></div>
+                    <div><span className="text-gray-600">Tipo de evento:</span> <span className="font-medium">{viewing.eventType || '-'}</span></div>
+                    <div><span className="text-gray-600">Fecha evento:</span> <span className="font-medium">{viewing.eventDate || '-'}</span></div>
+                    <div><span className="text-gray-600">Hora:</span> <span className="font-medium">{(viewing as any).eventTime || '-'}</span></div>
+                    <div><span className="text-gray-600">Ubicación:</span> <span className="font-medium">{(viewing as any).eventLocation || '-'}</span></div>
+                    <div><span className="text-gray-600">Paquete:</span> <span className="font-medium">{(viewing as any).packageTitle || '-'}</span></div>
+                    <div><span className="text-gray-600">Duración:</span> <span className="font-medium">{(viewing as any).packageDuration || '-'}</span></div>
+                  </div>
+
+                  <div>
+                    <div className="text-sm font-medium mb-2">Items del contrato</div>
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="text-left text-gray-600">
+                          <th className="py-1">Item</th>
+                          <th className="py-1">Cant.</th>
+                          <th className="py-1">Precio</th>
+                          <th className="py-1">Total</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(viewing.services || []).map((it: any, idx: number) => {
+                          const qty = Number(it.quantity ?? 1);
+                          const price = Number(String(it.price || '').replace(/[^0-9]/g, ''));
+                          const total = price * qty;
+                          return (
+                            <tr key={idx} className="border-t">
+                              <td className="py-1">{it.name || it.id || '—'}</td>
+                              <td className="py-1">{qty}</td>
+                              <td className="py-1">R$ {price.toFixed(0)}</td>
+                              <td className="py-1">R$ {total.toFixed(0)}</td>
+                            </tr>
+                          );
+                        })}
+                        {Array.isArray(viewing.storeItems) && viewing.storeItems.map((it: any, idx: number) => (
+                          <tr key={`store-${idx}`} className="border-t">
+                            <td className="py-1">{it.name}</td>
+                            <td className="py-1">{Number(it.quantity)}</td>
+                            <td className="py-1">R$ {Number(it.price).toFixed(0)}</td>
+                            <td className="py-1">R$ {(Number(it.price) * Number(it.quantity)).toFixed(0)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                    <div className="bg-primary text-white px-6 py-3 border-b">
+                      <h2 className="text-lg font-medium">Cláusulas Contratuais</h2>
+                    </div>
+                    <div className="p-6 space-y-6 text-sm text-gray-700">
+                      <section>
+                        <h3 className="text-base font-medium text-primary mb-2">CLÁUSULA 1ª – DAS OBRIGAÇÕES DA CONTRATADA</h3>
+                        <div className="space-y-2">
+                          <p>Comparecer ao evento com antecedência suficiente, garantindo o fiel cumprimento do tempo de cobertura contratado.</p>
+                          <p>Entregar todas as fotografias editadas, com correção de cores, no prazo máximo de 15 (quinze) dias úteis após a realização do evento.</p>
+                          <p>Disponibilizar todos os arquivos digitais em alta resolução, sem marca d'água.</p>
+                        </div>
+                      </section>
+                      <section>
+                        <h3 className="text-base font-medium text-primary mb-2">CLÁUSULA 2ª – DAS OBRIGAÇÕES DA CONTRATANTE</h3>
+                        <div className="space-y-2">
+                          <p>Realizar o pagamento conforme estipulado: 20% do valor total como sinal de reserva e o restante no dia do evento.</p>
+                          <p>Fornecer todas as informações necessárias sobre o evento e garantir acesso aos locais.</p>
+                        </div>
+                      </section>
+                      <section>
+                        <h3 className="text-base font-medium text-primary mb-2">CLÁUSULA 3ª – DA ENTREGA E DIREITOS AUTORAIS</h3>
+                        <div className="space-y-2">
+                          <p>As fotografias serão entregues em formato digital através de galeria online privada.</p>
+                          <p>Os direitos autorais pertencem ao fotógrafo, concedendo-se ao contratante direito de uso pessoal.</p>
+                        </div>
+                      </section>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-0">
             <div className="md:col-span-1 border-r p-4 max-h-[70vh] overflow-auto">
               <div className="flex items-center justify-between mb-3">
