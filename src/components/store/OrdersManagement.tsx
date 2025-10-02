@@ -445,7 +445,18 @@ const OrdersManagement = () => {
             const progressColor = deliveryComplete ? '#16a34a' : (deliveryPct >= 67 ? '#16a34a' : deliveryPct >= 34 ? '#eab308' : '#ef4444');
             return (
               <div key={o.id} className="grid grid-cols-12 p-3 items-center hover:bg-gray-50 cursor-pointer" onClick={() => openWorkflow(o)}>
-                <div className="col-span-1" />
+                <div className="col-span-1">
+                  {!String(o.id || '').startsWith('contract-') && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); remove(o.id); }}
+                      className="text-red-600 hover:text-red-800"
+                      title="Eliminar orden"
+                      aria-label="Eliminar orden"
+                    >
+                      <Trash size={16} />
+                    </button>
+                  )}
+                </div>
                 <div className="col-span-3 lowercase first-letter:uppercase">{o.customer_name || 'cliente'}</div>
                 <div className="col-span-2 text-sm text-gray-600">{o.created_at ? new Date(o.created_at).toLocaleDateString() : ''}</div>
                 <div className="col-span-1 font-semibold">${Number(o.total || 0).toFixed(0)}</div>
