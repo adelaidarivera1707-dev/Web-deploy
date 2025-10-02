@@ -27,10 +27,9 @@ interface StoreProduct {
 }
 
 const StorePage: React.FC = () => {
-  const { addToCart } = useCart();
+  const { addToCart, items } = useCart();
   const location = useLocation() as any;
   const navigate = useNavigate();
-  const { items } = useCart();
   const [products, setProducts] = useState<StoreProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [coupons, setCoupons] = useState<DBCoupon[]>([]);
