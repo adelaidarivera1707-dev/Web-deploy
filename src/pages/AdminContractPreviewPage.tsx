@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import ContractPreview from '../components/booking/ContractPreview';
 import type { BookingFormData, CartItem, StoreCartItem } from '../types/booking';
 import { useMemo } from 'react';
+import type { CSSProperties } from 'react';
 
 const formatBRL = (value: number) => {
   return `R$ ${Number(value || 0).toFixed(2).replace('.', ',')}`;
