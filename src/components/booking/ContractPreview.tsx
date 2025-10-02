@@ -3,7 +3,7 @@ import { ptBR } from 'date-fns/locale';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../utils/firebaseClient';
 import type { DressOption } from '../../types/booking';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { BookingFormData } from '../../types/booking';
 import { sessionPackages } from '../../data/sessionsData';
 import { eventPackages } from '../../data/eventsData';
