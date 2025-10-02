@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import app from "../utils/firebaseClient"; // importa tu firebaseClient
 
