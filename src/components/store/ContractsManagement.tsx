@@ -416,23 +416,55 @@ const ContractsManagement = () => {
                       <section>
                         <h3 className="text-base font-medium text-primary mb-2">CLÁUSULA 1ª – DAS OBRIGAÇÕES DA CONTRATADA</h3>
                         <div className="space-y-2">
-                          <p>Comparecer ao evento com antecedência suficiente, garantindo o fiel cumprimento do tempo de cobertura contratado.</p>
-                          <p>Entregar todas as fotografias editadas, com correção de cores, no prazo máximo de 15 (quinze) dias úteis após a realização do evento.</p>
-                          <p>Disponibilizar todos os arquivos digitais em alta resolução, sem marca d'água.</p>
+                          <p>1.1. Comparecer ao evento com antecedência suficiente, garantindo o fiel cumprimento do tempo de cobertura contratado.</p>
+                          <p>1.2. Entregar todas as fotografias editadas, com correção de cores, no prazo máximo de 15 (quinze) dias úteis após a realização do evento.</p>
+                          <p>1.3. Disponibilizar todos os arquivos digitais em alta resolução, devidamente editados e sem marca d'água.</p>
+                          <p>1.4. Manter sigilo sobre as informações pessoais e familiares dos contratantes.</p>
                         </div>
                       </section>
                       <section>
                         <h3 className="text-base font-medium text-primary mb-2">CLÁUSULA 2ª – DAS OBRIGAÇÕES DA CONTRATANTE</h3>
                         <div className="space-y-2">
-                          <p>Realizar o pagamento conforme estipulado: 20% do valor total como sinal de reserva e o restante no dia do evento.</p>
-                          <p>Fornecer todas as informações necessárias sobre o evento e garantir acesso aos locais.</p>
+                          <p>2.1. Realizar o pagamento conforme estipulado: 20% do valor total como sinal de reserva e o restante no dia do evento.</p>
+                          <p>2.2. Fornecer todas as informações necessárias sobre o evento (horários, locais, pessoas importantes).</p>
+                          <p>2.3. Garantir acesso aos locais do evento e cooperação das pessoas envolvidas.</p>
+                          <p>2.4. Comunicar qualquer alteração com antecedência mínima de 48 horas.</p>
                         </div>
                       </section>
                       <section>
                         <h3 className="text-base font-medium text-primary mb-2">CLÁUSULA 3ª – DA ENTREGA E DIREITOS AUTORAIS</h3>
                         <div className="space-y-2">
-                          <p>As fotografias serão entregues em formato digital através de galeria online privada.</p>
-                          <p>Os direitos autorais pertencem ao fotógrafo, concedendo-se ao contratante direito de uso pessoal.</p>
+                          <p>3.1. As fotografias serão entregues em formato digital através de galeria online privada.</p>
+                          <p>3.2. Os direitos autorais das fotografias pertencem ao fotógrafo, sendo concedido ao contratante o direito de uso pessoal.</p>
+                          <p>3.3. É vedada a reprodução comercial das imagens sem autorização expressa da contratada.</p>
+                          <p>3.4. A contratada poderá utilizar as imagens para fins de divulgação de seu trabalho.</p>
+                        </div>
+                      </section>
+                      <section>
+                        <h3 className="text-base font-medium text-primary mb-2">CLÁUSULA 4ª – DO CANCELAMENTO E REAGENDAMENTO</h3>
+                        <div className="space-y-2">
+                          <p>4.1. Em caso de cancelamento pela contratante com mais de 30 dias de antecedência, será devolvido 50% do valor pago.</p>
+                          <p>4.2. Cancelamentos com menos de 30 dias não terão devolução do valor pago.</p>
+                          <p>4.3. Reagendamentos estão sujeitos à disponibilidade da agenda da contratada.</p>
+                          <p>4.4. Casos de força maior serão analisados individualmente.</p>
+                        </div>
+                      </section>
+                      <section>
+                        <h3 className="text-base font-medium text-primary mb-2">CLÁUSULA 5ª – DAS DISPOSIÇÕES GERAIS</h3>
+                        <div className="space-y-2">
+                          <p>5.1. Este contrato é regido pelas leis brasileiras.</p>
+                          <p>5.2. Eventuais conflitos serão resolvidos preferencialmente por mediação.</p>
+                          <p>5.3. As partes elegem o foro da comarca de Curitiba/PR para dirimir questões oriundas deste contrato.</p>
+                          <p>5.4. Este contrato entra em vigor na data de sua assinatura.</p>
+                        </div>
+                      </section>
+                      <section>
+                        <h3 className="text-base font-medium text-primary mb-2">CLÁUSULA 6ª – DA CLÁUSULA PENAL</h3>
+                        <div className="space-y-2">
+                          <p>6.1. O descumprimento, por qualquer das partes, das obrigações assumidas neste contrato, sujeitará a parte infratora ao pagamento de multa equivalente a 1/3 (um terço) do valor total do contrato, sem prejuízo de eventuais perdas e danos.</p>
+                          <p>6.2. A cláusula penal não afasta a possibilidade de cobrança judicial ou extrajudicial de danos adicionais comprovadamente sofridos pela parte prejudicada.</p>
+                          <p>6.3. No caso de a CONTRATADA não comparecer no dia do evento ou não entregar o material contratado nos prazos estabelecidos, a multa será aplicada de forma imediata, facultando ao(à) CONTRATANTE a execução do contrato e o ajuizamento de ação para reparação integral dos prejuízos, incluindo eventual indenização por danos morais.</p>
+                          <p>6.4. Em caso fortuito ou força maior, devidamente comprovados, não se aplicam as penalidades acima descritas, sendo o contrato desfeito sem prejuízo a ambas as partes.</p>
                         </div>
                       </section>
                     </div>
