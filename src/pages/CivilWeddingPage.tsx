@@ -1,6 +1,4 @@
 import { useEffect, useState } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../utils/firebaseClient';
 import { fetchPackages, DBPackage } from '../utils/packagesService';
 import { formatPrice, parsePrice } from '../utils/format';
 import { useCart } from '../contexts/CartContext';
