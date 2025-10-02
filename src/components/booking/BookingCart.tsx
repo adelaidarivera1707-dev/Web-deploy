@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { CartItem, PaymentMethod } from '../../types/booking';
+import { PaymentMethod } from '../../types/booking';
 import { CreditCard, Wallet, QrCode } from 'lucide-react';
 import { formatPrice as formatBRL } from '../../utils/format';
 
