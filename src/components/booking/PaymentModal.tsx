@@ -77,7 +77,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, bookingDat
 
         // Create preference via Firebase Callable (mpCreatePreference) and open MP Checkout using SDK v2
         const resp = await mercadoPago.createPreference(bookingData);
-        const preferenceId = resp?.preferenceId || resp?.id || '';
+        const preferenceId = resp?.id || '';
         if (!preferenceId) throw new Error('Falha ao criar preferência de pagamento');
         await initCheckout(preferenceId, { autoOpen: true });
       } else {
