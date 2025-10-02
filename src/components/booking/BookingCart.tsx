@@ -83,7 +83,7 @@ const BookingCart = ({ cartItems, travelCost, paymentMethod, formData = {} }: Bo
     };
   };
 
-  const { discount, total, deposit, remaining } = calculateTotal();
+  const { discount, total, deposit, remaining, depositServices, depositStore } = calculateTotal();
 
   const paymentIcons = {
     cash: <Wallet className="w-4 h-4" />,
