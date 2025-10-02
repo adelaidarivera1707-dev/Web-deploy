@@ -139,8 +139,13 @@ const ContractsManagement = () => {
     setEditForm({
       clientName: c.clientName || '',
       clientEmail: c.clientEmail || '',
+      eventType: c.eventType || '',
       eventDate: c.eventDate || '',
       eventTime: (c as any).eventTime || '',
+      eventLocation: (c as any).eventLocation || '',
+      packageTitle: (c as any).packageTitle || '',
+      packageDuration: (c as any).packageDuration || '',
+      paymentMethod: c.paymentMethod || '',
       totalAmount: Number(c.totalAmount || 0),
       travelFee: Number(c.travelFee || 0),
       message: c.message || ''
