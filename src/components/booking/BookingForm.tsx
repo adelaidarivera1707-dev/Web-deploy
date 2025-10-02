@@ -129,7 +129,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ initialData, packages, onSubm
     discountCoupon: ''
   });
   const [errors, setErrors] = useState<{[key: string]: string}>({});
-  const [dresses, setDresses] = useState<DressOption[]>(defaultDressOptions);
+  const [dresses, setDresses] = useState<DressOption[]>([]);
 
   const serviceTypes = [
     { id: 'portrait', name: 'Retratos' },
@@ -703,7 +703,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ initialData, packages, onSubm
                     onChange={handleInputChange}
                     rows={4}
                     className="input-base focus:outline-none focus:ring-2 focus:ring-secondary"
-                    placeholder="Informa��ões adicionais sobre o evento..."
+                    placeholder="Informações adicionais sobre o evento..."
                   />
                 </div>
               </section>
