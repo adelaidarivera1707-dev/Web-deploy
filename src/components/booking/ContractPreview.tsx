@@ -2,14 +2,12 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../utils/firebaseClient';
-import { dressOptions as defaultDressOptions } from '../../data/dressData';
 import type { DressOption } from '../../types/booking';
 import { useState, useRef } from 'react';
 import { BookingFormData } from '../../types/booking';
 import { sessionPackages } from '../../data/sessionsData';
 import { eventPackages } from '../../data/eventsData';
 import { maternityPackages } from '../../data/maternityData';
-import { dressOptions } from '../../data/dressData';
 import SignaturePad from './SignaturePad';
 import Button from '../ui/Button';
 import { useFeatureFlags } from '../../contexts/FeatureFlagsContext';
@@ -40,7 +38,7 @@ const ContractPreview = ({ data, onConfirm, onBack }: ContractPreviewProps) => {
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [dresses, setDresses] = useState<DressOption[]>(defaultDressOptions);
+  const [dresses, setDresses] = useState<DressOption[]>([]);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const contractRef = useRef<HTMLDivElement>(null);
   const { flags } = useFeatureFlags();
@@ -63,9 +61,9 @@ const ContractPreview = ({ data, onConfirm, onBack }: ContractPreviewProps) => {
             color: Array.isArray(p.tags) && p.tags.length ? String(p.tags[0]) : '',
             image: p.image_url || ''
           }));
-        if (list.length) setDresses(list);
+        setDresses(list);
       } catch (e) {
-        // keep fallback
+        setDresses([]);
       }
     })();
   }, []);
