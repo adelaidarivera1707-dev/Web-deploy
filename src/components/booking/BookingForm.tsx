@@ -65,8 +65,9 @@ const DatePicker: React.FC<{ value: string; onChange: (val: string) => void; min
   const minDate = min ? new Date(min) : today;
   const asStr = (y:number,m:number,d:number)=> `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
 
-  const cells: (string|null)[] = Array.from({length: startWeekday}, ()=>null)
-    .concat(Array.from({length: daysInMonth}, (_,i)=>asStr(view.year, view.month, i+1)));
+  const prefix: (string|null)[] = Array.from({ length: startWeekday }, () => null) as (string | null)[];
+  const monthDays: (string|null)[] = Array.from({ length: daysInMonth }, (_, i) => asStr(view.year, view.month, i + 1)) as (string | null)[];
+  const cells: (string | null)[] = prefix.concat(monthDays);
   const canSelect = (d: string) => new Date(d) >= new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate());
 
   return (
