@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
 import { BookingFormData } from '../../types/booking';
 import { maternityPackages } from '../../data/maternityData';
-import { dressOptions } from '../../data/dressData';
+import { dressOptions as defaultDressOptions } from '../../data/dressData';
 import DressSelector from './DressSelector';
+import { db } from '../../utils/firebaseClient';
+import { collection, getDocs } from 'firebase/firestore';
+import type { DressOption } from '../../types/booking';
 import BookingCart from './BookingCart';
 
 // Helpers for BR formatting/validation
@@ -127,12 +130,37 @@ const BookingForm: React.FC<BookingFormProps> = ({ initialData, packages, onSubm
     discountCoupon: ''
   });
   const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const [dresses, setDresses] = useState<DressOption[]>(defaultDressOptions);
 
   const serviceTypes = [
     { id: 'portrait', name: 'Retratos' },
     { id: 'maternity', name: 'Gestantes' },
     { id: 'events', name: 'Eventos' }
   ];
+
+  // Load dresses from Firestore (category = vestidos) with fallback
+  useEffect(() => {
+    (async () => {
+      try {
+        const snap = await getDocs(collection(db, 'products'));
+        const list: DressOption[] = snap.docs
+          .map(d => ({ id: d.id, ...(d.data() as any) }))
+          .filter(p => {
+            const c = String((p as any).category || '').toLowerCase();
+            return c.includes('vestid') || c.includes('dress');
+          })
+          .map((p: any) => ({
+            id: p.id,
+            name: p.name || 'Vestido',
+            color: Array.isArray(p.tags) && p.tags.length ? String(p.tags[0]) : '',
+            image: p.image_url || ''
+          }));
+        if (list.length) setDresses(list);
+      } catch (e) {
+        // keep fallback
+      }
+    })();
+  }, []);
 
   // Set PIX as default payment method
   useEffect(() => {
@@ -507,7 +535,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ initialData, packages, onSubm
                       {item.type === 'maternity' && (
                         <div className="md:col-span-2">
                           <DressSelector
-                            dresses={dressOptions}
+                            dresses={dresses}
                             maxSelections={getMaxLooks(item)}
                             selectedDresses={formData.selectedDresses || []}
                             onChange={handleDressSelection}
