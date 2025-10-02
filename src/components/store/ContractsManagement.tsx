@@ -5,6 +5,7 @@ import { ChevronDown, ChevronUp, CheckCircle, Clock, FileText, Loader, Mail, Map
 import { defaultWorkflow, categoryColors, WorkflowTemplate } from './_contractsWorkflowHelper';
 import { generatePDF } from '../../utils/pdf';
 import { useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface WorkflowTask { id: string; title: string; done: boolean; due?: string | null; note?: string }
 interface WorkflowCategory { id: string; name: string; tasks: WorkflowTask[] }
@@ -53,6 +54,7 @@ const ContractsManagement = () => {
   const [templatesOpen, setTemplatesOpen] = useState(false);
   const pdfRef = useRef<HTMLDivElement | null>(null);
   const [generatingPdf, setGeneratingPdf] = useState(false);
+  const navigate = useNavigate();
   const [templates, setTemplates] = useState<WorkflowTemplate[]>([]);
   const [tplEditing, setTplEditing] = useState<WorkflowTemplate | null>(null);
   const [defaults, setDefaults] = useState<{ packages?: string; products?: string }>({});
@@ -333,20 +335,8 @@ const ContractsManagement = () => {
             <div className="flex items-center gap-2">
               <button onClick={()=> viewing && openEdit(viewing)} className="border px-3 py-2 rounded-none text-sm">Modificar datos</button>
               <button onClick={async()=>{
-                if (!pdfRef.current || !viewing) return;
-                try {
-                  setGeneratingPdf(true);
-                  const blob = (await generatePDF(pdfRef.current, { quality: 0.4, scale: 1.1, returnType: 'blob', longSinglePage: true, marginTopPt: 0, marginBottomPt: 0 })) as Blob;
-                  const url = URL.createObjectURL(blob);
-                  const a = document.createElement('a');
-                  a.href = url;
-                  a.download = `contrato-${(viewing.clientName || 'cliente').toLowerCase().replace(/\s+/g,'-')}.pdf`;
-                  document.body.appendChild(a);
-                  a.click();
-                  document.body.removeChild(a);
-                } finally {
-                  setGeneratingPdf(false);
-                }
+                if (!viewing) return;
+                navigate('/admin/contract-preview', { state: { contract: viewing } });
               }} className="border-2 border-black bg-black text-white px-3 py-2 rounded-none text-sm hover:opacity-90" disabled={generatingPdf}>{generatingPdf? 'Generando...' : 'Generar PDF'}</button>
               <button onClick={()=>setViewing(null)} className="text-gray-500 hover:text-gray-900">✕</button>
             </div>
@@ -580,8 +570,40 @@ const ContractsManagement = () => {
                 <div><span className="text-gray-600">Paquete:</span> <span className="font-medium">{(viewing as any).packageTitle || '-'}</span></div>
                 <div><span className="text-gray-600">Duración:</span> <span className="font-medium">{(viewing as any).packageDuration || '-'}</span></div>
                 <div><span className="text-gray-600">Método de pago:</span> <span className="font-medium">{viewing.paymentMethod || '-'}</span></div>
-                <div className="flex items-center gap-2"><span className="text-gray-600">Depósito:</span> <span className={`px-2 py-0.5 rounded text-xs ${viewing.depositPaid? 'bg-green-100 text-green-700':'bg-red-100 text-red-700'}`}>{viewing.depositPaid? 'Pagado':'No pagado'}</span></div>
-                <div className="flex items-center gap-2"><span className="text-gray-600">Restante:</span> <span className={`px-2 py-0.5 rounded text-xs ${viewing.finalPaymentPaid? 'bg-green-100 text-green-700':'bg-red-100 text-red-700'}`}>{viewing.finalPaymentPaid? 'Pagado':'No pagado'}</span></div>
+                {(() => {
+                  const servicesTotal = (Array.isArray(viewing.services) ? viewing.services : []).reduce((sum, it: any) => {
+                    const qty = Number(it.quantity ?? 1);
+                    const price = Number(String(it.price || '').replace(/[^0-9]/g, ''));
+                    return sum + (price * qty);
+                  }, 0);
+                  const storeTotal = (Array.isArray(viewing.storeItems) ? viewing.storeItems : []).reduce((sum, it: any) => sum + (Number(it.price) * Number(it.quantity || 1)), 0);
+                  const travel = Number(viewing.travelFee || 0);
+                  const total = servicesTotal + storeTotal + travel;
+                  const depositAmount = Math.round(servicesTotal * 0.2 + storeTotal * 0.5);
+                  const remainingAmount = Math.max(0, Math.round(total - depositAmount));
+                  return (
+                    <>
+                      <div className="flex items-center gap-2">
+                        <span className="text-gray-600">Depósito:</span>
+                        <span className="font-medium">R$ {depositAmount.toFixed(0)}</span>
+                        <span className={`px-2 py-0.5 rounded text-xs ${viewing.depositPaid? 'bg-green-100 text-green-700':'bg-red-100 text-red-700'}`}>{viewing.depositPaid? 'Pagado':'No pagado'}</span>
+                        <button
+                          onClick={async ()=>{ await toggleFlag(viewing.id, 'depositPaid'); setViewing(v=> v? { ...v, depositPaid: !v.depositPaid }: v); }}
+                          className={`text-xs px-2 py-1 border rounded-none ${viewing.depositPaid? 'border-green-600 text-green-700 hover:bg-green-600 hover:text-white':'border-red-600 text-red-700 hover:bg-red-600 hover:text-white'}`}
+                        >{viewing.depositPaid? 'Marcar No pagado':'Marcar Pagado'}</button>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-gray-600">Restante:</span>
+                        <span className="font-medium">R$ {remainingAmount.toFixed(0)}</span>
+                        <span className={`px-2 py-0.5 rounded text-xs ${viewing.finalPaymentPaid? 'bg-green-100 text-green-700':'bg-red-100 text-red-700'}`}>{viewing.finalPaymentPaid? 'Pagado':'No pagado'}</span>
+                        <button
+                          onClick={async ()=>{ await toggleFlag(viewing.id, 'finalPaymentPaid'); setViewing(v=> v? { ...v, finalPaymentPaid: !v.finalPaymentPaid }: v); }}
+                          className={`text-xs px-2 py-1 border rounded-none ${viewing.finalPaymentPaid? 'border-green-600 text-green-700 hover:bg-green-600 hover:text-white':'border-red-600 text-red-700 hover:bg-red-600 hover:text-white'}`}
+                        >{viewing.finalPaymentPaid? 'Marcar No pagado':'Marcar Pagado'}</button>
+                      </div>
+                    </>
+                  );
+                })()}
                 <div><span className="text-gray-600">Total:</span> <span className="font-medium">R$ {(viewing.totalAmount ?? 0).toFixed(0)}</span></div>
                 <div><span className="text-gray-600">Deslocamento:</span> <span className="font-medium">R$ {(viewing.travelFee ?? 0).toFixed(0)}</span></div>
               </div>
