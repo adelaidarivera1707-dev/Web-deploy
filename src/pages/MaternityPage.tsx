@@ -161,7 +161,7 @@ const MaternityPage = () => {
 
     } catch (error) {
       console.error('📱 MaternityPage: Error adding to cart:', error);
-      window.dispatchEvent(new CustomEvent('adminToast', { detail: { message: 'Error al agregar al carrito: ' + (error as Error).message, type: 'error' } }));
+      window.dispatchEvent(new CustomEvent('adminToast', { detail: { message: 'Error al agregar al carrito: ' + ((error as any)?.message || String(error)), type: 'error' } }));
     }
   };
 
