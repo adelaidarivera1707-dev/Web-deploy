@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BookingFormData } from '../../types/booking';
 import { maternityPackages } from '../../data/maternityData';
-import { dressOptions as defaultDressOptions } from '../../data/dressData';
 import DressSelector from './DressSelector';
 import { db } from '../../utils/firebaseClient';
 import { collection, getDocs } from 'firebase/firestore';
@@ -704,7 +703,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ initialData, packages, onSubm
                     onChange={handleInputChange}
                     rows={4}
                     className="input-base focus:outline-none focus:ring-2 focus:ring-secondary"
-                    placeholder="Informações adicionais sobre o evento..."
+                    placeholder="Informa��ões adicionais sobre o evento..."
                   />
                 </div>
               </section>
