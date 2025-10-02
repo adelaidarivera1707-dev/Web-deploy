@@ -335,17 +335,31 @@ const ContractsManagement = () => {
             <div className="flex items-center gap-2">
               <button onClick={()=> viewing && openEdit(viewing)} className="border px-3 py-2 rounded-none text-sm">Modificar datos</button>
               <button onClick={async()=>{
-                if (!viewing) return;
-                navigate('/admin/contract-preview', { state: { contract: viewing } });
-              }} className="border-2 border-black bg-black text-white px-3 py-2 rounded-none text-sm hover:opacity-90" disabled={generatingPdf}>{generatingPdf? 'Generando...' : 'Generar PDF'}</button>
+                if (!pdfRef.current || !viewing) return;
+                try {
+                  setGeneratingPdf(true);
+                  const blob = (await generatePDF(pdfRef.current, { quality: 0.4, scale: 1.1, returnType: 'blob', longSinglePage: true, marginTopPt: 0, marginBottomPt: 0 })) as Blob;
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = `contrato-copia-${(viewing.clientName || 'cliente').toLowerCase().replace(/\s+/g,'-')}.pdf`;
+                  document.body.appendChild(a);
+                  a.click();
+                  document.body.removeChild(a);
+                } finally {
+                  setGeneratingPdf(false);
+                }
+              }} className="border-2 border-black bg-black text-white px-3 py-2 rounded-none text-sm hover:opacity-90" disabled={generatingPdf}>{generatingPdf? 'Descargando...' : 'Descargar'}</button>
               <button onClick={()=>setViewing(null)} className="text-gray-500 hover:text-gray-900">✕</button>
             </div>
           </div>
           {/* Offscreen PDF content */}
           {viewing && (
             <div style={{ position:'fixed', left:-99999, top:0, width:'800px', background:'#fff' }}>
-              <div ref={pdfRef} className="bg-white">
-                <div className="bg-primary text-white p-8 text-center relative">
+              <div ref={pdfRef} className="bg-white relative">
+                {/* Watermark overlay COPIA */}
+                <div style={{ position:'absolute', inset:0, backgroundImage:'url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'200\' viewBox=\'0 0 200 200\'><text x=\'100\' y=\'110\' text-anchor=\'middle\' fill=\'rgba(255,0,0,0.10)\' font-size=\'48\' transform=\'rotate(-30, 100, 100)\' font-family=\'sans-serif\'>COPIA</text></svg>")', backgroundRepeat:'repeat', backgroundSize:'200px 200px', pointerEvents:'none', zIndex:0 } as any} />
+                <div className="bg-primary text-white p-8 text-center relative" style={{ zIndex: 1 }}>
                   <h1 className="text-2xl font-semibold mb-1">Contrato de Prestación de Servicios Fotográficos</h1>
                   <p className="text-white/80">Wild Pictures Studio</p>
                 </div>
@@ -457,6 +471,37 @@ const ContractsManagement = () => {
                           <p>6.4. Em caso fortuito ou força maior, devidamente comprovados, não se aplicam as penalidades acima descritas, sendo o contrato desfeito sem prejuízo a ambas as partes.</p>
                         </div>
                       </section>
+                    </div>
+                  </div>
+
+                  <div className="bg-white border border-gray-200 rounded-lg overflow-hidden" style={{ position: 'relative', zIndex: 1 }}>
+                    <div className="bg-primary text-white px-6 py-3 border-b">
+                      <h2 className="text-lg font-medium">Assinaturas das Partes</h2>
+                    </div>
+                    <div className="p-6 grid md:grid-cols-2 gap-12">
+                      <div className="text-center">
+                        <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                          <h4 className="font-medium text-primary mb-4">CONTRATADA</h4>
+                          <div className="mb-4 h-20 flex items-center justify-center">
+                            <img src="/firma_fotografo.png" alt="Assinatura do Fotógrafo" className="max-h-16" />
+                          </div>
+                          <div className="border-t border-gray-300 pt-4">
+                            <p className="font-medium text-gray-900">Wild Pictures Studio</p>
+                            <p className="text-sm text-gray-600">CNPJ: 52.074.297/0001-33</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-center">
+                        <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 relative overflow-hidden">
+                          <h4 className="font-medium text-primary mb-4">CONTRATANTE</h4>
+                          <div className="mb-4 h-20 flex items-center justify-center border border-dashed border-gray-300 bg-white relative">
+                            <span className="absolute inset-0 flex items-center justify-center text-2xl font-bold text-red-500/60 select-none" style={{ transform: 'rotate(-20deg)' }}>COPIA</span>
+                          </div>
+                          <div className="border-t border-gray-300 pt-4">
+                            <p className="font-medium text-gray-900">{viewing.clientName}</p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
