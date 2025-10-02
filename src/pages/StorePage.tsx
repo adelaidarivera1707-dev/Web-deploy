@@ -265,13 +265,13 @@ const StorePage: React.FC = () => {
       </div>
 
       {(fromBooking && !hasStoreItems) && (
-        <div className={`fixed bottom-0 inset-x-0 z-40 transition-transform duration-300 ease-out ${showFinalizeBar ? 'translate-y-0' : 'translate-y-full'}`}>
-          <div className="bg-white/90 backdrop-blur border-t border-gray-200">
+        <div className={`fixed bottom-0 inset-x-0 z-[60] transition-transform duration-300 ease-out ${showFinalizeBar ? 'translate-y-0' : 'translate-y-full'}`}>
+          <div className="bg-black text-white">
             <div className="container-custom py-3 flex items-center justify-between gap-3">
-              <div className="text-sm text-gray-700">Tienes un paquete reservado. Puedes finalizar tu pedido cuando quieras.</div>
+              <div className="text-sm">Tienes un paquete reservado. Puedes finalizar tu pedido cuando quieras.</div>
               <button
                 onClick={() => navigate('/booking', { state: { skipStorePopup: true } })}
-                className="px-4 py-2 rounded-none border-2 border-black bg-black text-white hover:opacity-90"
+                className="px-4 py-2 rounded-none border-2 border-white bg-white text-black hover:bg-gray-100"
                 aria-label="Finalizar pedido"
               >
                 Finalizar pedido
