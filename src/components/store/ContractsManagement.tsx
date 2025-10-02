@@ -695,7 +695,7 @@ const ContractsManagement = () => {
     )}
     {editing && (
       <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl border border-gray-200 w-full max-w-2xl p-4">
+        <div className="bg-white rounded-xl border border-gray-200 w-full max-w-2xl p-4 max-h-[85vh] overflow-y-auto">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-medium">Editar Contrato</h3>
             <button onClick={() => setEditing(null)} className="text-gray-500 hover:text-gray-900">✕</button>
@@ -756,7 +756,7 @@ const ContractsManagement = () => {
             </div>
             <div className="md:col-span-2">
               <label className="text-xs text-gray-600">Notas</label>
-              <textarea value={editForm.message || ''} onChange={e => setEditForm((f: any) => ({ ...f, message: e.target.value }))} className="w-full px-3 py-2 border rounded-none" rows={3} />
+              <textarea value={editForm.message || ''} onChange={e => setEditForm((f: any) => ({ ...f, message: e.target.value }))} className="w-full px-3 py-2 border rounded-none max-h-24" rows={2} />
             </div>
           </div>
           <div className="mt-4 flex justify-end gap-2">
