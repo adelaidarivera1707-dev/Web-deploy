@@ -6,6 +6,7 @@ import PhotoPackagesManagement from '../components/store/PhotoPackagesManagement
 import StoreSettings from '../components/store/StoreSettings';
 import CouponsManagement from '../components/store/CouponsManagement';
 import ProductEditorModal from '../components/store/ProductEditorModal';
+import DressEditorModal from '../components/store/DressEditorModal';
 import { db } from '../utils/firebaseClient';
 import { collection, getDocs, deleteDoc, doc, updateDoc, orderBy, query } from 'firebase/firestore';
 import { Trash2 } from 'lucide-react';
