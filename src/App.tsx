@@ -22,6 +22,7 @@ const ClientDashboardPage = safeLazy(() => import('./pages/ClientDashboardPage')
 import lazyWithRetry from './utils/lazyWithRetry';
 const PackagesAdminPage = safeLazy(() => import('./pages/PackagesAdminPage'));
 const AdminStorePage = lazyWithRetry(() => import('./pages/AdminStorePage'));
+const AdminContractPreviewPage = safeLazy(() => import('./pages/AdminContractPreviewPage'));
 import './styles/globals.css';
 import ErrorBoundary from './components/ui/ErrorBoundary';
 
