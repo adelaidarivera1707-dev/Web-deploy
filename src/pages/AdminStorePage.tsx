@@ -125,10 +125,11 @@ const AdminStorePage: React.FC = () => {
 
           {adminView === 'products' && (
             <div>
-              <div className="flex justify-between items-center mb-6">
+              <div className="flex justify-between items-center mb-4">
                 <h2 className="section-title">Gestión de Productos</h2>
                 <div className="flex items-center gap-2">
-
+                  <button onClick={() => setProductFilter('products')} className={`px-3 py-2 rounded-none border ${productFilter==='products' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Productos</button>
+                  <button onClick={() => setProductFilter('dresses')} className={`px-3 py-2 rounded-none border ${productFilter==='dresses' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Vestidos</button>
                   <button onClick={() => { setEditingProduct(null); setEditorOpen(true); }} className="px-4 py-2 rounded-none border-2 border-black text-black hover:bg-black hover:text-white transition-colors">+ Agregar Producto</button>
                 </div>
               </div>
@@ -196,13 +197,14 @@ const AdminStorePage: React.FC = () => {
               {adminView === 'dashboard' && <AdminStoreDashboard onNavigate={v => setAdminView(v)} />}
               {adminView === 'products' && (
                 <div>
-                  <div className="flex justify-between items-center mb-6">
-                    <h2 className="section-title">Gestión de Productos</h2>
-                    <div className="flex items-center gap-2">
-    
-                      <button onClick={() => { setEditingProduct(null); setEditorOpen(true); }} className="px-4 py-2 rounded-none border-2 border-black text-black hover:bg-black hover:text-white transition-colors">+ Agregar Producto</button>
-                    </div>
-                  </div>
+                  <div className="flex justify-between items-center mb-4">
+                <h2 className="section-title">Gestión de Productos</h2>
+                <div className="flex items-center gap-2">
+                  <button onClick={() => setProductFilter('products')} className={`px-3 py-2 rounded-none border ${productFilter==='products' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Productos</button>
+                  <button onClick={() => setProductFilter('dresses')} className={`px-3 py-2 rounded-none border ${productFilter==='dresses' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Vestidos</button>
+                  <button onClick={() => { setEditingProduct(null); setEditorOpen(true); }} className="px-4 py-2 rounded-none border-2 border-black text-black hover:bg-black hover:text-white transition-colors">+ Agregar Producto</button>
+                </div>
+              </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {products.map(product => (
                       <div key={product.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden h-full flex flex-col">
