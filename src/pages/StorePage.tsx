@@ -41,6 +41,11 @@ const StorePage: React.FC = () => {
   const fromBooking = Boolean(location?.state?.fromCart);
   const hasStoreItems = Array.isArray(items) && items.some(i => i.type === 'store');
 
+  const isDressCategory = (cat?: string) => {
+    const c = String(cat || '').toLowerCase();
+    return c.includes('vestid') || c.includes('dress');
+  };
+
   const fetchProducts = async () => {
     try {
       const col = collection(db, 'products');
