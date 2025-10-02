@@ -278,7 +278,7 @@ const MaternityPage = () => {
                 <button
                   onClick={() => openAddModal(pkg)}
                   className="btn-primary mt-auto touch-manipulation mobile-cart-btn"
-                  onTouchStart={(e) => {
+                  onTouchStart={() => {
                   }}
                   onTouchEnd={(e) => {
                     e.preventDefault();
