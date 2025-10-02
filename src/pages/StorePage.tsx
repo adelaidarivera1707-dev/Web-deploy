@@ -70,7 +70,15 @@ const StorePage: React.FC = () => {
         variantes: Array.isArray(p.variantes) ? p.variantes : undefined,
         variants: Array.isArray(p.variants) ? p.variants : undefined,
       }));
-      setProducts(normalized);
+      const cleaned = normalized.filter(p => !isDressCategory(p.category));
+      const seen = new Set<string>();
+      const unique = cleaned.filter(p => {
+        const key = `${p.name.trim().toLowerCase()}|${Number(p.price)||0}|${String(p.category||'').trim().toLowerCase()}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+      setProducts(unique);
     } catch (err) {
       console.error('fetchProducts error:', err);
       setProducts([]);
