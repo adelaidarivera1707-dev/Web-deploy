@@ -95,6 +95,19 @@ const ContractsManagement = () => {
 
   useEffect(() => { fetchContracts(); }, []);
 
+  useEffect(() => {
+    const fetchPkgs = async () => {
+      try {
+        const snap = await getDocs(collection(db, 'packages'));
+        const list = snap.docs.map(d => ({ id: d.id, title: (d.data() as any).title || 'Paquete', duration: (d.data() as any).duration || '' }));
+        setPackagesList(list);
+      } catch {
+        setPackagesList([]);
+      }
+    };
+    if (editing) fetchPkgs();
+  }, [editing]);
+
   const filtered = useMemo(() => {
     const list = (() => {
       if (!search.trim()) return contracts;
