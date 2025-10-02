@@ -23,9 +23,18 @@ const AdminStorePage: React.FC = () => {
   const [editingProduct, setEditingProduct] = useState<any | null>(null);
   const [editorOpen, setEditorOpen] = useState(false);
   const [notice, setNotice] = useState<{ text: string; type: 'success' | 'error' | 'info' } | null>(null);
+  const [productFilter, setProductFilter] = useState<'products' | 'dresses'>('products');
   const showNotice = (text: string, type: 'success' | 'error' | 'info' = 'success') => {
     setNotice({ text, type });
     setTimeout(() => setNotice(null), 2500);
+  };
+  const isDressCategory = (cat?: string) => {
+    const c = String(cat || '').toLowerCase();
+    return c.includes('vestid') || c.includes('dress');
+  };
+  const getFiltered = () => {
+    if (productFilter === 'dresses') return products.filter(p => isDressCategory(p.category));
+    return products.filter(p => !isDressCategory(p.category));
   };
 
   const fetchProducts = async () => {
