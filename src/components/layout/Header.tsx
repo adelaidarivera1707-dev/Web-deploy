@@ -87,15 +87,18 @@ const Header = () => {
   const checkAdminAfterLogin = async () => {
     try {
       await refreshClaims();
-      const token = await auth.currentUser?.getIdTokenResult(true);
-      const claims = token?.claims || {};
-      if (claims.admin) {
-        notifyAdminChange(true);
-        navigate('/admin');
-        return true;
-      } else {
-        return false;
+      try {
+        const token = await auth.currentUser?.getIdTokenResult(true);
+        const claims = token?.claims || {};
+        if (claims.admin) {
+          notifyAdminChange(true);
+          navigate('/admin');
+          return true;
+        }
+      } catch (e) {
+        console.warn('getIdTokenResult(true) failed (network?)', e);
       }
+      return false;
     } catch (e) {
       console.error('Error checking admin claims:', e);
       return false;
