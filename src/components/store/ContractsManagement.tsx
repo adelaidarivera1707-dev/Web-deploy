@@ -158,13 +158,18 @@ const ContractsManagement = () => {
     const payload: Partial<ContractItem> = {
       clientName: String(editForm.clientName || ''),
       clientEmail: String(editForm.clientEmail || ''),
+      eventType: String(editForm.eventType || ''),
       eventDate: String(editForm.eventDate || ''),
       eventCompleted: editing.eventCompleted,
       totalAmount: Number(editForm.totalAmount || 0),
       travelFee: Number(editForm.travelFee || 0),
+      paymentMethod: String(editForm.paymentMethod || ''),
       message: String(editForm.message || ''),
     } as any;
     if (editForm.eventTime != null) (payload as any).eventTime = String(editForm.eventTime || '');
+    if (editForm.eventLocation != null) (payload as any).eventLocation = String(editForm.eventLocation || '');
+    if (editForm.packageTitle != null) (payload as any).packageTitle = String(editForm.packageTitle || '');
+    if (editForm.packageDuration != null) (payload as any).packageDuration = String(editForm.packageDuration || '');
     await updateDoc(doc(db, 'contracts', id), payload as any);
     setEditing(null);
     await fetchContracts();
