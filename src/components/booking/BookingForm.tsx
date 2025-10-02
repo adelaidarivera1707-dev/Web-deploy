@@ -4,9 +4,6 @@ import { maternityPackages } from '../../data/maternityData';
 import { dressOptions } from '../../data/dressData';
 import DressSelector from './DressSelector';
 import BookingCart from './BookingCart';
-import { Check } from 'lucide-react';
-import { formatPrice } from '../../utils/format';
-import { gcalCheckAvailability, gcalUpsertBooking, parseDurationToMinutes } from '../../utils/calendar';
 
 // Helpers for BR formatting/validation
 function onlyDigits(s: string) { return s.replace(/\D/g, ''); }
