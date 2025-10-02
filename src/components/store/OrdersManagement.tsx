@@ -93,7 +93,7 @@ const OrdersManagement = () => {
             .map((c: any) => {
               const storeItems = Array.isArray(c.storeItems) ? c.storeItems : [];
               const itemsForOrder = storeItems.map((si: any) => ({ name: si.name, quantity: Number(si.quantity || 1), price: Number(si.price || 0), total: Number(si.price || 0) * Number(si.quantity || 1) }));
-              const total = itemsForOrder.reduce((s, it) => s + Number(it.total || 0), 0) + Number(c.travelFee || 0);
+              const total = itemsForOrder.reduce((s: number, it: any) => s + Number((it as any).total || 0), 0) + Number(c.travelFee || 0);
               return {
                 id: `contract-${c.id}`,
                 customer_name: c.clientName || c.client_name || '',
