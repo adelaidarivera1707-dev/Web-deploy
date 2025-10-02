@@ -51,6 +51,8 @@ const ContractsManagement = () => {
   const [wfEditMode, setWfEditMode] = useState(false);
 
   const [templatesOpen, setTemplatesOpen] = useState(false);
+  const pdfRef = useRef<HTMLDivElement | null>(null);
+  const [generatingPdf, setGeneratingPdf] = useState(false);
   const [templates, setTemplates] = useState<WorkflowTemplate[]>([]);
   const [tplEditing, setTplEditing] = useState<WorkflowTemplate | null>(null);
   const [defaults, setDefaults] = useState<{ packages?: string; products?: string }>({});
