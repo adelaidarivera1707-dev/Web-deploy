@@ -16,6 +16,7 @@ import { generatePDF } from '../../utils/pdf';
 import { saveContract, updateContractStatus } from '../../utils/contractService';
 import { getAuth, signInAnonymously } from 'firebase/auth';
 import PaymentModal from './PaymentModal';
+import { sendConfirmationEmail } from '../../utils/email';
 import { gcalUpsertBooking, parseDurationToMinutes } from '../../utils/calendar';
 
 function parseBRL(value: string): number {
@@ -86,11 +87,8 @@ const ContractPreview = ({ data, onConfirm, onBack }: ContractPreviewProps) => {
 
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
 
-    if (flags.payments?.mpEnabled !== false) {
-      setShowPaymentModal(true);
-    } else {
-      await handlePaymentSuccess();
-    }
+    // Directly finalize: generate PDF and confirmations
+    await handlePaymentSuccess();
   };
 
   const handlePaymentSuccess = async () => {
@@ -195,6 +193,17 @@ const ContractPreview = ({ data, onConfirm, onBack }: ContractPreviewProps) => {
       } catch (e: any) {
         console.error('PDF download failed', e);
         alert('Error al generar/descargar el contrato. Tente novamente.');
+      }
+
+      // Send confirmation emails (client and studio)
+      try {
+        const summary = { name: data.name, email: data.email, total, deposit, remaining };
+        await Promise.all([
+          sendConfirmationEmail({ to: data.email, subject: 'Confirmação de Reserva – Wild Pictures Studio', data: summary }),
+          sendConfirmationEmail({ to: 'wildpicturesstudio@gmail.com', subject: 'Nova Reserva Confirmada', data: { ...summary, when: new Date().toISOString() } })
+        ]);
+      } catch (e) {
+        console.warn('Confirmation email failed', e);
       }
 
       setShowSuccessModal(true);
