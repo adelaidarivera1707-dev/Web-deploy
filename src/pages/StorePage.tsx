@@ -37,6 +37,7 @@ const StorePage: React.FC = () => {
   const [search, setSearch] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [selected, setSelected] = useState<StoreProduct | null>(null);
+  const [showFinalizeBar, setShowFinalizeBar] = useState(false);
 
   const fromBooking = Boolean(location?.state?.fromCart);
   const hasStoreItems = Array.isArray(items) && items.some(i => i.type === 'store');
@@ -88,6 +89,15 @@ const StorePage: React.FC = () => {
   };
 
   useEffect(() => { fetchProducts(); }, []);
+
+  useEffect(() => {
+    if (fromBooking && !hasStoreItems) {
+      const t = setTimeout(() => setShowFinalizeBar(true), 50);
+      return () => clearTimeout(t);
+    } else {
+      setShowFinalizeBar(false);
+    }
+  }, [fromBooking, hasStoreItems]);
 
   useEffect(() => {
     (async () => {
@@ -212,11 +222,6 @@ const StorePage: React.FC = () => {
           />
         </div>
 
-        {(fromBooking && !hasStoreItems) && (
-          <div className="mb-4 text-right">
-            <button onClick={() => navigate('/booking', { state: { skipStorePopup: true } })} className="px-4 py-2 rounded-none border-2 border-black text-black hover:bg-black hover:text-white">Continuar sin comprar</button>
-          </div>
-        )}
 
         {loading ? (
           <div className="text-gray-500">Carregando...</div>
@@ -258,6 +263,23 @@ const StorePage: React.FC = () => {
           </div>
         )}
       </div>
+
+      {(fromBooking && !hasStoreItems) && (
+        <div className={`fixed bottom-0 inset-x-0 z-40 transition-transform duration-300 ease-out ${showFinalizeBar ? 'translate-y-0' : 'translate-y-full'}`}>
+          <div className="bg-white/90 backdrop-blur border-t border-gray-200">
+            <div className="container-custom py-3 flex items-center justify-between gap-3">
+              <div className="text-sm text-gray-700">Tienes un paquete reservado. Puedes finalizar tu pedido cuando quieras.</div>
+              <button
+                onClick={() => navigate('/booking', { state: { skipStorePopup: true } })}
+                className="px-4 py-2 rounded-none border-2 border-black bg-black text-white hover:opacity-90"
+                aria-label="Finalizar pedido"
+              >
+                Finalizar pedido
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <AddToCartModal
         isOpen={modalOpen}
