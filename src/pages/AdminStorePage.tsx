@@ -133,6 +133,9 @@ const AdminStorePage: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <button onClick={() => setProductFilter('products')} className={`px-3 py-2 rounded-none border ${productFilter==='products' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Productos</button>
                   <button onClick={() => setProductFilter('dresses')} className={`px-3 py-2 rounded-none border ${productFilter==='dresses' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Vestidos</button>
+                  {productFilter==='dresses' && (
+                    <button onClick={seedDefaultDresses} className="px-3 py-2 rounded-none border border-black text-black hover:bg-black hover:text-white">Importar vestidos base</button>
+                  )}
                   <button onClick={() => { if (productFilter==='dresses') { setEditingDress(null); setDressEditorOpen(true); } else { setEditingProduct(null); setEditorOpen(true); } }} className="px-4 py-2 rounded-none border-2 border-black text-black hover:bg-black hover:text-white transition-colors">+ Agregar {productFilter==='dresses' ? 'Vestido' : 'Producto'}</button>
                 </div>
               </div>
@@ -213,6 +216,9 @@ const AdminStorePage: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <button onClick={() => setProductFilter('products')} className={`px-3 py-2 rounded-none border ${productFilter==='products' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Productos</button>
                   <button onClick={() => setProductFilter('dresses')} className={`px-3 py-2 rounded-none border ${productFilter==='dresses' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Vestidos</button>
+                  {productFilter==='dresses' && (
+                    <button onClick={seedDefaultDresses} className="px-3 py-2 rounded-none border border-black text-black hover:bg-black hover:text-white">Importar vestidos base</button>
+                  )}
                   <button onClick={() => { if (productFilter==='dresses') { setEditingDress(null); setDressEditorOpen(true); } else { setEditingProduct(null); setEditorOpen(true); } }} className="px-4 py-2 rounded-none border-2 border-black text-black hover:bg-black hover:text-white transition-colors">+ Agregar {productFilter==='dresses' ? 'Vestido' : 'Producto'}</button>
                 </div>
               </div>
