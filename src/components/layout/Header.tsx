@@ -61,12 +61,16 @@ const Header = () => {
           // Try refreshing claims in case they were just set
           await refreshClaims();
           if (authLoading) return;
-          const token = await auth.currentUser?.getIdTokenResult();
-          if (token?.claims?.admin) {
-            notifyAdminChange(true);
-            navigate('/admin');
-          } else {
-            // Prompt for email/password login to check admin claims
+          try {
+            const token = await auth.currentUser?.getIdTokenResult();
+            if (token?.claims?.admin) {
+              notifyAdminChange(true);
+              navigate('/admin');
+            } else {
+              setShowAdminEmailLogin(true);
+            }
+          } catch (e) {
+            console.warn('getIdTokenResult failed (network?)', e);
             setShowAdminEmailLogin(true);
           }
         }
