@@ -695,7 +695,7 @@ const ContractsManagement = () => {
     )}
     {editing && (
       <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl border border-gray-200 w-full max-w-lg p-4">
+        <div className="bg-white rounded-xl border border-gray-200 w-full max-w-2xl p-4">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-medium">Editar Contrato</h3>
             <button onClick={() => setEditing(null)} className="text-gray-500 hover:text-gray-900">✕</button>
@@ -710,12 +710,41 @@ const ContractsManagement = () => {
               <input value={editForm.clientEmail || ''} onChange={e => setEditForm((f: any) => ({ ...f, clientEmail: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
             </div>
             <div>
+              <label className="text-xs text-gray-600">Tipo de evento</label>
+              <input value={editForm.eventType || ''} onChange={e => setEditForm((f: any) => ({ ...f, eventType: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
+            </div>
+            <div>
+              <label className="text-xs text-gray-600">Ubicación</label>
+              <input value={editForm.eventLocation || ''} onChange={e => setEditForm((f: any) => ({ ...f, eventLocation: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
+            </div>
+            <div>
               <label className="text-xs text-gray-600">Fecha evento</label>
               <input type="date" value={editForm.eventDate || ''} onChange={e => setEditForm((f: any) => ({ ...f, eventDate: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
             </div>
             <div>
               <label className="text-xs text-gray-600">Hora</label>
               <input type="time" value={editForm.eventTime || ''} onChange={e => setEditForm((f: any) => ({ ...f, eventTime: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
+            </div>
+
+            <div>
+              <label className="text-xs text-gray-600">Paquete</label>
+              <select value={editForm.packageTitle || ''} onChange={(e)=>{
+                const title = e.target.value;
+                const found = packagesList.find(p=>p.title===title);
+                setEditForm((f:any)=> ({ ...f, packageTitle: title, packageDuration: found?.duration || f.packageDuration || '' }));
+              }} className="w-full px-3 py-2 border rounded-none">
+                <option value="">— Selecciona paquete —</option>
+                {packagesList.map(p=> (<option key={p.id} value={p.title}>{p.title}</option>))}
+              </select>
+            </div>
+            <div>
+              <label className="text-xs text-gray-600">Duración</label>
+              <input value={editForm.packageDuration || ''} onChange={e=> setEditForm((f:any)=> ({ ...f, packageDuration: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
+            </div>
+
+            <div>
+              <label className="text-xs text-gray-600">Método de pago</label>
+              <input value={editForm.paymentMethod || ''} onChange={e=> setEditForm((f:any)=> ({ ...f, paymentMethod: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
             </div>
             <div>
               <label className="text-xs text-gray-600">Total</label>
