@@ -137,7 +137,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ initialData, packages, onSubm
     { id: 'events', name: 'Eventos' }
   ];
 
-  // Load dresses from Firestore (category = vestidos) with fallback
+  // Load dresses from Firestore (category = vestidos)
   useEffect(() => {
     (async () => {
       try {
@@ -154,9 +154,9 @@ const BookingForm: React.FC<BookingFormProps> = ({ initialData, packages, onSubm
             color: Array.isArray(p.tags) && p.tags.length ? String(p.tags[0]) : '',
             image: p.image_url || ''
           }));
-        if (list.length) setDresses(list);
+        setDresses(list);
       } catch (e) {
-        // keep fallback
+        setDresses([]);
       }
     })();
   }, []);
