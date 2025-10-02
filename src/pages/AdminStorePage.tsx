@@ -159,7 +159,7 @@ const AdminStorePage: React.FC = () => {
                         <span className="px-2 py-1 bg-gray-100 rounded">{product.category || 'General'}</span>
                       </div>
                       <div className="mt-4 flex items-center gap-2 mt-auto">
-                        <button onClick={() => { setEditingProduct(product); setEditorOpen(true); }} className="flex-1 border-2 border-black text-black px-3 py-2 rounded-none hover:bg-black hover:text-white">Editar</button>
+                        <button onClick={() => { if (isDressCategory(product.category)) { setEditingDress(product); setDressEditorOpen(true); } else { setEditingProduct(product); setEditorOpen(true); } }} className="flex-1 border-2 border-black text-black px-3 py-2 rounded-none hover:bg-black hover:text-white">Editar</button>
                         <button onClick={() => handleDeactivate(product.id, (product as any).active === false ? true : false)} className={`flex-1 border-2 border-black px-3 py-2 rounded-none ${(product as any).active === false ? 'bg-white text-black hover:bg-black hover:text-white' : 'bg-black text-white hover:opacity-90'}`}>{(product as any).active === false ? 'Activar' : 'Desactivar'}</button>
                         <button onClick={() => handleDeleteProduct(product.id)} className="border-2 border-black text-black px-3 py-2 rounded hover:bg-black hover:text-white"><Trash2 size={16} /></button>
                       </div>
@@ -235,7 +235,7 @@ const AdminStorePage: React.FC = () => {
                             <span className="px-2 py-1 bg-gray-100 rounded">{product.category || 'General'}</span>
                           </div>
                           <div className="mt-4 flex items-center gap-2 mt-auto">
-                            <button onClick={() => { setEditingProduct(product); setEditorOpen(true); }} className="flex-1 border-2 border-black text-black px-3 py-2 rounded-none hover:bg-black hover:text-white">Editar</button>
+                            <button onClick={() => { if (isDressCategory(product.category)) { setEditingDress(product); setDressEditorOpen(true); } else { setEditingProduct(product); setEditorOpen(true); } }} className="flex-1 border-2 border-black text-black px-3 py-2 rounded-none hover:bg-black hover:text-white">Editar</button>
                             <button onClick={() => handleDeactivate(product.id, (product as any).active === false ? true : false)} className={`flex-1 border-2 border-black px-3 py-2 rounded-none ${(product as any).active === false ? 'bg-white text-black hover:bg-black hover:text-white' : 'bg-black text-white hover:opacity-90'}`}>{(product as any).active === false ? 'Activar' : 'Desactivar'}</button>
                             <button onClick={() => handleDeleteProduct(product.id)} className="border-2 border-black text-black px-3 py-2 rounded hover:bg-black hover:text-white"><Trash2 size={16} /></button>
                           </div>
