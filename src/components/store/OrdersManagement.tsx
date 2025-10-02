@@ -188,7 +188,7 @@ const OrdersManagement = () => {
   function normalize(s: string) { return s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().trim(); }
 
   function getDisplayItems(o: OrderItem) {
-    if (!o) return o.items || [];
+    if (!o) return [] as any[];
     let c = o.contractId ? contractsMap[o.contractId] : null;
     if (!c && o.customer_email) {
       const key = String(o.customer_email).toLowerCase().trim();
