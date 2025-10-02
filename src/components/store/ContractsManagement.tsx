@@ -56,6 +56,7 @@ const ContractsManagement = () => {
   const [templates, setTemplates] = useState<WorkflowTemplate[]>([]);
   const [tplEditing, setTplEditing] = useState<WorkflowTemplate | null>(null);
   const [defaults, setDefaults] = useState<{ packages?: string; products?: string }>({});
+  const [packagesList, setPackagesList] = useState<{ id: string; title: string; duration?: string }[]>([]);
 
   const fetchContracts = async () => {
     setLoading(true);
