@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, ShoppingCart, Minus, Plus, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
+import { ShoppingCart, Trash2 } from 'lucide-react';
 import { useCart } from '../../contexts/CartContext';
 import { useNavigate } from 'react-router-dom';
 import { formatPrice as formatBRL } from '../../utils/format';
@@ -11,7 +11,6 @@ interface CartSidebarProps {
 
 const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
   const { items, removeFromCart, updateQuantity, getTotalPrice, clearCart } = useCart();
-  const [isExpanded, setIsExpanded] = React.useState(false);
   const navigate = useNavigate();
   
 

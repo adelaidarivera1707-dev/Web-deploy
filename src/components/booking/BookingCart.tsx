@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { CartItem, PaymentMethod } from '../../types/booking';
-import { MapPin, CreditCard, Wallet, QrCode, ChevronRight, AlertCircle } from 'lucide-react';
+import { CreditCard, Wallet, QrCode } from 'lucide-react';
 import { formatPrice as formatBRL } from '../../utils/format';
 
 interface BookingCartProps {
@@ -83,7 +83,7 @@ const BookingCart = ({ cartItems, travelCost, paymentMethod, formData = {} }: Bo
     };
   };
 
-  const { subtotal, discount, total, deposit, remaining, depositServices, depositStore } = calculateTotal();
+  const { discount, total, deposit, remaining } = calculateTotal();
 
   const paymentIcons = {
     cash: <Wallet className="w-4 h-4" />,

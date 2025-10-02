@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, Eye, EyeOff } from 'lucide-react';
+import { Menu, X, Eye } from 'lucide-react';
 import { signOut as firebaseSignOut } from 'firebase/auth';
 import { auth } from '../../utils/firebaseClient';
 import { useTranslation } from 'react-i18next';

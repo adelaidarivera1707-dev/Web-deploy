@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { X, Eye, EyeOff, Mail, Lock, User, Phone, CreditCard } from 'lucide-react';
-import app, { auth, db, storage } from '../../utils/firebaseClient'; // <-- import corregido
+import { X, Eye, EyeOff, Mail, Lock } from 'lucide-react';
+//
 import { useAuth } from '../../contexts/AuthContext';
 
 interface LoginModalProps {

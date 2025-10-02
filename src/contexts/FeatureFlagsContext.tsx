@@ -105,17 +105,18 @@ export const FeatureFlagsProvider: React.FC<{ children: React.ReactNode }> = ({ 
         Promise.resolve(readFromLocalStorage()),
       ]);
 
+      const mergedPayments: PaymentsFlags = {
+        mpEnabled: Boolean((fromLs?.payments?.mpEnabled ?? fromDb?.payments?.mpEnabled ?? DEFAULT_FLAGS.payments.mpEnabled)),
+        calendarEnabled: Boolean((fromLs?.payments?.calendarEnabled ?? fromDb?.payments?.calendarEnabled ?? DEFAULT_FLAGS.payments.calendarEnabled)),
+      };
+
       const merged: FeatureFlags = {
         pages: {
           ...DEFAULT_FLAGS.pages,
           ...(fromDb?.pages || {}),
           ...(fromLs?.pages || {}), // LS overrides DB for admin local changes
         },
-        payments: {
-          ...DEFAULT_FLAGS.payments,
-          ...(fromDb?.payments || {}),
-          ...(fromLs?.payments || {}), // LS overrides DB to keep latest toggles
-        },
+        payments: mergedPayments,
       };
 
       setFlags(merged);
@@ -132,7 +133,10 @@ export const FeatureFlagsProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const setPageEnabled = async (key: PageKey, value: boolean) => {
     const next: FeatureFlags = {
       pages: { ...flags.pages, [key]: value },
-      payments: { ...DEFAULT_FLAGS.payments, ...(flags.payments || {}) } as PaymentsFlags,
+      payments: {
+        mpEnabled: Boolean(flags.payments?.mpEnabled ?? DEFAULT_FLAGS.payments.mpEnabled),
+        calendarEnabled: Boolean(flags.payments?.calendarEnabled ?? DEFAULT_FLAGS.payments.calendarEnabled),
+      },
     };
     setFlags(next);
     writeToLocalStorage(next);
@@ -146,7 +150,10 @@ export const FeatureFlagsProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const setPaymentEnabled = async (value: boolean) => {
     const next: FeatureFlags = {
       pages: { ...flags.pages },
-      payments: { ...DEFAULT_FLAGS.payments, ...(flags.payments || {}), mpEnabled: value } as PaymentsFlags,
+      payments: {
+        mpEnabled: Boolean(value),
+        calendarEnabled: Boolean(flags.payments?.calendarEnabled ?? DEFAULT_FLAGS.payments.calendarEnabled),
+      },
     };
     setFlags(next);
     writeToLocalStorage(next);
@@ -158,7 +165,10 @@ export const FeatureFlagsProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const setCalendarEnabled = async (value: boolean) => {
     const next: FeatureFlags = {
       pages: { ...flags.pages },
-      payments: { ...DEFAULT_FLAGS.payments, ...(flags.payments || {}), calendarEnabled: value } as PaymentsFlags,
+      payments: {
+        mpEnabled: Boolean(flags.payments?.mpEnabled ?? DEFAULT_FLAGS.payments.mpEnabled),
+        calendarEnabled: Boolean(value),
+      },
     };
     setFlags(next);
     writeToLocalStorage(next);
