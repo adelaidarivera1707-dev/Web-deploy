@@ -226,7 +226,7 @@ const OrdersManagement = () => {
       deliveryCat.tasks.filter(t => t.done).map(t => normalize(t.title))
     );
     const productNames = items.map((it: any) => String(it.name || it.product_id || it.productId || ''));
-    return productNames.every(n => doneSet.has(normalize(`entregar ${n}`)));
+    return productNames.every((n: string) => doneSet.has(normalize(`entregar ${n}`)));
   }
 
   function getDerivedStatusForOrder(o: OrderItem): OrderStatus {
