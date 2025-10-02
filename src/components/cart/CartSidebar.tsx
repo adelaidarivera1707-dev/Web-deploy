@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShoppingCart, Trash2 } from 'lucide-react';
+import { ShoppingCart, Trash2, X } from 'lucide-react';
 import { useCart } from '../../contexts/CartContext';
 import { useNavigate } from 'react-router-dom';
 import { formatPrice as formatBRL } from '../../utils/format';
