@@ -94,7 +94,7 @@ const AdminContractPreviewPage = () => {
     `<text x='100' y='110' text-anchor='middle' fill='rgba(0,0,0,0.08)' font-size='48' transform='rotate(-30, 100, 100)' font-family='sans-serif'>COPIA</text>` +
     `</svg>`
   );
-  const watermarkStyle: React.CSSProperties = {
+  const watermarkStyle: CSSProperties = {
     position: 'fixed',
     inset: 0 as any,
     backgroundImage: `url("data:image/svg+xml;utf8,${svg}")`,
