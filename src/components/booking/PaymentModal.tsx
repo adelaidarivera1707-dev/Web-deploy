@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { X, Calendar, CreditCard, Clock, CheckCircle, AlertCircle } from 'lucide-react';
+import { X, Calendar, CreditCard, CheckCircle, AlertCircle } from 'lucide-react';
 import { googleCalendar } from '../../utils/googleCalendar';
 import { initCheckout } from '../../utils/mp';
 import { mercadoPago } from '../../utils/mercadoPago';
