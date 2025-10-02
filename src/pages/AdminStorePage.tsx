@@ -23,6 +23,8 @@ const AdminStorePage: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [editingProduct, setEditingProduct] = useState<any | null>(null);
   const [editorOpen, setEditorOpen] = useState(false);
+  const [editingDress, setEditingDress] = useState<any | null>(null);
+  const [dressEditorOpen, setDressEditorOpen] = useState(false);
   const [notice, setNotice] = useState<{ text: string; type: 'success' | 'error' | 'info' } | null>(null);
   const [productFilter, setProductFilter] = useState<'products' | 'dresses'>('products');
   const showNotice = (text: string, type: 'success' | 'error' | 'info' = 'success') => {
