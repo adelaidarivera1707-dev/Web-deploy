@@ -40,6 +40,43 @@ const AdminStorePage: React.FC = () => {
     return products.filter(p => !isDressCategory(p.category));
   };
 
+  const seedDefaultDresses = async () => {
+    try {
+      const defaults = [
+        { name: 'Vestido Azul Royal', color: 'Azul', image_url: 'https://images.pexels.com/photos/291759/pexels-photo-291759.jpeg?auto=compress&cs=tinysrgb&w=1600' },
+        { name: 'Vestido Branco', color: 'Branco', image_url: 'https://images.pexels.com/photos/1631181/pexels-photo-1631181.jpeg?auto=compress&cs=tinysrgb&w=1600' },
+        { name: 'Vestido Rosa', color: 'Rosa', image_url: 'https://images.pexels.com/photos/1755385/pexels-photo-1755385.jpeg?auto=compress&cs=tinysrgb&w=1600' },
+        { name: 'Vestido Verde', color: 'Verde', image_url: 'https://images.pexels.com/photos/1375736/pexels-photo-1375736.jpeg?auto=compress&cs=tinysrgb&w=1600' },
+        { name: 'Vestido Vermelho', color: 'Vermelho', image_url: 'https://images.pexels.com/photos/1755428/pexels-photo-1755428.jpeg?auto=compress&cs=tinysrgb&w=1600' },
+        { name: 'Vestido Dourado', color: 'Dourado', image_url: 'https://images.pexels.com/photos/1755433/pexels-photo-1755433.jpeg?auto=compress&cs=tinysrgb&w=1600' },
+        { name: 'Vestido Preto', color: 'Preto', image_url: 'https://images.pexels.com/photos/1755432/pexels-photo-1755432.jpeg?auto=compress&cs=tinysrgb&w=1600' },
+        { name: 'Vestido Prata', color: 'Prata', image_url: 'https://images.pexels.com/photos/1755429/pexels-photo-1755429.jpeg?auto=compress&cs=tinysrgb&w=1600' },
+      ];
+      const snap = await getDocs(collection(db, 'products'));
+      const existing = new Set(snap.docs.map(d => String((d.data() as any).name || '').trim().toLowerCase()));
+      let created = 0;
+      for (const d of defaults) {
+        if (existing.has(d.name.trim().toLowerCase())) continue;
+        await addDoc(collection(db, 'products'), {
+          name: d.name,
+          image_url: d.image_url,
+          category: 'vestidos',
+          tags: d.color ? [d.color] : [],
+          price: 0,
+          active: true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        });
+        created++;
+      }
+      showNotice(created > 0 ? `Se importaron ${created} vestidos` : 'Nada para importar', 'success');
+      fetchProducts();
+    } catch (e) {
+      console.error('seedDefaultDresses error', e);
+      showNotice('Error al importar vestidos', 'error');
+    }
+  };
+
   const fetchProducts = async () => {
     try {
       if (typeof navigator !== 'undefined' && !navigator.onLine) { setProducts([]); return; }
