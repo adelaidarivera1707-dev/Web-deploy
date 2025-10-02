@@ -9,7 +9,7 @@ const AdminSetup = () => {
         const functions = getFunctions(app);
         const makeAdmin = httpsCallable(functions, "makeAdmin");
         const result = await makeAdmin({});
-        const data: any = result.data as any;
+        const data: any = (result as any).data as any;
         console.log(data?.message);
         window.dispatchEvent(new CustomEvent('adminToast', { detail: { message: String(data?.message || 'Operación completada'), type: 'success' } }));
       } catch (err: any) {
