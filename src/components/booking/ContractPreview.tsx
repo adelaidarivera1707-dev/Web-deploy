@@ -1,5 +1,9 @@
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../../utils/firebaseClient';
+import { dressOptions as defaultDressOptions } from '../../data/dressData';
+import type { DressOption } from '../../types/booking';
 import { useState, useRef } from 'react';
 import { BookingFormData } from '../../types/booking';
 import { sessionPackages } from '../../data/sessionsData';
@@ -36,11 +40,35 @@ const ContractPreview = ({ data, onConfirm, onBack }: ContractPreviewProps) => {
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [dresses, setDresses] = useState<DressOption[]>(defaultDressOptions);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const contractRef = useRef<HTMLDivElement>(null);
   const { flags } = useFeatureFlags();
 
   const photographerSignature = 'https://i.imgur.com/QqWZGHc.png';
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const snap = await getDocs(collection(db, 'products'));
+        const list: DressOption[] = snap.docs
+          .map(d => ({ id: d.id, ...(d.data() as any) }))
+          .filter(p => {
+            const c = String((p as any).category || '').toLowerCase();
+            return c.includes('vestid') || c.includes('dress');
+          })
+          .map((p: any) => ({
+            id: p.id,
+            name: p.name || 'Vestido',
+            color: Array.isArray(p.tags) && p.tags.length ? String(p.tags[0]) : '',
+            image: p.image_url || ''
+          }));
+        if (list.length) setDresses(list);
+      } catch (e) {
+        // keep fallback
+      }
+    })();
+  }, []);
 
   const allPackages = [...sessionPackages, ...eventPackages, ...maternityPackages];
   const selectedPackage = allPackages.find(pkg => pkg.id === data.packageId);
@@ -277,9 +305,9 @@ const ContractPreview = ({ data, onConfirm, onBack }: ContractPreviewProps) => {
   const payments = calculatePayments();
   const { deposit, remaining } = payments;
 
-  const selectedDresses = data.selectedDresses?.map(dressId => 
-    dressOptions.find(dress => dress.id === dressId)
-  ).filter(Boolean) || [];
+  const selectedDresses = (data.selectedDresses || [])
+    .map(dressId => dresses.find(dress => dress.id === dressId))
+    .filter(Boolean) as DressOption[];
 
   return (
     <>
