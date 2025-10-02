@@ -134,7 +134,7 @@ const AdminStorePage: React.FC = () => {
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {products.map(product => (
+                {getFiltered().map(product => (
                   <div key={product.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden h-full flex flex-col">
                     <div className="relative">
                       <img loading="lazy" src={product.image_url} alt={product.name} className="w-full h-44 object-cover" />
@@ -206,7 +206,7 @@ const AdminStorePage: React.FC = () => {
                 </div>
               </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {products.map(product => (
+                    {getFiltered().map(product => (
                       <div key={product.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden h-full flex flex-col">
                         <div className="relative">
                           <img loading="lazy" src={product.image_url} alt={product.name} className="w-full h-44 object-cover" />
