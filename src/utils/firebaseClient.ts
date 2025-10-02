@@ -3,8 +3,6 @@ import { getFirestore, initializeFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { getStorage } from 'firebase/storage';
 import { getFunctions } from 'firebase/functions'; // 👈 Importar Functions
-import { initializeApp, getApps, getApp } from 'firebase/app';
-
 const firebaseConfig = {
   apiKey: 'AIzaSyAOGDqjKHDZ9T_4stYWN2aW2I4shcJRQEg',
   authDomain: 'wild-pictures-studio-contratos.firebaseapp.com',
