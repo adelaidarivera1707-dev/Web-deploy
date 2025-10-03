@@ -48,12 +48,43 @@ const DressEditorModal: React.FC<DressEditorModalProps> = ({ open, onClose, dres
     }
   };
 
+  const reuploadToBucket = async (src: string): Promise<string> => {
+    try {
+      // Fetch as blob (supports data URLs and http URLs)
+      const blob = src.startsWith('data:')
+        ? (await (await fetch(src)).blob())
+        : (await fetch(src, { mode: 'cors' })).blob();
+      const b = await blob;
+      const ext = (b.type && b.type.split('/')[1]) || 'jpg';
+      const key = `dresses/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+      const r = ref(storage, key);
+      await uploadBytes(r, b);
+      const url = await getDownloadURL(r);
+      return url;
+    } catch (e) {
+      console.warn('Reupload to bucket failed, keeping original URL', e);
+      return src;
+    }
+  };
+
+  const isFirebaseUrl = (u?: string | null) => {
+    if (!u) return false;
+    return u.includes('firebasestorage.googleapis.com') || u.includes('storage.googleapis.com');
+  };
+
   const save = async () => {
     try {
       setSaving(true);
+
+      // Ensure image is stored in our bucket
+      let finalImageUrl = form.image_url || '';
+      if (finalImageUrl && !isFirebaseUrl(finalImageUrl)) {
+        finalImageUrl = await reuploadToBucket(finalImageUrl);
+      }
+
       const payload: any = {
         name: form.name || 'Vestido',
-        image_url: form.image_url || '',
+        image_url: finalImageUrl || '',
         category: 'vestidos',
         tags: form.color ? [form.color] : [],
         price: 0,
