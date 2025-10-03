@@ -13,7 +13,7 @@ const formatBRL = (value: number) => {
 const AdminContractPreviewPage = () => {
   const location = useLocation() as any;
   const navigate = useNavigate();
-  const contract = location?.state?.contract as any | undefined;
+  const contract = (location?.state?.contract as any | undefined) || (()=>{ try { const raw = sessionStorage.getItem('admin_contract_preview'); return raw ? JSON.parse(raw) : undefined; } catch { return undefined; } })();
 
   const data: BookingFormData | null = useMemo(() => {
     if (!contract) return null;
