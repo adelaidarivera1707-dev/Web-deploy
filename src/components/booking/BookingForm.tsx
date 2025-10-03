@@ -53,23 +53,60 @@ function validateEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value.toLowerCase());
 }
 
+// Helper to parse YYYY-MM-DD as a local date (avoids UTC shift)
+function parseLocalDate(dateStr: string) {
+  const [y, m, d] = String(dateStr || '').split('-').map(Number);
+  if (!y || !m || !d) return new Date();
+  return new Date(y, (m - 1), d);
+}
+
+// Preset event locations and their travel costs (R$)
+const LOCATION_OPTIONS = [
+  { key: 'jardim-botanico', label: 'Jardim Botânico', cost: 30 },
+  { key: 'parque-barigui', label: 'Parque Barigüi', cost: 40 },
+  { key: 'parque-tangua', label: 'Parque Tanguá', cost: 45 },
+  { key: 'parque-tingui', label: 'Parque Tingüi', cost: 45 },
+  { key: 'bosque-alemao', label: 'Bosque Alemão', cost: 45 },
+  { key: 'parque-das-aguas', label: 'Parque das Águas', cost: 10 },
+  { key: 'parque-lago-azul', label: 'Parque Lago Azul (Umbará)', cost: 50 },
+  { key: 'parque-sao-jose', label: 'Parque São José (São José dos Pinhais)', cost: 40 }
+] as const;
+
+type LocationKey = typeof LOCATION_OPTIONS[number]['key'];
+
+function recomputeTravelCost(data: BookingFormData, count: number): number {
+  // If any service uses custom location (manual), deslocamento = 0
+  for (let i = 0; i < count; i++) {
+    if ((data as any)[`eventLocationMode_${i}`] === 'custom') return 0;
+  }
+  // Else take the maximum cost among selected presets
+  let maxCost = 0;
+  for (let i = 0; i < count; i++) {
+    const key: LocationKey | undefined = (data as any)[`eventLocationPreset_${i}`];
+    if (!key) continue;
+    const opt = LOCATION_OPTIONS.find(o => o.key === key);
+    if (opt && opt.cost > maxCost) maxCost = opt.cost;
+  }
+  return maxCost;
+}
+
 // Simple DatePicker
 const DatePicker: React.FC<{ value: string; onChange: (val: string) => void; min?: string }>=({ value, onChange, min })=>{
   const today = new Date();
   const [view, setView] = useState(() => {
-    const d = value ? new Date(value) : today;
+    const d = value ? parseLocalDate(value) : today;
     return { year: d.getFullYear(), month: d.getMonth() };
   });
   const first = new Date(view.year, view.month, 1);
   const startWeekday = (first.getDay() + 6) % 7; // Monday-first
   const daysInMonth = new Date(view.year, view.month+1, 0).getDate();
-  const minDate = min ? new Date(min) : today;
+  const minDate = min ? parseLocalDate(min) : today;
   const asStr = (y:number,m:number,d:number)=> `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
 
   const prefix: (string|null)[] = Array.from({ length: startWeekday }, () => null) as (string | null)[];
   const monthDays: (string|null)[] = Array.from({ length: daysInMonth }, (_, i) => asStr(view.year, view.month, i + 1)) as (string | null)[];
   const cells: (string | null)[] = prefix.concat(monthDays);
-  const canSelect = (d: string) => new Date(d) >= new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate());
+  const canSelect = (ds: string) => parseLocalDate(ds) >= new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate());
 
   return (
     <div className="border rounded-md p-3">
@@ -556,19 +593,55 @@ const BookingForm: React.FC<BookingFormProps> = ({ initialData, packages, onSubm
                             (Buscar no Google Maps)
                           </a>
                         </label>
-                        <input
-                          type="text"
-                          name={`eventLocation_${index}`}
-                          value={formData[`eventLocation_${index}`] || ''}
-                          onChange={(e) => setFormData(prev => ({ ...prev, [`eventLocation_${index}`]: e.target.value }))}
+                        <select
+                          name={`eventLocationSelect_${index}`}
+                          value={(formData[`eventLocationMode_${index}`] === 'custom') ? 'custom' : (formData[`eventLocationPreset_${index}`] || '')}
+                          onChange={(e) => {
+                            const v = e.target.value;
+                            setFormData(prev => {
+                              const next: any = { ...prev };
+                              const count = (prev.cartItems || []).length || 0;
+                              if (v === 'custom') {
+                                next[`eventLocationMode_${index}`] = 'custom';
+                                next[`eventLocationPreset_${index}`] = '';
+                                next[`eventLocation_${index}`] = '';
+                              } else {
+                                next[`eventLocationMode_${index}`] = 'preset';
+                                next[`eventLocationPreset_${index}`] = v;
+                                const opt = LOCATION_OPTIONS.find(o => o.key === v);
+                                next[`eventLocation_${index}`] = opt ? opt.label : '';
+                              }
+                              next.travelCost = recomputeTravelCost(next, count);
+                              return next;
+                            });
+                          }}
                           className={`input-base focus:outline-none focus:ring-2 focus:ring-secondary ${
                             errors[`eventLocation_${index}`] ? 'border-red-500' : 'border-gray-300'
                           }`}
-                          placeholder="Endereço completo do evento ou link do Google Maps"
-                        />
+                        >
+                          <option value="">Selecione um local</option>
+                          {LOCATION_OPTIONS.map(opt => (
+                            <option key={opt.key} value={opt.key}>{opt.label} – R$ {opt.cost}</option>
+                          ))}
+                          <option value="custom">Outro (digitar endereço)</option>
+                        </select>
+
+                        {(formData[`eventLocationMode_${index}`] === 'custom') && (
+                          <input
+                            type="text"
+                            name={`eventLocation_${index}`}
+                            value={formData[`eventLocation_${index}`] || ''}
+                            onChange={(e) => setFormData(prev => ({ ...prev, [`eventLocation_${index}`]: e.target.value, travelCost: 0 }))}
+                            className={`mt-3 input-base focus:outline-none focus:ring-2 focus:ring-secondary ${
+                              errors[`eventLocation_${index}`] ? 'border-red-500' : 'border-gray-300'
+                            }`}
+                            placeholder="Endereço completo do evento ou link do Google Maps"
+                          />
+                        )}
+
                         {errors[`eventLocation_${index}`] && <p className="text-red-500 text-sm mt-1">{errors[`eventLocation_${index}`]}</p>}
                         <p className="text-xs text-gray-500 mt-1">
-                          Você pode colar o link do Google Maps aqui para maior precisão
+                          Selecione um local predefinido para preencher a taxa automaticamente, ou escolha "Outro" para digitar o endereço (deslocamento = R$ 0)
                         </p>
                       </div>
                     </div>
@@ -628,7 +701,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ initialData, packages, onSubm
               ) : (
                 (!formData.storeItems || formData.storeItems.length === 0) ? (
                   <section>
-                    <h2 className="text-xl font-medium mb-6 pb-2 border-b">Informações do Servi��o</h2>
+                    <h2 className="text-xl font-medium mb-6 pb-2 border-b">Informações do Servi����o</h2>
                     <div className="bg-yellow-50 border border-yellow-200 p-4">
                       <p className="text-yellow-800">Nenhum serviço selecionado. Por favor, adicione serviços ao carrinho primeiro.</p>
                     </div>
@@ -667,6 +740,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ initialData, packages, onSubm
                         name="travelCost"
                         value={formData.travelCost}
                         onChange={handleInputChange}
+                        onInput={(e)=>{ const t=e.currentTarget; t.value = t.value.replace(/^0+(?=\d)/,''); }}
                         className="input-base focus:outline-none focus:ring-2 focus:ring-secondary"
                         placeholder="0"
                         min="0"
