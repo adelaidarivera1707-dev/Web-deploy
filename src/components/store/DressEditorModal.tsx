@@ -208,7 +208,7 @@ const DressEditorModal: React.FC<DressEditorModalProps> = ({ open, onClose, dres
             )}
             {form.image_url && (
               <div className="mt-3 relative">
-                <img src={form.image_url} alt="preview" className="w-full h-48 object-cover rounded" />
+                <img src={(function(u){ if(!u) return ''; if(/^https?:\/\//i.test(u)) return u; if(u.startsWith('gs://')){ try { const bucket = ((storage as any)?.app?.options?.storageBucket)||''; const without = u.slice(5); const idx = without.indexOf('/'); const path = idx>=0? without.slice(idx+1): without; const enc = encodeURIComponent(path); if(bucket) return `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${enc}?alt=media`; } catch(_){} } return u; })(form.image_url)} alt="preview" className="w-full h-48 object-cover rounded" />
                 <button className="absolute top-2 right-2 bg-white border-2 border-black text-black rounded-none p-1 hover:bg-black hover:text-white" onClick={() => setForm({ ...form, image_url: '' })}>
                   <X size={14} />
                 </button>
