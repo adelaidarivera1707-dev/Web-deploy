@@ -142,6 +142,22 @@ const AdminStorePage: React.FC = () => {
     }
   };
 
+  const safeImageSrc = (u?: string) => {
+    if (!u) return '';
+    if (/^https?:\/\//i.test(u)) return u;
+    if (u.startsWith('gs://')) {
+      try {
+        const bucket = ((storage as any)?.app?.options?.storageBucket) || '';
+        const withoutScheme = u.slice(5);
+        const firstSlash = withoutScheme.indexOf('/');
+        const path = firstSlash >= 0 ? withoutScheme.slice(firstSlash + 1) : withoutScheme;
+        const encoded = encodeURIComponent(path);
+        if (bucket) return `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${encoded}?alt=media`;
+      } catch {}
+    }
+    return u;
+  };
+
   return (
     <section className="pt-32 pb-16">
       <div className="container-custom">
