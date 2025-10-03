@@ -1,6 +1,7 @@
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { collection, getDocs } from 'firebase/firestore';
+import { withFirestoreRetry } from '../../utils/firestoreRetry';
 import { db } from '../../utils/firebaseClient';
 import type { DressOption } from '../../types/booking';
 import { useState, useRef, useEffect } from 'react';
@@ -49,7 +50,7 @@ const ContractPreview = ({ data, onConfirm, onBack }: ContractPreviewProps) => {
   useEffect(() => {
     (async () => {
       try {
-        const snap = await getDocs(collection(db, 'products'));
+        const snap = await withFirestoreRetry(() => getDocs(collection(db, 'products')));
         const list: DressOption[] = snap.docs
           .map(d => ({ id: d.id, ...(d.data() as any) }))
           .filter(p => {
