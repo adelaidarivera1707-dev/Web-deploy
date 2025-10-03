@@ -264,11 +264,14 @@ const MaternityPage = () => {
                     <>
                       <li className="mt-2 text-xs text-gray-600">Productos incluidos</li>
                       {(pkg.__db as any).storeItemsIncluded.map((it: any, idx: number) => {
-                        const sp = storeProducts[it.productId];
+                        const isPkg = String(it.productId).startsWith('pkg:');
+                        const pkgName = isPkg && dbPackages ? (dbPackages.find(p => `pkg:${p.id}` === String(it.productId))?.title) : undefined;
+                        const sp = !isPkg ? storeProducts[it.productId] : undefined;
+                        const label = `${pkgName || sp?.name || it.productId}${it.variantName ? ` — ${it.variantName}` : ''}`;
                         return (
                           <li key={`inc-${idx}`} className="flex items-start mb-2">
                             <ChevronRight size={16} className="text-secondary mt-1 mr-2 flex-shrink-0" />
-                            <span className="text-xs md:text-sm text-gray-700 break-words">{`${sp?.name || it.productId}${it.variantName ? ` — ${it.variantName}` : ''}`} x{Number(it.quantity || 0)}</span>
+                            <span className="text-xs md:text-sm text-gray-700 break-words">{label} x{Number(it.quantity || 0)}</span>
                           </li>
                         );
                       })}
@@ -338,7 +341,13 @@ const MaternityPage = () => {
       pkg={selectedPkg ? (() => {
         const dbPkg: DBPackage | undefined = selectedPkg.__db as any;
         const includes = (dbPkg && Array.isArray((dbPkg as any).storeItemsIncluded)) ? (dbPkg as any).storeItemsIncluded as { productId: string; quantity: number; variantName?: string }[] : [];
-        const includesLabels = includes.map(it => ({ label: `${storeProducts[it.productId]?.name || it.productId}${it.variantName ? ` — ${it.variantName}` : ''}`, quantity: Number(it.quantity || 0) }));
+        const includesLabels = includes.map(it => {
+          const isPkg = String(it.productId).startsWith('pkg:');
+          const pkgName = isPkg && dbPackages ? (dbPackages.find(p => `pkg:${p.id}` === String(it.productId))?.title) : undefined;
+          const sp = !isPkg ? storeProducts[it.productId] : undefined;
+          const label = `${pkgName || sp?.name || it.productId}${it.variantName ? ` — ${it.variantName}` : ''}`;
+          return { label, quantity: Number(it.quantity || 0) };
+        });
         return {
           id: selectedPkg.id,
           title: selectedPkg.title,
