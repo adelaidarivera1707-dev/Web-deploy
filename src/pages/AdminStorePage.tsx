@@ -20,6 +20,9 @@ const AdminStorePage: React.FC = () => {
   const [adminFullscreen, setAdminFullscreen] = useState<boolean>(() => {
     try { return localStorage.getItem('admin_fullscreen') === '1'; } catch { return false; }
   });
+  const [adminDark, setAdminDark] = useState<boolean>(() => {
+    try { return localStorage.getItem('admin_dark') === '1'; } catch { return false; }
+  });
 
   // products state copied from StorePage
   const [products, setProducts] = useState<any[]>([]);
@@ -120,6 +123,9 @@ const AdminStorePage: React.FC = () => {
   useEffect(() => {
     try { adminFullscreen ? localStorage.setItem('admin_fullscreen', '1') : localStorage.removeItem('admin_fullscreen'); } catch {}
   }, [adminFullscreen]);
+  useEffect(() => {
+    try { adminDark ? localStorage.setItem('admin_dark', '1') : localStorage.removeItem('admin_dark'); } catch {}
+  }, [adminDark]);
 
   const handleDeactivate = async (productId: string, activate: boolean) => {
     try {
@@ -161,7 +167,7 @@ const AdminStorePage: React.FC = () => {
   };
 
   return (
-    <section className="pt-32 pb-16">
+    <section className={`pt-32 pb-16 ${adminDark ? 'admin-dark' : ''}`}>
       <div className="container-custom">
         <div className="mb-8 space-y-6">
           <div className="flex items-center gap-2">
@@ -172,7 +178,8 @@ const AdminStorePage: React.FC = () => {
             <button onClick={() => setAdminView('packages')} className={`px-4 py-2 rounded-none border-2 ${adminView==='packages' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Paquetes</button>
             <button onClick={() => setAdminView('coupons')} className={`px-4 py-2 rounded-none border-2 ${adminView==='coupons' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Cupones</button>
             <button onClick={() => setAdminView('settings')} className={`px-4 py-2 rounded-none border-2 ${adminView==='settings' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Ajustes</button>
-            <div className="ml-auto">
+            <div className="ml-auto flex items-center gap-2">
+              <button onClick={() => setAdminDark(v => !v)} className="px-4 py-2 rounded-none border-2 border-black text-black hover:bg-black hover:text-white">{adminDark ? 'Modo claro' : 'Modo oscuro'}</button>
               <button onClick={() => setAdminFullscreen(v => !v)} className="px-4 py-2 rounded-none border-2 border-black text-black hover:bg-black hover:text-white">{adminFullscreen ? 'Restaurar' : 'Maximizar'}</button>
             </div>
           </div>
@@ -329,6 +336,18 @@ const AdminStorePage: React.FC = () => {
         )}
 
       </div>
+      <style>{`
+        .admin-dark { background-color: #0b0b0b; color: #e5e5e5; }
+        .admin-dark .bg-white { background-color: #121212 !important; color: #e5e5e5; }
+        .admin-dark .text-gray-600 { color: #c7c7c7 !important; }
+        .admin-dark .text-gray-700 { color: #d1d1d1 !important; }
+        .admin-dark .text-gray-500 { color: #a7a7a7 !important; }
+        .admin-dark .border-gray-200 { border-color: #2a2a2a !important; }
+        .admin-dark .bg-gray-50 { background-color: #111111 !important; }
+        .admin-dark .bg-gray-100 { background-color: #1a1a1a !important; }
+        .admin-dark input, .admin-dark select, .admin-dark textarea { background-color: #0e0e0e; color: #e5e5e5; border-color: #303030; }
+        .admin-dark .hover\:bg-gray-50:hover { background-color: #161616 !important; }
+      `}</style>
     </section>
   );
 };
