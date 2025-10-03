@@ -17,7 +17,7 @@ interface ContractItem {
   depositPaid?: boolean;
   finalPaymentPaid?: boolean;
   eventCompleted?: boolean;
-  status?: 'pending' | 'booked' | 'delivered' | 'cancelled' | 'pending_payment';
+  status?: 'pending' | 'booked' | 'delivered' | 'cancelled' | 'pending_payment' | 'confirmed';
   pdfUrl?: string | null;
   phone?: string;
   formSnapshot?: any;
@@ -38,6 +38,7 @@ function getEventColor(c: ContractItem): string {
   if (c.status === 'cancelled') return 'bg-red-500 text-white hover:opacity-90';
   if (c.status === 'delivered' || (c.eventCompleted && c.finalPaymentPaid)) return 'bg-green-600 text-white hover:opacity-90';
   if (c.status === 'pending_payment' || c.depositPaid === false) return 'bg-gray-400 text-white hover:opacity-90';
+  if (c.status === 'confirmed' || (c.depositPaid && !c.eventCompleted && c.status !== 'cancelled')) return 'bg-blue-600 text-white hover:opacity-90';
   return 'bg-yellow-500 text-black hover:opacity-90';
 }
 
@@ -198,7 +199,7 @@ const AdminCalendar: React.FC = () => {
             const dayEvents = cell.date ? (eventsByDay.get(key) || []) : [];
             return (
               <div key={key} className="bg-white min-h-28 p-2 relative">
-                <div className={`text-xs ${isToday? 'text-secondary font-semibold' : 'text-gray-500'}`}>{cell.date ? cell.date.getDate() : ''}</div>
+                <div className="text-xs">{cell.date ? (isToday ? <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-secondary text-black">{cell.date.getDate()}</span> : <span className="text-gray-500">{cell.date.getDate()}</span>) : ''}</div>
                 <div className="mt-1 space-y-1">
                   {dayEvents.map(ev => {
                     const durationMin = parseDurationToMinutes(ev.packageDuration || '2 horas');
@@ -207,9 +208,9 @@ const AdminCalendar: React.FC = () => {
                       const start = new Date(`${d}T${t}:00`);
                       return new Date(start.getTime() + durationMin * 60000);
                     })();
-                    const label = `${ev.clientName || 'Evento'} — ${(ev.eventTime || '00:00')}–${String(end.getHours()).padStart(2,'0')}:${String(end.getMinutes()).padStart(2,'0')}`;
+                    const label = `${(ev.eventTime || '00:00')} ${ev.clientName || 'Evento'}`;
                     return (
-                      <button key={ev.id} onClick={()=> setSelected(ev)} className={`w-full text-left px-2 py-1 rounded ${getEventColor(ev)} text-xs flex items-center gap-1`}>
+                      <button key={ev.id} onClick={()=> setSelected(ev)} className={`w-full text-left px-2 py-1 rounded-md ${getEventColor(ev)} text-xs flex items-center gap-1`}>
                         <IconCalendar size={12}/><span className="truncate">{label}</span>
                       </button>
                     );
@@ -238,6 +239,7 @@ const AdminCalendar: React.FC = () => {
               <div className="flex items-center gap-2"><span>Estado:</span>
                 <select value={selected.status || (selected.eventCompleted && selected.finalPaymentPaid ? 'delivered' : (selected.depositPaid === false ? 'pending_payment' : 'booked'))} onChange={async e=>{ const st = e.target.value as ContractItem['status']; await handleSaveStatus(selected.id, st); setSelected(s=> s ? ({ ...s, status: st }) : s); }} className="px-2 py-1 border rounded-none text-sm">
                   <option value="booked">Contratado</option>
+                  <option value="confirmed">Confirmado</option>
                   <option value="pending_payment">Pendiente de pago</option>
                   <option value="delivered">Entregado</option>
                   <option value="cancelled">Cancelado</option>
@@ -245,7 +247,7 @@ const AdminCalendar: React.FC = () => {
               </div>
             </div>
             <div className="mt-4 flex justify-end">
-              <button onClick={()=> openContractPreview(selected)} className="px-4 py-2 rounded-none bg-gray-600 text-white inline-flex items-center gap-2 hover:opacity-90"><ExternalLink size={16}/> Ver Contrato</button>
+              <button onClick={()=> openContractPreview(selected)} className="px-4 py-2 rounded-md bg-blue-600 text-white inline-flex items-center gap-2 hover:bg-blue-700"><ExternalLink size={16}/> Ver Contrato</button>
             </div>
           </div>
         </div>
