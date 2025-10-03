@@ -1,6 +1,5 @@
 import { Camera } from 'lucide-react';
 import Button from '../ui/Button';
-import { Camera } from 'lucide-react';
 
 interface ContractDisplayProps {
   onAccept: () => void;
