@@ -59,6 +59,8 @@ const ContractsManagement = () => {
   const [tplEditing, setTplEditing] = useState<WorkflowTemplate | null>(null);
   const [defaults, setDefaults] = useState<{ packages?: string; products?: string }>({});
   const [packagesList, setPackagesList] = useState<{ id: string; title: string; duration?: string; price?: number }[]>([]);
+  const [creating, setCreating] = useState(false);
+  const [createForm, setCreateForm] = useState<any>({ clientName: '', clientEmail: '', clientPhone: '', eventType: '', eventDate: '', eventTime: '', eventLocation: '', packageTitle: '', packageDuration: '', paymentMethod: 'pix', totalAmount: 0, travelFee: 0, message: '' });
 
   const fetchContracts = async () => {
     setLoading(true);
