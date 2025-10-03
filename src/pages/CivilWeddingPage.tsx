@@ -15,7 +15,7 @@ const CivilWeddingPage = () => {
     (async () => {
       try {
         const data = await fetchPackages();
-        setDbEvents(data.filter(p => (p as any).active !== false && (((p.category || '').toLowerCase().includes('civil')) || p.id.startsWith('civil')) && (!((p as any).displayPage) || (p as any).displayPage === 'civilWedding')));
+        setDbEvents(data.filter(p => (p as any).active !== false && (((p as any).displayPage === 'civilWedding') || ((p.category || '').toLowerCase().includes('civil')) || p.id.startsWith('civil'))));
       } catch {
         setDbEvents([]);
       }
