@@ -470,29 +470,8 @@ const EventsPage = () => {
       {/* Seção Casamento Civil / Cartório */}
       <section className="py-16">
         <div className="container-custom">
-          <div className="mb-6 flex items-center justify-between gap-4">
-            <h2 className="section-title mb-0">Casamento Civil / Cartório</h2>
-            <div className="ml-auto">
-              <label className="text-sm mr-2">Ordenar:</label>
-              <select value={sortCivil} onChange={e=>setSortCivil(e.target.value as any)} className="border px-2 py-1 text-sm">
-                <option value="default">Por defecto</option>
-                <option value="asc">Preço: menor a maior</option>
-                <option value="desc">Preço: maior a menor</option>
-              </select>
-            </div>
-          </div>
-          <p className="text-gray-700 mb-8 text-center max-w-3xl mx-auto">
-            Cobertura especializada para cerimônias civis em cartório.
-          </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            {[...civilPackages]
-              .sort((a:any,b:any)=>{
-                if (sortCivil==='default') return 0;
-                const pa = parsePrice(a.price);
-                const pb = parsePrice(b.price);
-                return sortCivil==='asc' ? pa - pb : pb - pa;
-              })
-              .map((pkg) => (
+            {civilPackages.map((pkg) => (
               <div key={pkg.id} className={`card flex flex-col h-full relative max-h-screen lg:max-h-[85vh] overflow-x-hidden min-h-0 ${pkg.recommended ? 'ring-2 ring-secondary shadow-md' : ''}`}>
                 {pkg.recommended && (<span className="absolute top-2 left-3 z-10 bg-secondary text-white text-xs px-2 py-1 rounded">Recomendado</span>)}
                 <div className="h-48 md:h-56 overflow-hidden mb-4 relative">
