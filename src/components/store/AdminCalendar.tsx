@@ -95,7 +95,7 @@ const AdminCalendar: React.FC = () => {
   const monthDays = useMemo(() => {
     const first = startOfMonth(current.y, current.m);
     const last = endOfMonth(current.y, current.m);
-    const startWeekday = (first.getDay() + 6) % 7; // Monday-first
+    const startWeekday = first.getDay(); // Sunday-first
     const total = last.getDate();
     const cells: Array<{ date: Date | null } > = [];
     for (let i = 0; i < startWeekday; i++) cells.push({ date: null });
@@ -225,7 +225,7 @@ const AdminCalendar: React.FC = () => {
       {/* Calendar grid */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <div className="grid grid-cols-7 text-center text-xs text-gray-500 py-2 border-b">
-          {['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'].map((d)=> <div key={d} className="py-1">{d}</div>)}
+          {['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'].map((d)=> <div key={d} className="py-1">{d}</div>)}
         </div>
         <div className="grid grid-cols-7 gap-px bg-gray-200">
           {monthDays.map((cell, idx)=>{
