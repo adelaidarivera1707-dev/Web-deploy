@@ -1,8 +1,9 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import ContractPreview from '../components/booking/ContractPreview';
 import type { BookingFormData, CartItem, StoreCartItem } from '../types/booking';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import type { CSSProperties } from 'react';
+import { generatePDF } from '../utils/pdf';
 
 const formatBRL = (value: number) => {
   return `R$ ${Number(value || 0).toFixed(2).replace('.', ',')}`;
@@ -71,6 +72,13 @@ const AdminContractPreviewPage = () => {
       storeItems
     };
 
+    // Fill per-service dates/times/locations to match ContractPreview expectations
+    (booking.cartItems || []).forEach((_it, index) => {
+      (booking as any)[`date_${index}`] = booking.eventDate;
+      (booking as any)[`time_${index}`] = booking.eventTime;
+      (booking as any)[`eventLocation_${index}`] = booking.eventLocation;
+    });
+
     return booking;
   }, [contract]);
 
@@ -95,24 +103,82 @@ const AdminContractPreviewPage = () => {
     `</svg>`
   );
   const watermarkStyle: CSSProperties = {
-    position: 'fixed',
+    position: 'absolute',
     inset: 0 as any,
     backgroundImage: `url("data:image/svg+xml;utf8,${svg}")`,
     backgroundRepeat: 'repeat',
     backgroundSize: '200px 200px',
     opacity: 1,
     pointerEvents: 'none',
-    zIndex: 40
+    zIndex: 1
+  };
+
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  // Auto-generate and download on mount
+  useEffect(() => {
+    const t = setTimeout(async () => {
+      if (!wrapperRef.current) return;
+      const target = wrapperRef.current.querySelector('.max-w-4xl');
+      if (target) {
+        const blob = (await generatePDF(target as HTMLElement, { quality: 0.4, scale: 1.1, returnType: 'blob', longSinglePage: true, marginTopPt: 0, marginBottomPt: 0 })) as Blob;
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `contrato-copia-${String(data.name || 'cliente').toLowerCase().replace(/\s+/g,'-')}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+    }, 400);
+    return () => clearTimeout(t);
+  }, []);
+
+  const signatureOverlay: CSSProperties = {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: '120px',
+    textAlign: 'center',
+    fontSize: '28px',
+    fontWeight: 700,
+    color: 'rgba(220, 38, 38, 0.6)',
+    transform: 'rotate(-15deg)',
+    zIndex: 2,
+    pointerEvents: 'none'
   };
 
   return (
-    <div className="relative">
+    <div ref={wrapperRef} className="relative">
       <div style={watermarkStyle} className="print:block" />
+      <div style={signatureOverlay}>COPIA</div>
       <ContractPreview
         data={data}
         onConfirm={() => {}}
         onBack={() => navigate(-1)}
       />
+      <div className="max-w-4xl mx-auto px-6 pb-12">
+        <div className="flex justify-center mt-4">
+          <button
+            onClick={async ()=>{
+              if (!wrapperRef.current) return;
+              const target = wrapperRef.current.querySelector('.max-w-4xl');
+              if (!target) return;
+              const blob = (await generatePDF(target as HTMLElement, { quality: 0.4, scale: 1.1, returnType: 'blob', longSinglePage: true, marginTopPt: 0, marginBottomPt: 0 })) as Blob;
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `contrato-copia-${String(data.name || 'cliente').toLowerCase().replace(/\s+/g,'-')}.pdf`;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+            }}
+            className="border-2 border-black bg-black text-white px-4 py-2 rounded-none hover:opacity-90"
+          >
+            Descargar
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
