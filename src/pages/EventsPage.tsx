@@ -584,7 +584,13 @@ const EventsPage = () => {
         pkg={selectedPkg ? (() => {
           const dbPkg: DBPackage | undefined = selectedPkg.__db as any;
           const includes = (dbPkg && Array.isArray((dbPkg as any).storeItemsIncluded)) ? (dbPkg as any).storeItemsIncluded as { productId: string; quantity: number; variantName?: string }[] : [];
-          const includesLabels = includes.map(it => ({ label: `${storeProducts[it.productId]?.name || it.productId}${it.variantName ? ` — ${it.variantName}` : ''}`, quantity: Number(it.quantity || 0) }));
+          const includesLabels = includes.map(it => {
+            const isPkg = String(it.productId).startsWith('pkg:');
+            const pkgName = isPkg && dbEvents ? (dbEvents.find(p => `pkg:${p.id}` === String(it.productId))?.title) : undefined;
+            const sp = !isPkg ? storeProducts[it.productId] : undefined;
+            const label = `${pkgName || sp?.name || it.productId}${it.variantName ? ` — ${it.variantName}` : ''}`;
+            return { label, quantity: Number(it.quantity || 0) };
+          });
           return {
             id: selectedPkg.id,
             title: selectedPkg.title,
