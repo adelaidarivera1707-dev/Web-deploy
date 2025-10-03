@@ -160,14 +160,14 @@ const AdminCalendar: React.FC = () => {
   return (
     <div className="space-y-4">
       {/* Filters / Controls */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 flex flex-wrap gap-3 items-center justify-between">
+      <div className="bg-white rounded-xl border border-gray-200 p-1 flex flex-wrap gap-1 items-center justify-between">
         <div className="flex items-center gap-1">
           <button onClick={prevMonth} className="px-2 py-1 border rounded-none"><ChevronLeft size={16}/></button>
           <div className="text-base font-semibold w-32 text-center">
             {new Date(current.y, current.m, 1).toLocaleString('es', { month: 'long', year: 'numeric' })}
           </div>
           <button onClick={nextMonth} className="px-2 py-1 border rounded-none"><ChevronRight size={16}/></button>
-          <button onClick={goToday} className="ml-2 px-3 py-2 border rounded-none">Hoy</button>
+          <button onClick={goToday} className="ml-2 px-2 py-1 border-2 border-black text-black rounded-none hover:bg-black hover:text-white inline-flex items-center gap-1 text-sm">Hoy</button>
         </div>
         <div className="flex items-center gap-1">
           <select value={filterMonth} onChange={e=> setFilterMonth(Number(e.target.value))} className="px-2 py-1 border rounded-none text-sm">
