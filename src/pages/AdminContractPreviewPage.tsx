@@ -121,7 +121,7 @@ const AdminContractPreviewPage = () => {
       if (!wrapperRef.current) return;
       const target = wrapperRef.current.querySelector('.max-w-4xl');
       if (target) {
-        const blob = (await generatePDF(target as HTMLElement, { quality: 0.4, scale: 1.1, returnType: 'blob', longSinglePage: true, marginTopPt: 0, marginBottomPt: 0 })) as Blob;
+        const blob = (await generatePDF(target as HTMLElement, { quality: 1, scale: 2, returnType: 'blob' })) as Blob;
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -164,7 +164,7 @@ const AdminContractPreviewPage = () => {
               if (!wrapperRef.current) return;
               const target = wrapperRef.current.querySelector('.max-w-4xl');
               if (!target) return;
-              const blob = (await generatePDF(target as HTMLElement, { quality: 0.4, scale: 1.1, returnType: 'blob', longSinglePage: true, marginTopPt: 0, marginBottomPt: 0 })) as Blob;
+              const blob = (await generatePDF(target as HTMLElement, { quality: 1, scale: 2, returnType: 'blob' })) as Blob;
               const url = URL.createObjectURL(blob);
               const a = document.createElement('a');
               a.href = url;
