@@ -236,6 +236,7 @@ const AdminStorePage: React.FC = () => {
 
           {adminView === 'orders' && <OrdersManagement />}
           {adminView === 'contracts' && <ContractsManagement />}
+          {adminView === 'calendar' && <AdminCalendar />}
           {adminView === 'packages' && <PhotoPackagesManagement />}
           {adminView === 'coupons' && <CouponsManagement />}
           {adminView === 'settings' && <StoreSettings />}
