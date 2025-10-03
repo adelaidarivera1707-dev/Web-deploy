@@ -365,16 +365,14 @@ const ContractPreview = ({ data, onConfirm, onBack }: ContractPreviewProps) => {
               </section>
 
               {/* Cláusula 3 */}
-              <section>
-                <h3 className="text-lg font-medium text-primary mb-4 pb-2 border-b border-secondary">
-                  CLÁUSULA 3ª – DO ENSAIO PRÉ-WEDDING OU ENSAIO FOTOGRÁFICO
-                </h3>
-                <div className="space-y-3 text-sm text-gray-700">
-                  <p>No caso de contratação de ensaio pré-wedding ou ensaio fotográfico, o(a) CONTRATANTE deverá informar à CONTRATADA a data escolhida com, no mínimo, 3 (três) dias de antecedência, para que a equipe possa se organizar e enviar o formulário de agendamento.</p>
-                  <p>Quando se tratar de casamento, o ensaio pré-wedding deverá ser realizado até 3 (três) dias antes da data do evento.</p>
-                  <p><strong>Parágrafo único – Reagendamento de ensaios:</strong> Em caso de condições climáticas desfavoráveis no dia do ensaio, o reagendamento poderá ser realizado sem qualquer custo adicional. O(a) CONTRATANTE terá direito a 1 (uma) remarcação gratuita por outros motivos pessoais, desde que avise com pelo menos 7 (sete) dias de antecedência. A partir da segunda remarcação por motivos pessoais, será necessário efetuar novo pagamento do valor da reserva (20%) para garantir a nova data.</p>
-                </div>
-              </section>
+                  <section className="contract-section">
+                    <h2 className="section-title">CLÁUSULA 3ª – DO ENSAIO PRÉ-WEDDING OU ENSAIO FOTOGRÁFICO</h2>
+                    <div className="space-y-4 text-gray-700">
+                      <p>No caso de contratação de ensaio pré-wedding ou ensaio fotográfico, o(a) CONTRATANTE deverá informar à CONTRATADA a data escolhida com, no mínimo, 3 (três) dias de antecedência, para que a equipe possa se organizar e enviar o formulário de agendamento.</p>
+                      <p>Quando se tratar de casamento, o ensaio pré-wedding deverá ser realizado até 3 (três) dias antes da data do evento.</p>
+                      <p><strong>Parágrafo único – Reagendamento de ensaios:</strong> Em caso de condições climáticas desfavoráveis no dia do ensaio, o reagendamento poderá ser realizado sem qualquer custo adicional. O(a) CONTRATANTE terá direito a 1 (uma) remarcação gratuita por outros motivos pessoais, desde que avise com pelo menos 3 (três) dias de antecedência. A partir da segunda remarcação por motivos pessoais, será necessário efetuar novo pagamento do valor da reserva (20%) para garantir a nova data.</p>
+                    </div>
+                  </section>
 
               {/* Cláusula 4 */}
               <section>
