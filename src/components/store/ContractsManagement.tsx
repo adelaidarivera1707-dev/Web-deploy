@@ -846,6 +846,10 @@ const ContractsManagement = () => {
               <input value={editForm.clientEmail || ''} onChange={e => setEditForm((f: any) => ({ ...f, clientEmail: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
             </div>
             <div>
+              <label className="text-xs text-gray-600">Teléfono</label>
+              <input value={(editForm as any).clientPhone || ''} onChange={e => setEditForm((f: any) => ({ ...f, clientPhone: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
+            </div>
+            <div>
               <label className="text-xs text-gray-600">Tipo de evento</label>
               <input value={editForm.eventType || ''} onChange={e => setEditForm((f: any) => ({ ...f, eventType: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
             </div>
@@ -898,6 +902,107 @@ const ContractsManagement = () => {
           <div className="mt-4 flex justify-end gap-2">
             <button onClick={() => setEditing(null)} className="border-2 border-black text-black px-3 py-2 rounded-none hover:bg-black hover:text-white">Cancelar</button>
             <button onClick={saveEdit} className="border-2 border-black bg-black text-white px-3 py-2 rounded-none hover:opacity-90">Guardar</button>
+          </div>
+        </div>
+      </div>
+    )}
+
+    {creating && (
+      <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={()=> setCreating(false)}>
+        <div className="bg-white rounded-xl border border-gray-200 w-full max-w-2xl p-4 max-h-[85vh] overflow-y-auto" onClick={e=> e.stopPropagation()}>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-medium">Nuevo Contrato</h3>
+            <button onClick={() => setCreating(false)} className="text-gray-500 hover:text-gray-900">✕</button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs text-gray-600">Nombre</label>
+              <input value={createForm.clientName} onChange={e => setCreateForm((f: any) => ({ ...f, clientName: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
+            </div>
+            <div>
+              <label className="text-xs text-gray-600">Email</label>
+              <input value={createForm.clientEmail} onChange={e => setCreateForm((f: any) => ({ ...f, clientEmail: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
+            </div>
+            <div>
+              <label className="text-xs text-gray-600">Teléfono</label>
+              <input value={createForm.clientPhone} onChange={e => setCreateForm((f: any) => ({ ...f, clientPhone: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
+            </div>
+            <div>
+              <label className="text-xs text-gray-600">Tipo de evento</label>
+              <input value={createForm.eventType} onChange={e => setCreateForm((f: any) => ({ ...f, eventType: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
+            </div>
+            <div>
+              <label className="text-xs text-gray-600">Ubicación</label>
+              <input value={createForm.eventLocation} onChange={e => setCreateForm((f: any) => ({ ...f, eventLocation: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
+            </div>
+            <div>
+              <label className="text-xs text-gray-600">Fecha evento</label>
+              <input type="date" value={createForm.eventDate} onChange={e => setCreateForm((f: any) => ({ ...f, eventDate: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
+            </div>
+            <div>
+              <label className="text-xs text-gray-600">Hora</label>
+              <input type="time" value={createForm.eventTime} onChange={e => setCreateForm((f: any) => ({ ...f, eventTime: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
+            </div>
+            <div>
+              <label className="text-xs text-gray-600">Paquete</label>
+              <select value={createForm.packageTitle} onChange={(e)=>{
+                const title = e.target.value;
+                const found = packagesList.find(p=>p.title===title);
+                setCreateForm((f:any)=> ({ ...f, packageTitle: title, packageDuration: found?.duration || f.packageDuration || '' }));
+              }} className="w-full px-3 py-2 border rounded-none">
+                <option value="">— Selecciona paquete —</option>
+                {packagesList.map(p=> (<option key={p.id} value={p.title}>{p.title}</option>))}
+              </select>
+            </div>
+            <div>
+              <label className="text-xs text-gray-600">Duración</label>
+              <input value={createForm.packageDuration} onChange={e=> setCreateForm((f:any)=> ({ ...f, packageDuration: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
+            </div>
+            <div>
+              <label className="text-xs text-gray-600">Método de pago</label>
+              <input value={createForm.paymentMethod} onChange={e=> setCreateForm((f:any)=> ({ ...f, paymentMethod: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
+            </div>
+            <div>
+              <label className="text-xs text-gray-600">Total</label>
+              <input type="number" step="0.01" value={createForm.totalAmount} onChange={e => setCreateForm((f: any) => ({ ...f, totalAmount: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
+            </div>
+            <div>
+              <label className="text-xs text-gray-600">Deslocamento</label>
+              <input type="number" step="0.01" value={createForm.travelFee} onChange={e => setCreateForm((f: any) => ({ ...f, travelFee: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
+            </div>
+            <div className="md:col-span-2">
+              <label className="text-xs text-gray-600">Notas</label>
+              <textarea value={createForm.message} onChange={e => setCreateForm((f: any) => ({ ...f, message: e.target.value }))} className="w-full px-3 py-2 border rounded-none max-h-24" rows={2} />
+            </div>
+          </div>
+          <div className="mt-4 flex justify-end gap-2">
+            <button onClick={() => setCreating(false)} className="border px-3 py-2 rounded-none">Cancelar</button>
+            <button onClick={async ()=>{
+              if (!createForm.clientName || !createForm.eventDate) { alert('Nombre y fecha del evento son obligatorios'); return; }
+              const payload: any = {
+                clientName: createForm.clientName,
+                clientEmail: createForm.clientEmail || '',
+                eventType: createForm.eventType || 'Evento',
+                eventDate: createForm.eventDate,
+                eventTime: createForm.eventTime || '00:00',
+                eventLocation: createForm.eventLocation || '',
+                paymentMethod: createForm.paymentMethod || 'pix',
+                depositPaid: false,
+                finalPaymentPaid: false,
+                eventCompleted: false,
+                createdAt: new Date().toISOString(),
+                totalAmount: Number(createForm.totalAmount || 0) || 0,
+                travelFee: Number(createForm.travelFee || 0) || 0,
+                status: 'booked' as const,
+                ...(createForm.packageTitle ? { packageTitle: createForm.packageTitle } : {}),
+                ...(createForm.packageDuration ? { packageDuration: createForm.packageDuration } : {}),
+              };
+              if (createForm.clientPhone) payload.formSnapshot = { ...(payload.formSnapshot || {}), phone: createForm.clientPhone };
+              await addDoc(collection(db, 'contracts'), payload);
+              setCreating(false);
+              setCreateForm({ clientName: '', clientEmail: '', clientPhone: '', eventType: '', eventDate: '', eventTime: '', eventLocation: '', packageTitle: '', packageDuration: '', paymentMethod: 'pix', totalAmount: 0, travelFee: 0, message: '' });
+              await fetchContracts();
+            }} className="border-2 border-black bg-black text-white px-3 py-2 rounded-none hover:opacity-90">Crear</button>
           </div>
         </div>
       </div>
