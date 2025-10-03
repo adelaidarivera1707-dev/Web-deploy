@@ -15,7 +15,7 @@ const firebaseConfig = {
 // ✅ Inicializar Firebase de forma segura
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
-export const db = initializeFirestore(app, { experimentalForceLongPolling: true });
+export const db = initializeFirestore(app, { experimentalForceLongPolling: true, experimentalAutoDetectLongPolling: true, useFetchStreams: false });
 export const auth = getAuth(app);
 export const storage = getStorage(app);
 export const functions = getFunctions(app, 'us-central1');
