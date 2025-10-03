@@ -517,8 +517,8 @@ const ContractPreview = ({ data, onConfirm, onBack }: ContractPreviewProps) => {
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                               {selectedDresses.map((dress) => (
                                 <div key={dress.id} className="text-center">
-                                  <div className="aspect-square overflow-hidden rounded-lg mb-2">
-                                    <img loading="lazy" src={dress.image} alt={dress.name} className="w-full h-full object-cover" />
+                                  <div className="relative aspect-[9/16] overflow-hidden rounded-lg mb-2">
+                                    <img loading="lazy" src={dress.image} alt={dress.name} className="absolute inset-0 w-full h-full object-cover" />
                                   </div>
                                   <p className="text-sm font-medium text-gray-900">{dress.name}</p>
                                   <p className="text-xs text-gray-600">{dress.color}</p>
