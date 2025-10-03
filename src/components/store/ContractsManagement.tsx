@@ -328,6 +328,7 @@ const ContractsManagement = () => {
       <div className="flex items-center justify-between">
         <h2 className="section-title">Gestión de Contratos</h2>
         <div className="flex items-center gap-2">
+          <button onClick={()=> setCreating(true)} className="border-2 border-black bg-black text-white px-3 py-2 rounded-none hover:opacity-90 inline-flex items-center gap-2"><Plus size={14}/> Nuevo contrato</button>
           <button onClick={async ()=>{ await fetchTemplates(); setTemplatesOpen(true); }} className="border-2 border-black text-black px-3 py-2 rounded-none hover:bg-black hover:text-white">Workflows</button>
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar por cliente/teléfono" className="px-3 py-2 border rounded-none" />
         </div>
