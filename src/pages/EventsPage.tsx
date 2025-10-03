@@ -50,7 +50,7 @@ const EventsPage = () => {
           (p.category || '').toLowerCase().includes('prewedding') ||
           (p.category || '').toLowerCase().includes('civil') ||
           p.id.startsWith('wedding') || p.id.startsWith('prewedding') || p.id.startsWith('civil')
-        )));
+        ) && (!((p as any).displayPage) || (p as any).displayPage === 'events')));
       } catch (e) {
         console.warn('EventsPage: falling back to static packages');
         setDbEvents(null);
