@@ -18,6 +18,7 @@ interface ContractItem {
   eventDate?: string;
   eventTime?: string;
   contractDate?: string;
+  signatureTime?: string; // HH:mm de firma del contrato
   totalAmount?: number;
   travelFee?: number;
   paymentMethod?: string;
@@ -212,6 +213,7 @@ const ContractsManagement = () => {
       eventType: c.eventType || '',
       eventDate: c.eventDate || '',
       eventTime: (c as any).eventTime || '',
+      signatureTime: (c as any).signatureTime || '',
       eventLocation: (c as any).eventLocation || '',
       packageTitle: (c as any).packageTitle || '',
       packageDuration: (c as any).packageDuration || '',
@@ -241,6 +243,7 @@ const ContractsManagement = () => {
       ...(editForm.eventLocation !== undefined ? { eventLocation: String(editForm.eventLocation || '') } : {}),
       ...(editForm.packageTitle !== undefined ? { packageTitle: String(editForm.packageTitle || '') } : {}),
       ...(editForm.packageDuration !== undefined ? { packageDuration: String(editForm.packageDuration || '') } : {}),
+      ...(editForm.signatureTime !== undefined ? { signatureTime: String(editForm.signatureTime || '') } : {}),
     } as any;
 
     const calc = computeAmounts(merged);
@@ -677,6 +680,7 @@ const ContractsManagement = () => {
                 <div><span className="text-gray-600">Fecha evento:</span> <span className="font-medium">{viewing.eventDate || '-'}</span></div>
                 <div><span className="text-gray-600">Hora:</span> <span className="font-medium">{(viewing as any).eventTime || '-'}</span></div>
                 <div><span className="text-gray-600">Fecha contrato:</span> <span className="font-medium">{viewing.contractDate || '-'}</span></div>
+                <div><span className="text-gray-600">Hora firma:</span> <span className="font-medium">{(viewing as any).signatureTime || '-'}</span></div>
                 <div><span className="text-gray-600">Ubicación:</span> <span className="font-medium">{(viewing as any).eventLocation || '-'}</span></div>
                 <div><span className="text-gray-600">Paquete:</span> <span className="font-medium">{(viewing as any).packageTitle || '-'}</span></div>
                 <div><span className="text-gray-600">Duraci��n:</span> <span className="font-medium">{(viewing as any).packageDuration || '-'}</span></div>
@@ -904,6 +908,10 @@ const ContractsManagement = () => {
             <div>
               <label className="text-xs text-gray-600">Hora</label>
               <input type="time" value={editForm.eventTime || ''} onChange={e => setEditForm((f: any) => ({ ...f, eventTime: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
+            </div>
+            <div>
+              <label className="text-xs text-gray-600">Hora firma</label>
+              <input type="time" value={editForm.signatureTime || ''} onChange={e => setEditForm((f: any) => ({ ...f, signatureTime: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
             </div>
 
             <div>
