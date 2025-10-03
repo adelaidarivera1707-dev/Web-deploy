@@ -26,7 +26,7 @@ interface OrderItem {
 
 interface ProductLite { id: string; name: string }
 
-interface AdminProps { onNavigate?: (view: 'dashboard' | 'products' | 'orders' | 'contracts') => void }
+interface AdminProps { onNavigate?: (view: 'dashboard' | 'products' | 'orders' | 'contracts' | 'calendar') => void }
 const AdminStoreDashboard: React.FC<AdminProps> = ({ onNavigate }) => {
   const [stats, setStats] = useState({ products: 0, orders: 0, income: 0, customers: 0 });
   const [recentOrders, setRecentOrders] = useState<OrderItem[]>([]);
