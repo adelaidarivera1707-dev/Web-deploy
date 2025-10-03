@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import ContractPreview from '../components/booking/ContractPreview';
 import type { BookingFormData, CartItem, StoreCartItem } from '../types/booking';
 import { useEffect, useMemo, useRef } from 'react';
+import ImageAdminOverlay from '../components/admin/ImageAdminOverlay';
 import type { CSSProperties } from 'react';
 import { generatePDF } from '../utils/pdf';
 
@@ -114,22 +115,33 @@ const AdminContractPreviewPage = () => {
   };
 
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const captureRef = useRef<HTMLDivElement>(null);
+
+  // Disable admin image overlay (👁️) while on this page
+  useEffect(() => {
+    try { ImageAdminOverlay.destroyImageAdminOverlay(); } catch {}
+    return () => {
+      try {
+        if (typeof window !== 'undefined' && sessionStorage.getItem('site_admin_mode')) {
+          ImageAdminOverlay.initImageAdminOverlay();
+        }
+      } catch {}
+    };
+  }, []);
 
   // Auto-generate and download on mount
   useEffect(() => {
     const t = setTimeout(async () => {
-      if (!wrapperRef.current) return;
-      const target = wrapperRef.current.querySelector('.max-w-4xl');
-      if (target) {
-        const blob = (await generatePDF(target as HTMLElement, { quality: 1, scale: 2, returnType: 'blob', longSinglePage: true, marginTopPt: 0, marginBottomPt: 0 })) as Blob;
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `contrato-copia-${String(data.name || 'cliente').toLowerCase().replace(/\s+/g,'-')}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      }
+      if (!captureRef.current) return;
+      const target = captureRef.current;
+      const blob = (await generatePDF(target as HTMLElement, { quality: 1, scale: 2, returnType: 'blob', longSinglePage: true, marginTopPt: 0, marginBottomPt: 0 })) as Blob;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `contrato-copia-${String(data.name || 'cliente').toLowerCase().replace(/\s+/g,'-')}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
     }, 400);
     return () => clearTimeout(t);
   }, []);
@@ -150,20 +162,21 @@ const AdminContractPreviewPage = () => {
 
   return (
     <div ref={wrapperRef} className="relative">
-      <div style={watermarkStyle} className="print:block" />
-      <div style={signatureOverlay}>COPIA</div>
-      <ContractPreview
-        data={data}
-        onConfirm={() => {}}
-        onBack={() => navigate(-1)}
-      />
+      <div ref={captureRef} className="relative">
+        <div style={watermarkStyle} className="print:block" />
+        <div style={signatureOverlay}>COPIA</div>
+        <ContractPreview
+          data={data}
+          onConfirm={() => {}}
+          onBack={() => navigate(-1)}
+        />
+      </div>
       <div className="max-w-4xl mx-auto px-6 pb-12">
         <div className="flex justify-center mt-4">
           <button
             onClick={async ()=>{
-              if (!wrapperRef.current) return;
-              const target = wrapperRef.current.querySelector('.max-w-4xl');
-              if (!target) return;
+              if (!captureRef.current) return;
+              const target = captureRef.current;
               const blob = (await generatePDF(target as HTMLElement, { quality: 1, scale: 2, returnType: 'blob', longSinglePage: true, marginTopPt: 0, marginBottomPt: 0 })) as Blob;
               const url = URL.createObjectURL(blob);
               const a = document.createElement('a');
