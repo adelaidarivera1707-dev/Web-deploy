@@ -174,6 +174,7 @@ const AdminStorePage: React.FC = () => {
             <button onClick={() => setAdminView('products')} className={`px-4 py-2 rounded-none border-2 ${adminView==='products' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Productos</button>
             <button onClick={() => setAdminView('orders')} className={`px-4 py-2 rounded-none border-2 ${adminView==='orders' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Órdenes</button>
             <button onClick={() => setAdminView('contracts')} className={`px-4 py-2 rounded-none border-2 ${adminView==='contracts' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Contratos</button>
+            <button onClick={() => setAdminView('calendar')} className={`px-4 py-2 rounded-none border-2 ${adminView==='calendar' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Calendario</button>
             <button onClick={() => setAdminView('packages')} className={`px-4 py-2 rounded-none border-2 ${adminView==='packages' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Paquetes</button>
             <button onClick={() => setAdminView('coupons')} className={`px-4 py-2 rounded-none border-2 ${adminView==='coupons' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Cupones</button>
             <button onClick={() => setAdminView('settings')} className={`px-4 py-2 rounded-none border-2 ${adminView==='settings' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Ajustes</button>
@@ -262,6 +263,7 @@ const AdminStorePage: React.FC = () => {
                 <button onClick={() => setAdminView('products')} className={`px-4 py-2 rounded-none border-2 ${adminView==='products' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Productos</button>
                 <button onClick={() => setAdminView('orders')} className={`px-4 py-2 rounded-none border-2 ${adminView==='orders' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Órdenes</button>
                 <button onClick={() => setAdminView('contracts')} className={`px-4 py-2 rounded-none border-2 ${adminView==='contracts' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Contratos</button>
+            <button onClick={() => setAdminView('calendar')} className={`px-4 py-2 rounded-none border-2 ${adminView==='calendar' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Calendario</button>
             <button onClick={() => setAdminView('packages')} className={`px-4 py-2 rounded-none border-2 ${adminView==='packages' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Paquetes</button>
             <button onClick={() => setAdminView('coupons')} className={`px-4 py-2 rounded-none border-2 ${adminView==='coupons' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Cupones</button>
             <button onClick={() => setAdminView('settings')} className={`px-4 py-2 rounded-none border-2 ${adminView==='settings' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Ajustes</button>
@@ -345,7 +347,17 @@ const AdminStorePage: React.FC = () => {
         .admin-dark .bg-gray-50 { background-color: #111111 !important; }
         .admin-dark .bg-gray-100 { background-color: #1a1a1a !important; }
         .admin-dark input, .admin-dark select, .admin-dark textarea { background-color: #0e0e0e; color: #e5e5e5; border-color: #303030; }
-        .admin-dark .hover\:bg-gray-50:hover { background-color: #161616 !important; }
+        /* Buttons: active (selected) => white bg, black text */
+        .admin-dark .bg-black { background-color: #ffffff !important; }
+        .admin-dark .text-white { color: #000000 !important; }
+        /* Buttons: inactive => white border, no bg, white text */
+        .admin-dark .border-black { border-color: #ffffff !important; }
+        .admin-dark .text-black { color: #ffffff !important; }
+        /* Hover behavior: gray bg with black text */
+        .admin-dark .hover\:bg-black:hover,
+        .admin-dark .hover\:bg-white:hover,
+        .admin-dark .hover\:bg-gray-50:hover { background-color: #9ca3af !important; color: #000000 !important; }
+        .admin-dark .hover\:text-white:hover { color: #000000 !important; }
       `}</style>
     </section>
   );
