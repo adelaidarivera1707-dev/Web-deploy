@@ -119,8 +119,8 @@ const ContractsManagement = () => {
         setPackagesList([]);
       }
     };
-    if (editing) fetchPkgs();
-  }, [editing]);
+    if (editing || creating) fetchPkgs();
+  }, [editing, creating]);
 
   const filtered = useMemo(() => {
     const list = (() => {
