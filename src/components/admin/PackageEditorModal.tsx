@@ -21,6 +21,7 @@ const PackageEditorModal: React.FC<PackageEditorModalProps> = ({ open, onClose, 
   const [featuresText, setFeaturesText] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [category, setCategory] = useState<string | undefined>('');
+  const [displayPage, setDisplayPage] = useState<'' | 'portrait' | 'maternity' | 'events' | 'civilWedding'>('');
   const [sections, setSections] = useState<string[]>([]);
   const [showNewSection, setShowNewSection] = useState(false);
   const [newSection, setNewSection] = useState('');
@@ -62,6 +63,7 @@ const PackageEditorModal: React.FC<PackageEditorModalProps> = ({ open, onClose, 
     setFeaturesText((pkg.features || []).join('\n'));
     setImageUrl(pkg.image_url || '');
     setCategory(pkg.category || '');
+    setDisplayPage(((pkg as any).displayPage as any) || '');
     setRecommended(Boolean((pkg as any).recommended || false));
     // load sections if present
     const s = Array.isArray((pkg as any).sections) ? (pkg as any).sections.slice() : [];
@@ -168,7 +170,8 @@ const PackageEditorModal: React.FC<PackageEditorModalProps> = ({ open, onClose, 
         image_url: imageUrl,
         category: category || undefined,
         recommended: Boolean(recommended),
-      } as Partial<DBPackage>;
+      } as Partial<DBPackage> & { displayPage?: 'portrait'|'maternity'|'events'|'civilWedding' };
+      if (displayPage) (updates as any).displayPage = displayPage;
       (updates as any).sections = sections;
       (updates as any).storeItemsIncluded = Object.entries(included).map(([rawKey, quantity]) => { const { id, variantName } = parseKey(rawKey); return { productId: id, quantity: Number(quantity||0), ...(variantName ? { variantName } : {}) }; }).filter(x => x.quantity > 0);
       await updatePackage(pkg.id, updates);
@@ -212,6 +215,7 @@ const PackageEditorModal: React.FC<PackageEditorModalProps> = ({ open, onClose, 
         }).filter((x) => x.quantity > 0),
         active: true,
       };
+      if (displayPage) payload.displayPage = displayPage;
       const newId = await createPackage(payload);
       try {
         const ref = doc(db, 'packages', newId);
@@ -305,6 +309,19 @@ const PackageEditorModal: React.FC<PackageEditorModalProps> = ({ open, onClose, 
           </div>
 
           <div>
+            <label className="block text-sm text-gray-700 mb-1">Página donde mostrar</label>
+            <select
+              value={displayPage}
+              onChange={e=> setDisplayPage(e.target.value as any)}
+              className="px-3 py-2 border rounded w-full mb-3"
+            >
+              <option value="">Todas (por tipo)</option>
+              <option value="portrait">Retratos (PortraitPage)</option>
+              <option value="maternity">Gestantes (MaternityPage)</option>
+              <option value="events">Eventos (EventsPage)</option>
+              <option value="civilWedding">Casamento Civil (CivilWeddingPage)</option>
+            </select>
+
             <label className="block text-sm text-gray-700 mb-1">Categoria (opcional)</label>
             <div className="flex items-center gap-2">
               <select
