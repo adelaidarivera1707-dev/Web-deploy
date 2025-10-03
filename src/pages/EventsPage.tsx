@@ -303,11 +303,14 @@ const EventsPage = () => {
                     <>
                       <li className="mt-2 text-xs text-gray-600">Productos incluidos</li>
                       {inc.map((it: any, idx: number) => {
-                        const sp = storeProducts[it.productId];
+                        const isPkg = String(it.productId).startsWith('pkg:');
+                        const pkgName = isPkg && dbEvents ? (dbEvents.find(p => `pkg:${p.id}` === String(it.productId))?.title) : undefined;
+                        const sp = !isPkg ? storeProducts[it.productId] : undefined;
+                        const label = `${pkgName || sp?.name || it.productId}${it.variantName ? ` — ${it.variantName}` : ''}`;
                         return (
                           <li key={`inc-${idx}`} className="flex items-start mb-2">
                             <ChevronRight size={16} className="text-secondary mt-1 mr-2 flex-shrink-0" />
-                            <span className="text-xs md:text-sm text-gray-700 break-words">{`${sp?.name || it.productId}${it.variantName ? ` — ${it.variantName}` : ''}`} x{Number(it.quantity || 0)}</span>
+                            <span className="text-xs md:text-sm text-gray-700 break-words">{label} x{Number(it.quantity || 0)}</span>
                           </li>
                         );
                       })}
@@ -424,11 +427,14 @@ const EventsPage = () => {
                     <>
                       <li className="mt-2 text-xs text-gray-600">Productos incluidos</li>
                       {inc.map((it: any, idx: number) => {
-                        const sp = storeProducts[it.productId];
+                        const isPkg = String(it.productId).startsWith('pkg:');
+                        const pkgName = isPkg && dbEvents ? (dbEvents.find(p => `pkg:${p.id}` === String(it.productId))?.title) : undefined;
+                        const sp = !isPkg ? storeProducts[it.productId] : undefined;
+                        const label = `${pkgName || sp?.name || it.productId}${it.variantName ? ` — ${it.variantName}` : ''}`;
                         return (
                           <li key={`inc-${idx}`} className="flex items-start mb-2">
                             <ChevronRight size={16} className="text-secondary mt-1 mr-2 flex-shrink-0" />
-                            <span className="text-xs md:text-sm text-gray-700 break-words">{`${sp?.name || it.productId}${it.variantName ? ` — ${it.variantName}` : ''}`} x{Number(it.quantity || 0)}</span>
+                            <span className="text-xs md:text-sm text-gray-700 break-words">{label} x{Number(it.quantity || 0)}</span>
                           </li>
                         );
                       })}
