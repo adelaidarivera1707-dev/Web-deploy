@@ -53,6 +53,7 @@ const AdminCalendar: React.FC = () => {
   const [selected, setSelected] = useState<ContractItem | null>(null);
   const [adding, setAdding] = useState(false);
   const [addForm, setAddForm] = useState<any>({ clientName: '', eventType: '', eventDate: '', eventTime: '', eventLocation: '', paymentMethod: 'pix' });
+  const [dressOptions, setDressOptions] = useState<{ id: string; name: string; image: string; color?: string }[]>([]);
 
   const load = async () => {
     setLoading(true);
@@ -71,6 +72,25 @@ const AdminCalendar: React.FC = () => {
   };
 
   useEffect(() => { load(); }, []);
+
+  useEffect(() => {
+    const loadDresses = async () => {
+      try {
+        const snap = await getDocs(collection(db, 'products'));
+        const list = snap.docs
+          .map(d => ({ id: d.id, ...(d.data() as any) }))
+          .filter((p: any) => {
+            const c = String((p as any).category || '').toLowerCase();
+            return c.includes('vestid') || c.includes('dress');
+          })
+          .map((p: any) => ({ id: p.id, name: p.name || 'Vestido', image: p.image_url || p.image || '', color: Array.isArray(p.tags) && p.tags.length ? String(p.tags[0]) : '' }));
+        setDressOptions(list);
+      } catch (e) {
+        setDressOptions([]);
+      }
+    };
+    if (selected) loadDresses();
+  }, [selected]);
 
   const monthDays = useMemo(() => {
     const first = startOfMonth(current.y, current.m);
@@ -236,6 +256,29 @@ const AdminCalendar: React.FC = () => {
               <div className="flex items-center gap-2"><MapPin size={16}/> <span>Ubicación:</span> <strong>{selected.eventLocation || '-'}</strong></div>
               <div className="flex items-center gap-2"><Phone size={16}/> <span>Tel.:</span> <strong>{selected.formSnapshot?.phone || '-'}</strong></div>
               <div className="flex items-center gap-2"><DollarSign size={16}/> <span>Pago:</span> <strong>{selected.paymentMethod || '-'}</strong> • <span>Depósito:</span> <strong>{selected.depositPaid ? 'Pago' : 'Pendiente'}</strong> • <span>Saldo:</span> <strong>{selected.finalPaymentPaid ? 'Pago' : 'Pendiente'}</strong></div>
+
+              {Array.isArray(selected.formSnapshot?.selectedDresses) && selected.formSnapshot!.selectedDresses.length > 0 && (
+                <div>
+                  <div className="text-sm font-medium mb-1">Vestidos seleccionados</div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {selected.formSnapshot!.selectedDresses
+                      .map((id: string) => dressOptions.find(d => d.id === id))
+                      .filter(Boolean)
+                      .map(dress => (
+                        <div key={(dress as any).id} className="flex items-center gap-2">
+                          <div className="w-10 h-16 rounded overflow-hidden bg-gray-100 relative">
+                            {(dress as any).image && <img src={(dress as any).image} alt={(dress as any).name} className="absolute inset-0 w-full h-full object-cover" />}
+                          </div>
+                          <div className="text-xs">
+                            <div className="font-medium text-gray-800">{(dress as any).name}</div>
+                            {(dress as any).color && <div className="text-[10px] text-gray-500">{(dress as any).color}</div>}
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              )}
+
               <div className="flex items-center gap-2"><span>Estado:</span>
                 <select value={selected.status || (selected.eventCompleted && selected.finalPaymentPaid ? 'delivered' : (selected.depositPaid === false ? 'pending_payment' : 'booked'))} onChange={async e=>{ const st = e.target.value as ContractItem['status']; await handleSaveStatus(selected.id, st); setSelected(s=> s ? ({ ...s, status: st }) : s); }} className="px-2 py-1 border rounded-none text-sm">
                   <option value="booked">Contratado</option>
