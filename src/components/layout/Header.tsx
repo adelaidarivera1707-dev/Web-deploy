@@ -280,11 +280,20 @@ const Header = () => {
         >
           <div className="flex flex-col h-full pt-24 px-6">
             <ul className="flex flex-col space-y-6 text-center">
+              <li>
+                <button
+                  onClick={() => { setMobileMenuOpen(false); toggleAdminFromHeader(); }}
+                  aria-label="Ir ao painel de administração"
+                  className="text-primary font-lato text-lg uppercase tracking-wide hover:text-secondary transition-colors flex items-center justify-center gap-2"
+                >
+                  <Eye size={18} /> Admin
+                </button>
+              </li>
               {navLinks.map((link) => (
                 <li key={link.name}>
                   {link.key === 'admin' ? (
                     <button
-                      onClick={toggleAdminFromHeader}
+                      onClick={() => { setMobileMenuOpen(false); toggleAdminFromHeader(); }}
                       className="text-primary font-lato text-lg uppercase tracking-wide hover:text-secondary transition-colors"
                     >
                       {link.name}
