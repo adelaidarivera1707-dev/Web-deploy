@@ -196,7 +196,7 @@ const AdminStorePage: React.FC = () => {
                 {getFiltered().map(product => (
                   <div key={product.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden h-full flex flex-col">
                     <div className="relative">
-                      <img loading="lazy" src={product.image_url} alt={product.name} className="w-full h-44 object-cover" />
+                      <img loading="lazy" src={safeImageSrc(product.image_url)} alt={product.name} className="w-full h-44 object-cover" />
                       {(product as any).active === false && (
                         <span className="absolute top-2 left-2 text-xs px-2 py-1 rounded bg-gray-200 text-gray-700">inactivo</span>
                       )}
@@ -279,7 +279,7 @@ const AdminStorePage: React.FC = () => {
                     {getFiltered().map(product => (
                       <div key={product.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden h-full flex flex-col">
                         <div className="relative">
-                          <img loading="lazy" src={product.image_url} alt={product.name} className="w-full h-44 object-cover" />
+                          <img loading="lazy" src={safeImageSrc(product.image_url)} alt={product.name} className="w-full h-44 object-cover" />
                           {(product as any).active === false && (
                             <span className="absolute top-2 left-2 text-xs px-2 py-1 rounded bg-gray-200 text-gray-700">inactivo</span>
                           )}
