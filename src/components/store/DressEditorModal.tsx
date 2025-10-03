@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { X, Upload, Trash2, Check } from 'lucide-react';
 import { db, storage } from '../../utils/firebaseClient';
 import { collection, addDoc, updateDoc, doc, deleteDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytes, getDownloadURL, uploadBytesResumable } from 'firebase/storage';
 
 export interface DressData {
   id?: string;
@@ -23,6 +23,7 @@ const DressEditorModal: React.FC<DressEditorModalProps> = ({ open, onClose, dres
   const [form, setForm] = useState<DressData>({ name: '', color: '', image_url: '', active: true });
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
@@ -34,17 +35,63 @@ const DressEditorModal: React.FC<DressEditorModalProps> = ({ open, onClose, dres
     }
   }, [open, dress]);
 
+  const testStorageWrite = async (): Promise<{ ok: boolean; code?: string; message?: string }> => {
+    try {
+      const blob = new Blob([`ping ${Date.now()}`], { type: 'text/plain' });
+      const key = `diagnostics/_ping_${Date.now()}.txt`;
+      const r = ref(storage, key);
+      await uploadBytes(r, blob, { cacheControl: 'no-store' });
+      return { ok: true };
+    } catch (e: any) {
+      return { ok: false, code: e?.code, message: e?.message };
+    }
+  };
+
   const handleUpload = async (file: File) => {
     try {
       setUploading(true);
-      const ext = file.name.split('.').pop() || 'jpg';
+      setUploadProgress(0);
+      // Optional preflight: try a tiny write to surface permission issues fast
+      const pre = await testStorageWrite();
+      if (!pre.ok && pre.code && pre.code.includes('unauth')) {
+        window.dispatchEvent(new CustomEvent('adminToast', { detail: { message: 'No autenticado para subir al Storage. Inicia sesión como admin.', type: 'error' } }));
+        setUploading(false);
+        setUploadProgress(null);
+        return;
+      }
+
+      const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
       const key = `dresses/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
       const r = ref(storage, key);
-      await uploadBytes(r, file);
-      const url = await getDownloadURL(r);
+      const task = uploadBytesResumable(r, file);
+
+      await new Promise<void>((resolve, reject) => {
+        task.on('state_changed',
+          (snap) => {
+            const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
+            setUploadProgress(pct);
+          },
+          (err) => reject(err),
+          () => resolve()
+        );
+      });
+
+      const url = await getDownloadURL(task.snapshot.ref);
       setForm(prev => ({ ...prev, image_url: url }));
+      window.dispatchEvent(new CustomEvent('adminToast', { detail: { message: 'Imagen subida al Storage', type: 'success' } }));
+    } catch (e: any) {
+      console.error('Upload failed', e);
+      const code = e?.code || '';
+      if (code.includes('unauthorized')) {
+        window.dispatchEvent(new CustomEvent('adminToast', { detail: { message: 'Reglas de Firebase Storage bloquean la subida (unauthorized). Revisa reglas y que el usuario admin esté autenticado.', type: 'error' } }));
+      } else if (code.includes('retry-limit-exceeded')) {
+        window.dispatchEvent(new CustomEvent('adminToast', { detail: { message: 'Problema de red/CORS al subir (retry limit). Verifica CORS, conexión y dominios autorizados.', type: 'error' } }));
+      } else {
+        window.dispatchEvent(new CustomEvent('adminToast', { detail: { message: 'Error al subir la imagen. Revisa consola y reglas de Storage.', type: 'error' } }));
+      }
     } finally {
       setUploading(false);
+      setUploadProgress(null);
     }
   };
 
@@ -152,7 +199,11 @@ const DressEditorModal: React.FC<DressEditorModalProps> = ({ open, onClose, dres
               <Upload size={18} className="inline mr-2" /> Subir imagen (JPG, PNG, WebP)
               <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={e => e.target.files && e.target.files[0] && handleUpload(e.target.files[0])} />
             </div>
-            {uploading && <div className="text-sm text-gray-500 mt-2">Subiendo...</div>}
+            {uploading && (
+              <div className="text-sm text-gray-700 mt-2">
+                Subiendo{uploadProgress !== null ? ` ${uploadProgress}%` : '...'}
+              </div>
+            )}
             {form.image_url && (
               <div className="mt-3 relative">
                 <img src={form.image_url} alt="preview" className="w-full h-48 object-cover rounded" />
