@@ -10,6 +10,7 @@ import DressEditorModal from '../components/store/DressEditorModal';
 import { db, storage } from '../utils/firebaseClient';
 import { collection, getDocs, deleteDoc, doc, updateDoc, orderBy, query, addDoc } from 'firebase/firestore';
 import { Trash2 } from 'lucide-react';
+import AdminCalendar from '../components/store/AdminCalendar';
 
 import AdminCalendar from '../components/store/AdminCalendar';
 
