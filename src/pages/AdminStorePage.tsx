@@ -195,8 +195,8 @@ const AdminStorePage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {getFiltered().map(product => (
                   <div key={product.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden h-full flex flex-col">
-                    <div className="relative aspect-[9/16] w-full">
-                      <img loading="lazy" src={safeImageSrc(product.image_url)} alt={product.name} className="absolute inset-0 w-full h-full object-cover" />
+                    <div className={`relative ${isDressCategory(product.category) ? 'aspect-[9/16]' : ''} w-full`}>
+                      <img loading="lazy" src={safeImageSrc(product.image_url)} alt={product.name} className={`${isDressCategory(product.category) ? 'absolute inset-0 w-full h-full' : 'w-full h-44'} object-cover`} />
                       {(product as any).active === false && (
                         <span className="absolute top-2 left-2 text-xs px-2 py-1 rounded bg-gray-200 text-gray-700">inactivo</span>
                       )}
@@ -278,8 +278,8 @@ const AdminStorePage: React.FC = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {getFiltered().map(product => (
                       <div key={product.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden h-full flex flex-col">
-                        <div className="relative aspect-[9/16] w-full">
-                      <img loading="lazy" src={safeImageSrc(product.image_url)} alt={product.name} className="absolute inset-0 w-full h-full object-cover" />
+                        <div className={`relative ${isDressCategory(product.category) ? 'aspect-[9/16]' : ''} w-full`}>
+                      <img loading="lazy" src={safeImageSrc(product.image_url)} alt={product.name} className={`${isDressCategory(product.category) ? 'absolute inset-0 w-full h-full' : 'w-full h-44'} object-cover`} />
                       {(product as any).active === false && (
                         <span className="absolute top-2 left-2 text-xs px-2 py-1 rounded bg-gray-200 text-gray-700">inactivo</span>
                       )}
