@@ -373,21 +373,9 @@ const ContractsManagement = () => {
             <div className="flex items-center gap-2">
               <button onClick={()=> viewing && openEdit(viewing)} className="border px-3 py-2 rounded-none text-sm">Modificar datos</button>
               <button onClick={async()=>{
-                if (!pdfRef.current || !viewing) return;
-                try {
-                  setGeneratingPdf(true);
-                  const blob = (await generatePDF(pdfRef.current, { quality: 0.4, scale: 1.1, returnType: 'blob', longSinglePage: true, marginTopPt: 0, marginBottomPt: 0 })) as Blob;
-                  const url = URL.createObjectURL(blob);
-                  const a = document.createElement('a');
-                  a.href = url;
-                  a.download = `contrato-copia-${(viewing.clientName || 'cliente').toLowerCase().replace(/\s+/g,'-')}.pdf`;
-                  document.body.appendChild(a);
-                  a.click();
-                  document.body.removeChild(a);
-                } finally {
-                  setGeneratingPdf(false);
-                }
-              }} className="border-2 border-black bg-black text-white px-3 py-2 rounded-none text-sm hover:opacity-90" disabled={generatingPdf}>{generatingPdf? 'Descargando...' : 'Descargar'}</button>
+                if (!viewing) return;
+                navigate('/admin/contract-preview', { state: { contract: viewing } });
+              }} className="border-2 border-black bg-black text-white px-3 py-2 rounded-none text-sm hover:opacity-90">Descargar</button>
               <button onClick={()=>setViewing(null)} className="text-gray-500 hover:text-gray-900">✕</button>
             </div>
           </div>
@@ -651,7 +639,7 @@ const ContractsManagement = () => {
                 <div><span className="text-gray-600">Fecha contrato:</span> <span className="font-medium">{viewing.contractDate || '-'}</span></div>
                 <div><span className="text-gray-600">Ubicación:</span> <span className="font-medium">{(viewing as any).eventLocation || '-'}</span></div>
                 <div><span className="text-gray-600">Paquete:</span> <span className="font-medium">{(viewing as any).packageTitle || '-'}</span></div>
-                <div><span className="text-gray-600">Duración:</span> <span className="font-medium">{(viewing as any).packageDuration || '-'}</span></div>
+                <div><span className="text-gray-600">Duraci��n:</span> <span className="font-medium">{(viewing as any).packageDuration || '-'}</span></div>
                 <div><span className="text-gray-600">Método de pago:</span> <span className="font-medium">{viewing.paymentMethod || '-'}</span></div>
                 {(() => {
                   const servicesTotal = (Array.isArray(viewing.services) ? viewing.services : []).reduce((sum, it: any) => {
