@@ -224,7 +224,9 @@ const ContractPreview = ({ data, onConfirm, onBack }: ContractPreviewProps) => {
   };
 
   const formatDate = (dateStr: string) => {
-    return format(new Date(dateStr), "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
+    const [y, m, d] = String(dateStr || '').split('-').map(Number);
+    const localDate = (y && m && d) ? new Date(y, (m - 1), d) : new Date();
+    return format(localDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
   };
 
   const formatTime = (timeStr: string) => {
