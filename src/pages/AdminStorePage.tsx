@@ -166,7 +166,7 @@ const AdminStorePage: React.FC = () => {
   };
 
   return (
-    <section className={`pt-24 pb-12 ${adminDark ? 'admin-dark' : ''}`}>
+    <section className={`pt-20 pb-12 ${adminDark ? 'admin-dark' : ''}`}>
       <div className="container-custom">
         <div className="mb-3 space-y-2">
           <div className="flex items-center gap-2 admin-tabs">
