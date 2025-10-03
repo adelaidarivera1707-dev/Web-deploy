@@ -58,7 +58,7 @@ const ContractsManagement = () => {
   const [templates, setTemplates] = useState<WorkflowTemplate[]>([]);
   const [tplEditing, setTplEditing] = useState<WorkflowTemplate | null>(null);
   const [defaults, setDefaults] = useState<{ packages?: string; products?: string }>({});
-  const [packagesList, setPackagesList] = useState<{ id: string; title: string; duration?: string }[]>([]);
+  const [packagesList, setPackagesList] = useState<{ id: string; title: string; duration?: string; price?: number }[]>([]);
 
   const fetchContracts = async () => {
     setLoading(true);
@@ -111,7 +111,7 @@ const ContractsManagement = () => {
     const fetchPkgs = async () => {
       try {
         const snap = await getDocs(collection(db, 'packages'));
-        const list = snap.docs.map(d => ({ id: d.id, title: (d.data() as any).title || 'Paquete', duration: (d.data() as any).duration || '' }));
+        const list = snap.docs.map(d => ({ id: d.id, title: (d.data() as any).title || 'Paquete', duration: (d.data() as any).duration || '', price: Number((d.data() as any).price || 0) }));
         setPackagesList(list);
       } catch {
         setPackagesList([]);
@@ -152,6 +152,28 @@ const ContractsManagement = () => {
     return mapped.map(m => m.c);
   }, [contracts, search]);
 
+  const computeAmounts = (c: ContractItem) => {
+    const servicesList = Array.isArray(c.services) ? c.services : [];
+    let servicesTotal = servicesList.reduce((sum, it: any) => {
+      const qty = Number(it.quantity ?? 1);
+      const price = Number(String(it.price || '').replace(/[^0-9]/g, ''));
+      return sum + (price * qty);
+    }, 0);
+    if (servicesTotal === 0 && (c as any).packageTitle) {
+      const pkg = packagesList.find(p => p.title === (c as any).packageTitle);
+      if (pkg && pkg.price && !isNaN(pkg.price)) servicesTotal = Number(pkg.price);
+    }
+    const storeTotal = (Array.isArray(c.storeItems) ? c.storeItems : []).reduce((sum, it: any) => sum + (Number(it.price) * Number(it.quantity || 1)), 0);
+    const travel = Number(c.travelFee || 0);
+    const totalAmount = Math.round(servicesTotal + storeTotal + travel);
+
+    let depositAmount = 0;
+    if (servicesTotal <= 0 && storeTotal > 0) depositAmount = Math.ceil((storeTotal + travel) * 0.5);
+    else depositAmount = Math.ceil(servicesTotal * 0.2 + storeTotal * 0.5);
+    const remainingAmount = Math.max(0, Math.round(totalAmount - depositAmount));
+    return { servicesTotal, storeTotal, travel, totalAmount, depositAmount, remainingAmount };
+  };
+
   const toggleFlag = async (id: string, field: keyof ContractItem) => {
     const current = contracts.find(c => c.id === id);
     if (!current) return;
@@ -182,48 +204,43 @@ const ContractsManagement = () => {
     if (!editing) return;
     const id = editing.id;
 
-    // Compute deposit/remaining based on updated fields
-    const services = Array.isArray(editing.services) ? editing.services : [];
-    const storeItems = Array.isArray(editing.storeItems) ? editing.storeItems : [];
-    const servicesTotal = services.reduce((sum: number, it: any) => {
-      const qty = Number(it.quantity ?? 1);
-      const price = Number(String(it.price || '').replace(/[^0-9]/g, ''));
-      return sum + (price * qty);
-    }, 0);
-    const storeTotal = storeItems.reduce((sum: number, it: any) => sum + (Number(it.price) * Number(it.quantity || 1)), 0);
-    const travelFee = Number(editForm.travelFee ?? editing.travelFee ?? 0);
-    const manualTotal = Number(editForm.totalAmount ?? NaN);
-    const baseTotal = isNaN(manualTotal) ? (Number(editing.totalAmount || 0) || (servicesTotal + storeTotal + travelFee)) : manualTotal;
+    // Merge editing with form changes to compute correctly
+    const merged: ContractItem = {
+      ...editing,
+      clientName: String(editForm.clientName || editing.clientName || ''),
+      clientEmail: String(editForm.clientEmail || editing.clientEmail || ''),
+      eventType: String(editForm.eventType || editing.eventType || ''),
+      eventDate: String(editForm.eventDate || editing.eventDate || ''),
+      paymentMethod: String(editForm.paymentMethod || editing.paymentMethod || ''),
+      message: String(editForm.message || editing.message || ''),
+      totalAmount: Number(editForm.totalAmount ?? editing.totalAmount ?? 0),
+      travelFee: Number(editForm.travelFee ?? editing.travelFee ?? 0),
+      ...(editForm.eventTime !== undefined ? { eventTime: String(editForm.eventTime || '') } : {}),
+      ...(editForm.eventLocation !== undefined ? { eventLocation: String(editForm.eventLocation || '') } : {}),
+      ...(editForm.packageTitle !== undefined ? { packageTitle: String(editForm.packageTitle || '') } : {}),
+      ...(editForm.packageDuration !== undefined ? { packageDuration: String(editForm.packageDuration || '') } : {}),
+    } as any;
 
-    let depositAmount = 0;
-    if (servicesTotal <= 0 && storeTotal > 0) {
-      depositAmount = Math.ceil((storeTotal + travelFee) * 0.5);
-    } else {
-      depositAmount = Math.ceil(servicesTotal * 0.2 + storeTotal * 0.5);
-    }
-    const totalAmount = Math.round(baseTotal);
-    const remainingAmount = Math.max(0, Math.round(totalAmount - depositAmount));
+    const calc = computeAmounts(merged);
 
     const payload: Partial<ContractItem> = {
-      clientName: String(editForm.clientName || ''),
-      clientEmail: String(editForm.clientEmail || ''),
-      eventType: String(editForm.eventType || ''),
-      eventDate: String(editForm.eventDate || ''),
+      clientName: merged.clientName,
+      clientEmail: merged.clientEmail,
+      eventType: merged.eventType,
+      eventDate: merged.eventDate,
       eventCompleted: editing.eventCompleted,
-      totalAmount,
-      travelFee,
-      paymentMethod: String(editForm.paymentMethod || ''),
-      message: String(editForm.message || ''),
-      // Persist computed amounts for dashboard/UI usage
-      ...( { depositAmount, remainingAmount } as any )
+      totalAmount: calc.totalAmount,
+      travelFee: merged.travelFee,
+      paymentMethod: merged.paymentMethod,
+      message: merged.message,
+      ...(merged.eventTime !== undefined ? { eventTime: merged.eventTime } : {}),
+      ...(merged.eventLocation !== undefined ? { eventLocation: merged.eventLocation } : {}),
+      ...(merged.packageTitle !== undefined ? { packageTitle: merged.packageTitle } : {}),
+      ...(merged.packageDuration !== undefined ? { packageDuration: merged.packageDuration } : {}),
+      ...( { depositAmount: calc.depositAmount, remainingAmount: calc.remainingAmount } as any )
     } as any;
-    if (editForm.eventTime != null) (payload as any).eventTime = String(editForm.eventTime || '');
-    if (editForm.eventLocation != null) (payload as any).eventLocation = String(editForm.eventLocation || '');
-    if (editForm.packageTitle != null) (payload as any).packageTitle = String(editForm.packageTitle || '');
-    if (editForm.packageDuration != null) (payload as any).packageDuration = String(editForm.packageDuration || '');
 
     await updateDoc(doc(db, 'contracts', id), payload as any);
-    // Reflect immediately in current viewing (avoid stale PDF)
     setViewing(v => v && v.id === id ? ({ ...v, ...payload }) as any : v);
     setEditing(null);
     await fetchContracts();
@@ -620,7 +637,7 @@ const ContractsManagement = () => {
                   <select onChange={(e)=>{
                     const id = e.target.value; const tpl = templates.find(t=>t.id===id) || null; applyTemplateToContract(tpl);
                   }} className="border px-2 py-2 rounded-none text-sm">
-                    <option value="">Elegir plantilla…</option>
+                    <option value="">Elegir plantilla���</option>
                     {templates.map(t=> <option key={t.id} value={t.id}>{t.name}</option>)}
                   </select>
                   <button onClick={()=> loadDefaults()} className="text-xs text-gray-600 underline">Cargar predeterminados</button>
@@ -642,21 +659,12 @@ const ContractsManagement = () => {
                 <div><span className="text-gray-600">Duraci��n:</span> <span className="font-medium">{(viewing as any).packageDuration || '-'}</span></div>
                 <div><span className="text-gray-600">Método de pago:</span> <span className="font-medium">{viewing.paymentMethod || '-'}</span></div>
                 {(() => {
-                  const servicesTotal = (Array.isArray(viewing.services) ? viewing.services : []).reduce((sum, it: any) => {
-                    const qty = Number(it.quantity ?? 1);
-                    const price = Number(String(it.price || '').replace(/[^0-9]/g, ''));
-                    return sum + (price * qty);
-                  }, 0);
-                  const storeTotal = (Array.isArray(viewing.storeItems) ? viewing.storeItems : []).reduce((sum, it: any) => sum + (Number(it.price) * Number(it.quantity || 1)), 0);
-                  const travel = Number(viewing.travelFee || 0);
-                  const total = servicesTotal + storeTotal + travel;
-                  const depositAmount = Math.round(servicesTotal * 0.2 + storeTotal * 0.5);
-                  const remainingAmount = Math.max(0, Math.round(total - depositAmount));
+                  const calc = computeAmounts(viewing);
                   return (
                     <>
                       <div className="flex items-center gap-2">
                         <span className="text-gray-600">Depósito:</span>
-                        <span className="font-medium">R$ {depositAmount.toFixed(0)}</span>
+                        <span className="font-medium">R$ {calc.depositAmount.toFixed(0)}</span>
                         <span className={`px-2 py-0.5 rounded text-xs ${viewing.depositPaid? 'bg-green-100 text-green-700':'bg-red-100 text-red-700'}`}>{viewing.depositPaid? 'Pagado':'No pagado'}</span>
                         <button
                           onClick={async ()=>{ await toggleFlag(viewing.id, 'depositPaid'); setViewing(v=> v? { ...v, depositPaid: !v.depositPaid }: v); }}
@@ -665,7 +673,7 @@ const ContractsManagement = () => {
                       </div>
                       <div className="flex items-center gap-2">
                         <span className="text-gray-600">Restante:</span>
-                        <span className="font-medium">R$ {remainingAmount.toFixed(0)}</span>
+                        <span className="font-medium">R$ {calc.remainingAmount.toFixed(0)}</span>
                         <span className={`px-2 py-0.5 rounded text-xs ${viewing.finalPaymentPaid? 'bg-green-100 text-green-700':'bg-red-100 text-red-700'}`}>{viewing.finalPaymentPaid? 'Pagado':'No pagado'}</span>
                         <button
                           onClick={async ()=>{ await toggleFlag(viewing.id, 'finalPaymentPaid'); setViewing(v=> v? { ...v, finalPaymentPaid: !v.finalPaymentPaid }: v); }}
@@ -675,7 +683,7 @@ const ContractsManagement = () => {
                     </>
                   );
                 })()}
-                <div><span className="text-gray-600">Total:</span> <span className="font-medium">R$ {(viewing.totalAmount ?? 0).toFixed(0)}</span></div>
+                <div><span className="text-gray-600">Total:</span> <span className="font-medium">R$ {computeAmounts(viewing).totalAmount.toFixed(0)}</span></div>
                 <div><span className="text-gray-600">Deslocamento:</span> <span className="font-medium">R$ {(viewing.travelFee ?? 0).toFixed(0)}</span></div>
               </div>
 
