@@ -61,6 +61,7 @@ const ContractsManagement = () => {
   const [packagesList, setPackagesList] = useState<{ id: string; title: string; duration?: string; price?: number }[]>([]);
   const [creating, setCreating] = useState(false);
   const [createForm, setCreateForm] = useState<any>({ clientName: '', clientEmail: '', clientPhone: '', eventType: '', eventDate: '', eventTime: '', eventLocation: '', packageTitle: '', packageDuration: '', paymentMethod: 'pix', totalAmount: 0, travelFee: 0, message: '' });
+  const [dressOptions, setDressOptions] = useState<{ id: string; name: string; image: string; color?: string }[]>([]);
 
   const fetchContracts = async () => {
     setLoading(true);
@@ -108,6 +109,25 @@ const ContractsManagement = () => {
   };
 
   useEffect(() => { fetchContracts(); }, []);
+
+  useEffect(() => {
+    const loadDresses = async () => {
+      try {
+        const snap = await getDocs(collection(db, 'products'));
+        const list = snap.docs
+          .map(d => ({ id: d.id, ...(d.data() as any) }))
+          .filter((p: any) => {
+            const c = String((p as any).category || '').toLowerCase();
+            return c.includes('vestid') || c.includes('dress');
+          })
+          .map((p: any) => ({ id: p.id, name: p.name || 'Vestido', image: p.image_url || p.image || '', color: Array.isArray(p.tags) && p.tags.length ? String(p.tags[0]) : '' }));
+        setDressOptions(list);
+      } catch (e) {
+        setDressOptions([]);
+      }
+    };
+    if (viewing) loadDresses();
+  }, [viewing]);
 
   useEffect(() => {
     const fetchPkgs = async () => {
@@ -742,6 +762,26 @@ const ContractsManagement = () => {
                   <span className="text-xs text-gray-600">Programado para: {new Date(viewing.reminders.find(r=>r.type==='finalPayment')!.sendAt).toLocaleString('es-ES')}</span>
                 )}
               </div>
+
+              {Array.isArray((viewing as any).formSnapshot?.selectedDresses) && (viewing as any).formSnapshot.selectedDresses.length > 0 && (
+                <div>
+                  <div className="text-sm font-medium mb-2">Vestidos seleccionados</div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    {((viewing as any).formSnapshot.selectedDresses as string[])
+                      .map(id => dressOptions.find(d => d.id === id))
+                      .filter(Boolean)
+                      .map(dress => (
+                        <div key={(dress as any).id} className="text-center">
+                          <div className="relative aspect-[9/16] overflow-hidden rounded-lg mb-1 bg-gray-100">
+                            {(dress as any).image && <img loading="lazy" src={(dress as any).image} alt={(dress as any).name} className="absolute inset-0 w-full h-full object-cover" />}
+                          </div>
+                          <div className="text-xs font-medium text-gray-800 truncate">{(dress as any).name}</div>
+                          {(dress as any).color && <div className="text-[10px] text-gray-500">{(dress as any).color}</div>}
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              )}
 
               {viewing.formSnapshot && (
                 <div>
