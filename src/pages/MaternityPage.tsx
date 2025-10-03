@@ -61,7 +61,7 @@ const MaternityPage = () => {
     (async () => {
       try {
         const data = await fetchPackages();
-        setDbPackages(data.filter(p => (p as any).active !== false && (p.type === 'maternity' || (p.category || '').toLowerCase().includes('maternity'))));
+        setDbPackages(data.filter(p => (p as any).active !== false && (p.type === 'maternity' || (p.category || '').toLowerCase().includes('maternity')) && (!((p as any).displayPage) || (p as any).displayPage === 'maternity')));
       } catch (e) {
         console.warn('MaternityPage: falling back to static packages');
         setDbPackages(null);
