@@ -12,8 +12,6 @@ import { collection, getDocs, deleteDoc, doc, updateDoc, orderBy, query, addDoc 
 import { Trash2 } from 'lucide-react';
 import AdminCalendar from '../components/store/AdminCalendar';
 
-import AdminCalendar from '../components/store/AdminCalendar';
-
 const AdminStorePage: React.FC = () => {
   const [adminView, setAdminView] = useState<'dashboard' | 'products' | 'orders' | 'contracts' | 'packages' | 'coupons' | 'settings' | 'calendar'>(() => {
     try { return (localStorage.getItem('admin_view') as any) || 'dashboard'; } catch { return 'dashboard'; }
