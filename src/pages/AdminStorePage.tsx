@@ -168,8 +168,8 @@ const AdminStorePage: React.FC = () => {
   return (
     <section className={`pt-32 pb-16 ${adminDark ? 'admin-dark' : ''}`}>
       <div className="container-custom">
-        <div className="mb-8 space-y-6">
-          <div className="flex items-center gap-2">
+        <div className="mb-3 space-y-2">
+          <div className="flex items-center gap-2 admin-tabs">
             <button onClick={() => setAdminView('dashboard')} className={`px-4 py-2 rounded-none border-2 ${adminView==='dashboard' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Panel</button>
             <button onClick={() => setAdminView('products')} className={`px-4 py-2 rounded-none border-2 ${adminView==='products' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Productos</button>
             <button onClick={() => setAdminView('orders')} className={`px-4 py-2 rounded-none border-2 ${adminView==='orders' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Órdenes</button>
@@ -258,7 +258,7 @@ const AdminStorePage: React.FC = () => {
         {adminFullscreen && (
           <div className="fixed inset-0 z-50 bg-white overflow-auto p-6">
             <div className="max-w-7xl mx-auto">
-              <div className="flex items-center gap-2 mb-6">
+              <div className="flex items-center gap-2 mb-3 admin-tabs">
                 <button onClick={() => setAdminView('dashboard')} className={`px-4 py-2 rounded-none border-2 ${adminView==='dashboard' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Panel</button>
                 <button onClick={() => setAdminView('products')} className={`px-4 py-2 rounded-none border-2 ${adminView==='products' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Productos</button>
                 <button onClick={() => setAdminView('orders')} className={`px-4 py-2 rounded-none border-2 ${adminView==='orders' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Órdenes</button>
@@ -338,6 +338,10 @@ const AdminStorePage: React.FC = () => {
 
       </div>
       <style>{`
+        /* Compact admin tabs */
+        .admin-tabs button { padding: 0.25rem 0.5rem; border-width: 1px; font-size: 0.875rem; line-height: 1.2; }
+        .admin-tabs { gap: 0.25rem !important; }
+
         .admin-dark { background-color: #0b0b0b; color: #e5e5e5; }
         .admin-dark .bg-white { background-color: #121212 !important; color: #e5e5e5; }
         .admin-dark .text-gray-600 { color: #c7c7c7 !important; }
