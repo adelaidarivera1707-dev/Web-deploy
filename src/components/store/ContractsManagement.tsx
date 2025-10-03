@@ -171,22 +171,50 @@ const ContractsManagement = () => {
   const saveEdit = async () => {
     if (!editing) return;
     const id = editing.id;
+
+    // Compute deposit/remaining based on updated fields
+    const services = Array.isArray(editing.services) ? editing.services : [];
+    const storeItems = Array.isArray(editing.storeItems) ? editing.storeItems : [];
+    const servicesTotal = services.reduce((sum: number, it: any) => {
+      const qty = Number(it.quantity ?? 1);
+      const price = Number(String(it.price || '').replace(/[^0-9]/g, ''));
+      return sum + (price * qty);
+    }, 0);
+    const storeTotal = storeItems.reduce((sum: number, it: any) => sum + (Number(it.price) * Number(it.quantity || 1)), 0);
+    const travelFee = Number(editForm.travelFee ?? editing.travelFee ?? 0);
+    const manualTotal = Number(editForm.totalAmount ?? NaN);
+    const baseTotal = isNaN(manualTotal) ? (Number(editing.totalAmount || 0) || (servicesTotal + storeTotal + travelFee)) : manualTotal;
+
+    let depositAmount = 0;
+    if (servicesTotal <= 0 && storeTotal > 0) {
+      depositAmount = Math.ceil((storeTotal + travelFee) * 0.5);
+    } else {
+      depositAmount = Math.ceil(servicesTotal * 0.2 + storeTotal * 0.5);
+    }
+    const totalAmount = Math.round(baseTotal);
+    const remainingAmount = Math.max(0, Math.round(totalAmount - depositAmount));
+
     const payload: Partial<ContractItem> = {
       clientName: String(editForm.clientName || ''),
       clientEmail: String(editForm.clientEmail || ''),
       eventType: String(editForm.eventType || ''),
       eventDate: String(editForm.eventDate || ''),
       eventCompleted: editing.eventCompleted,
-      totalAmount: Number(editForm.totalAmount || 0),
-      travelFee: Number(editForm.travelFee || 0),
+      totalAmount,
+      travelFee,
       paymentMethod: String(editForm.paymentMethod || ''),
       message: String(editForm.message || ''),
+      // Persist computed amounts for dashboard/UI usage
+      ...( { depositAmount, remainingAmount } as any )
     } as any;
     if (editForm.eventTime != null) (payload as any).eventTime = String(editForm.eventTime || '');
     if (editForm.eventLocation != null) (payload as any).eventLocation = String(editForm.eventLocation || '');
     if (editForm.packageTitle != null) (payload as any).packageTitle = String(editForm.packageTitle || '');
     if (editForm.packageDuration != null) (payload as any).packageDuration = String(editForm.packageDuration || '');
+
     await updateDoc(doc(db, 'contracts', id), payload as any);
+    // Reflect immediately in current viewing (avoid stale PDF)
+    setViewing(v => v && v.id === id ? ({ ...v, ...payload }) as any : v);
     setEditing(null);
     await fetchContracts();
   };
