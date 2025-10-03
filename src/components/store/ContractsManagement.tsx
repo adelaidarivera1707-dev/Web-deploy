@@ -88,11 +88,21 @@ const ContractsManagement = () => {
   };
 
   const fetchTemplates = async () => {
-    const snap = await getDocs(collection(db, 'workflowTemplates'));
-    const list = snap.docs.map(d => ({ id: d.id, ...(d.data() as any) })) as WorkflowTemplate[];
-    setTemplates(list);
-    const defDoc = await getDoc(doc(db, 'settings', 'workflowDefaults'));
-    setDefaults((defDoc.exists() ? defDoc.data() : {}) as any);
+    try {
+      const snap = await getDocs(collection(db, 'workflowTemplates'));
+      const list = snap.docs.map(d => ({ id: d.id, ...(d.data() as any) })) as WorkflowTemplate[];
+      setTemplates(list);
+    } catch (e) {
+      console.warn('No se pudieron cargar templates de workflow', e);
+      setTemplates([]);
+    }
+    try {
+      const defDoc = await getDoc(doc(db, 'settings', 'workflowDefaults'));
+      setDefaults((defDoc.exists() ? defDoc.data() : {}) as any);
+    } catch (e) {
+      console.warn('No se pudieron cargar defaults de workflow', e);
+      setDefaults({});
+    }
   };
 
   useEffect(() => { fetchContracts(); }, []);
