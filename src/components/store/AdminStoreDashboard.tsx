@@ -208,6 +208,10 @@ const AdminStoreDashboard: React.FC<AdminProps> = ({ onNavigate }) => {
               Ver Contratos
               <ArrowUpRight size={18} />
             </button>
+            <button onClick={() => onNavigate?.('calendar')} className="w-full border-2 border-black text-black px-4 py-3 rounded-none hover:bg-black hover:text-white flex items-center justify-center gap-2">
+              Ver Calendario
+              <ArrowUpRight size={18} />
+            </button>
             <button onClick={() => onNavigate?.('products')} className="w-full border-2 border-black text-black px-4 py-3 rounded-none hover:bg-black hover:text-white">
               Administrar Productos
             </button>
