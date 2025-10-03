@@ -367,39 +367,38 @@ const ContractPreview = ({ data, onConfirm, onBack }: ContractPreviewProps) => {
               {/* Cláusula 3 */}
               <section>
                 <h3 className="text-lg font-medium text-primary mb-4 pb-2 border-b border-secondary">
-                  CLÁUSULA 3ª – DA ENTREGA E DIREITOS AUTORAIS
+                  CLÁUSULA 3ª – DO ENSAIO PRÉ-WEDDING OU ENSAIO FOTOGRÁFICO
                 </h3>
                 <div className="space-y-3 text-sm text-gray-700">
-                  <p>3.1. As fotografias serão entregues em formato digital através de galeria online privada.</p>
-                  <p>3.2. Os direitos autorais das fotografias pertencem ao fotógrafo, sendo concedido ao contratante o direito de uso pessoal.</p>
-                  <p>3.3. É vedada a reprodu��ão comercial das imagens sem autorização expressa da contratada.</p>
-                  <p>3.4. A contratada poderá utilizar as imagens para fins de divulgação de seu trabalho.</p>
+                  <p>No caso de contratação de ensaio pré-wedding ou ensaio fotográfico, o(a) CONTRATANTE deverá informar à CONTRATADA a data escolhida com, no mínimo, 15 (quinze) dias de antecedência, para que a equipe possa se organizar e enviar o formulário de agendamento.</p>
+                  <p>Quando se tratar de casamento, o ensaio pré-wedding deverá ser realizado até 15 (quinze) dias antes da data do evento.</p>
+                  <p><strong>Parágrafo único – Reagendamento de ensaios:</strong> Em caso de condições climáticas desfavoráveis no dia do ensaio, o reagendamento poderá ser realizado sem qualquer custo adicional. O(a) CONTRATANTE terá direito a 1 (uma) remarcação gratuita por outros motivos pessoais, desde que avise com pelo menos 7 (sete) dias de antecedência. A partir da segunda remarcação por motivos pessoais, será necessário efetuar novo pagamento do valor da reserva (20%) para garantir a nova data.</p>
                 </div>
               </section>
 
               {/* Cláusula 4 */}
               <section>
                 <h3 className="text-lg font-medium text-primary mb-4 pb-2 border-b border-secondary">
-                  CLÁUSULA 4ª – DO CANCELAMENTO E REAGENDAMENTO
+                  CLÁUSULA 4ª – DAS HORAS EXTRAS E ATRASOS
                 </h3>
                 <div className="space-y-3 text-sm text-gray-700">
-                  <p>4.1. Em caso de cancelamento pela contratante com mais de 30 dias de antecedência, será devolvido 50% do valor pago.</p>
-                  <p>4.2. Cancelamentos com menos de 30 dias não terão devolução do valor pago.</p>
-                  <p>4.3. Reagendamentos estão sujeitos à disponibilidade da agenda da contratada.</p>
-                  <p>4.4. Casos de força maior serão analisados individualmente.</p>
+                  <p>O(a) CONTRATANTE reconhece que os horários contratados são previamente definidos por ele(a) e que devem ser rigorosamente cumpridos.</p>
+                  <p>A CONTRATADA não se responsabiliza por atrasos de terceiros (como cerimônias religiosas, buffets, maquiadores, etc.) que impactem na realização do evento e demandem horas extras.</p>
+                  <p>A contratação de horas extras no dia do evento estará sujeita à disponibilidade da agenda da CONTRATADA, que se reserva o direito de aceitar ou recusar tal solicitação.</p>
                 </div>
               </section>
 
               {/* Cláusula 5 */}
               <section>
                 <h3 className="text-lg font-medium text-primary mb-4 pb-2 border-b border-secondary">
-                  CLÁUSULA 5ª – DAS DISPOSIÇÕES GERAIS
+                  CLÁUSULA 5ª – DA RESCISÃO E MUDANÇA DE DATA
                 </h3>
                 <div className="space-y-3 text-sm text-gray-700">
-                  <p>5.1. Este contrato é regido pelas leis brasileiras.</p>
-                  <p>5.2. Eventuais conflitos serão resolvidos preferencialmente por mediação.</p>
-                  <p>5.3. As partes elegem o foro da comarca de Curitiba/PR para dirimir questões oriundas deste contrato.</p>
-                  <p>5.4. Este contrato entra em vigor na data de sua assinatura.</p>
+                  <p>O contrato poderá ser rescindido por qualquer das partes mediante aviso prévio por escrito de, no mínimo, 30 (trinta) dias.</p>
+                  <p>Em caso de desistência injustificada pelo(a) CONTRATANTE, o valor pago a título de reserva de data (20%) não será devolvido.</p>
+                  <p>Se a rescisão ocorrer por parte da CONTRATADA sem justa causa, esta deverá restituir integralmente os valores pagos, acrescidos de multa de 1/3 (um terço) sobre o valor já pago.</p>
+                  <p>Em caso de mudança de data do evento, o(a) CONTRATANTE deverá informar à CONTRATADA com antecedência mínima de 30 (trinta) dias, ficando a alteração condicionada à disponibilidade da agenda.</p>
+                  <p><strong>Parágrafo único – Sessões fotográficas:</strong> O reagendamento de ensaios deve ser solicitado com, no mínimo, 3 (três) dias de antecedência. Caso a solicitação ocorra fora deste prazo, a remarcação estará sujeita à cobrança de nova reserva de data (20%). Se a nova data não estiver disponível, aplicam-se as disposições de rescisão previstas nos itens anteriores.</p>
                 </div>
               </section>
 
