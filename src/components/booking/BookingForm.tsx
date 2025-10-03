@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BookingFormData } from '../../types/booking';
+import { withFirestoreRetry } from '../../utils/firestoreRetry';
 import { maternityPackages } from '../../data/maternityData';
 import DressSelector from './DressSelector';
 import { db } from '../../utils/firebaseClient';
@@ -142,7 +143,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ initialData, packages, onSubm
   useEffect(() => {
     (async () => {
       try {
-        const snap = await getDocs(collection(db, 'products'));
+        const snap = await withFirestoreRetry(() => getDocs(collection(db, 'products')));
         const list: DressOption[] = snap.docs
           .map(d => ({ id: d.id, ...(d.data() as any) }))
           .filter(p => {
