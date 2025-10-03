@@ -122,11 +122,26 @@ const AdminCalendar: React.FC = () => {
 
   const eventsByDay = useMemo(() => {
     const map = new Map<string, ContractItem[]>();
+    const toMinutes = (t?: string) => {
+      if (!t) return 0;
+      const [h, m] = t.split(':').map(Number);
+      return (Number.isFinite(h) ? h : 0) * 60 + (Number.isFinite(m) ? m : 0);
+    };
     filteredEvents.forEach(ev => {
       if (!ev.eventDate) return;
       const key = ev.eventDate;
       map.set(key, [...(map.get(key) || []), ev]);
     });
+    // sort each day's events by time asc
+    for (const [k, list] of Array.from(map.entries())) {
+      list.sort((a, b) => {
+        const ta = toMinutes(a.eventTime);
+        const tb = toMinutes(b.eventTime);
+        if (ta !== tb) return ta - tb;
+        return String(a.clientName || '').localeCompare(String(b.clientName || ''));
+      });
+      map.set(k, list);
+    }
     return map;
   }, [filteredEvents]);
 
