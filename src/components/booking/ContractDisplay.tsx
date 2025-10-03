@@ -76,7 +76,7 @@ const ContractDisplay = ({ onAccept, onReject }: ContractDisplayProps) => {
                 <p>No caso de contratação de ensaio pré-wedding ou ensaio fotográfico, o(a) CONTRATANTE deverá informar à CONTRATADA a data escolhida com, no mínimo, 3 (três) dias de antecedência, para que a equipe possa se organizar e enviar o formulário de agendamento.</p>
                 <p>Quando se tratar de casamento, o ensaio pré-wedding deverá ser realizado até 3 (três) dias antes da data do evento.</p>
                 <p><strong>Parágrafo único – Reagendamento de ensaios:</strong> Em caso de condições climáticas desfavoráveis no dia do ensaio, o reagendamento poderá ser realizado sem qualquer custo adicional. O(a) CONTRATANTE terá direito a 1 (uma) remarcação gratuita por outros motivos pessoais, desde que avise com pelo menos 3 (três) dias de antecedência. A partir da segunda remarcação por motivos pessoais, será necessário efetuar novo pagamento do valor da reserva (20%) para garantir a nova data.</p>
-                <p><strong>Exceção:</strong> Situações imprevisíveis e de força maior, tais como acidentes, doenças súbitas ou emergências comprovadas, não serão consideradas como remarcação pessoal e poderão ser reagendadas sem custo adicional, mediante comunicação imediata à <strong>CONTRATADA<strong>.</p>
+                <p><strong>Exceção:</strong> Situações imprevisíveis e de força maior, tais como acidentes, doenças súbitas ou emergências comprovadas, não serão consideradas como remarcação pessoal e poderão ser reagendadas sem custo adicional, mediante comunicação imediata à <strong>CONTRATADA</strong>.</p>
               </div>
             </section>
 
