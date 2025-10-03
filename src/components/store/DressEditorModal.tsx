@@ -96,12 +96,14 @@ const DressEditorModal: React.FC<DressEditorModalProps> = ({ open, onClose, dres
   };
 
   const reuploadToBucket = async (src: string): Promise<string> => {
+    // Only attempt reupload for data URLs; external HTTP(S) often block CORS
     try {
-      // Fetch as blob (supports data URLs and http URLs)
-      const blob = src.startsWith('data:')
-        ? (await (await fetch(src)).blob())
-        : (await fetch(src, { mode: 'cors' })).blob();
-      const b = await blob;
+      if (!src) return src;
+      if (isFirebaseUrl(src)) return src;
+      if (!src.startsWith('data:')) return src;
+
+      const res = await fetch(src);
+      const b = await res.blob();
       const ext = (b.type && b.type.split('/')[1]) || 'jpg';
       const key = `dresses/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
       const r = ref(storage, key);
