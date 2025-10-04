@@ -149,39 +149,22 @@ const InvestmentsManagement: React.FC = () => {
               </tr>
             )}
             {items.map(inv => {
-              const list = groupedByInvestment.get(inv.id) || [];
-              const status = list.length ? (list.every(i => i.status === 'pagado') ? 'pagado' : 'pendiente') : 'pendiente';
               return (
                 <tr key={inv.id} className="border-t">
-                  <td className="px-4 py-2">{inv.date}</td>
-                  <td className="px-4 py-2 capitalize">{inv.category}</td>
+                  <td className="px-4 py-2 whitespace-nowrap">{inv.date}</td>
                   <td className="px-4 py-2">
-                    <div className="flex items-center gap-2">
-                      {inv.productImageUrl && (
-                        <img src={inv.productImageUrl} alt="Producto" className="w-10 h-10 object-cover rounded border" />
-                      )}
-                      <span>{inv.description}</span>
-                      {inv.productUrl && (
-                        <a href={inv.productUrl} target="_blank" rel="noreferrer" className="text-blue-600 underline text-xs" aria-label="Abrir link de compra">ver</a>
-                      )}
-                    </div>
+                    <button onClick={() => setDetails({ open: true, inv })} className="w-full text-left">
+                      <div className="flex items-center gap-2">
+                        {inv.productImageUrl && (
+                          <img src={inv.productImageUrl} alt="Producto" className="w-10 h-10 object-cover rounded border" />
+                        )}
+                        <span className="max-w-[360px] truncate block" title={inv.description}>{inv.description}</span>
+                      </div>
+                    </button>
                   </td>
-                  <td className="px-4 py-2">R$ {Number(inv.totalValue || 0).toFixed(2)}</td>
-                  <td className="px-4 py-2">{inv.installmentsCount}</td>
-                  <td className="px-4 py-2">R$ {Number(inv.installmentValue || 0).toFixed(2)}</td>
-                  <td className="px-4 py-2">{inv.paymentMethod}</td>
-                  <td className="px-4 py-2">
-                    <span className={`px-2 py-1 rounded text-xs ${status === 'pagado' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>{status}</span>
-                  </td>
-                  <td className="px-4 py-2 min-w-[280px]">
-                    <div className="flex flex-wrap gap-2">
-                      {list.sort((a,b)=> a.installmentNumber-b.installmentNumber).map(inst => (
-                        <button key={inst.id} onClick={() => markPaid(inst.id, inst.status !== 'pagado')} className={`text-xs px-2 py-1 rounded border ${inst.status==='pagado' ? 'bg-green-600 text-white border-green-600' : 'bg-white text-gray-800 border-gray-300 hover:bg-gray-100'}`}>
-                          {inst.installmentNumber}/{inv.installmentsCount}: R$ {inst.amount.toFixed(2)} • {inst.dueDate} {inst.status==='pagado' ? '✓' : ''}
-                        </button>
-                      ))}
-                    </div>
-                  </td>
+                  <td className="px-4 py-2 whitespace-nowrap">R$ {Number(inv.totalValue || 0).toFixed(2)}</td>
+                  <td className="px-4 py-2 whitespace-nowrap">{inv.installmentsCount}</td>
+                  <td className="px-4 py-2 whitespace-nowrap">R$ {Number(inv.installmentValue || 0).toFixed(2)}</td>
                   <td className="px-4 py-2 whitespace-nowrap">
                     <div className="flex items-center gap-2">
                       <button onClick={() => { setEditing(inv); setModalOpen(true); }} className="px-2 py-1 border rounded-none hover:bg-gray-50">Editar</button>
