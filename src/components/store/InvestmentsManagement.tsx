@@ -121,6 +121,8 @@ const InvestmentsManagement: React.FC = () => {
     return map;
   }, [installments]);
 
+  const [details, setDetails] = useState<{ open: boolean; inv: Investment | null }>({ open: false, inv: null });
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
