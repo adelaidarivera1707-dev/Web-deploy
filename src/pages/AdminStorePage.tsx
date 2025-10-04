@@ -22,6 +22,7 @@ const AdminStorePage: React.FC = () => {
   const [adminDark, setAdminDark] = useState<boolean>(() => {
     try { return localStorage.getItem('admin_dark') === '1'; } catch { return false; }
   });
+  const [openContractId, setOpenContractId] = useState<string | null>(null);
 
   // products state copied from StorePage
   const [products, setProducts] = useState<any[]>([]);
@@ -113,6 +114,17 @@ const AdminStorePage: React.FC = () => {
     };
     window.addEventListener('adminToast', handler as EventListener);
     return () => window.removeEventListener('adminToast', handler as EventListener);
+  }, []);
+
+  useEffect(() => {
+    const openHandler = (e: any) => {
+      const id = String(e?.detail?.id || '');
+      if (!id) return;
+      setAdminView('contracts');
+      setOpenContractId(id);
+    };
+    window.addEventListener('adminOpenContract', openHandler as EventListener);
+    return () => window.removeEventListener('adminOpenContract', openHandler as EventListener);
   }, []);
 
   useEffect(() => {
@@ -242,7 +254,7 @@ const AdminStorePage: React.FC = () => {
           )}
 
           {adminView === 'orders' && <OrdersManagement />}
-          {adminView === 'contracts' && <ContractsManagement />}
+          {adminView === 'contracts' && <ContractsManagement openContractId={openContractId} onOpened={() => setOpenContractId(null)} />}
           {adminView === 'calendar' && <AdminCalendar />}
           {adminView === 'packages' && <PhotoPackagesManagement />}
           {adminView === 'coupons' && <CouponsManagement />}
@@ -326,7 +338,7 @@ const AdminStorePage: React.FC = () => {
               )}
 
               {adminView === 'orders' && <OrdersManagement />}
-              {adminView === 'contracts' && <ContractsManagement />}
+              {adminView === 'contracts' && <ContractsManagement openContractId={openContractId} onOpened={() => setOpenContractId(null)} />}
               {adminView === 'calendar' && <AdminCalendar />}
               {adminView === 'packages' && <PhotoPackagesManagement />}
            {adminView === 'coupons' && <CouponsManagement />}
