@@ -211,7 +211,7 @@ const InvestmentsManagement: React.FC = () => {
                   productUrl: payload.productUrl || '',
                   createdAt: new Date().toISOString(),
                 });
-                await createInstallments(invRef.id, payload.date, t, c);
+                await createInstallments(invRef.id, String(payload.date), t, c);
               } else {
                 const invId = payload.id;
                 const before = items.find(i => i.id === invId);
@@ -230,7 +230,7 @@ const InvestmentsManagement: React.FC = () => {
                 if (!before || before.date !== payload.date || Number(before.totalValue) !== t || Number(before.installmentsCount) !== c) {
                   const list = installments.filter(i => i.investmentId === invId);
                   await Promise.all(list.map(i => deleteDoc(doc(db, 'investment_installments', i.id))));
-                  await createInstallments(invId, payload.date, t, c);
+                  await createInstallments(invId, String(payload.date), t, c);
                 }
               }
               await fetchAll();
