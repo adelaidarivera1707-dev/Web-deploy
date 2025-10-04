@@ -977,10 +977,10 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
               <select value={editForm.packageTitle || ''} onChange={(e)=>{
                 const title = e.target.value;
                 const found = packagesList.find(p=>p.title===title);
-                setEditForm((f:any)=> ({ ...f, packageTitle: title, packageDuration: found?.duration || f.packageDuration || '' }));
+                setEditForm((f:any)=> ({ ...f, packageTitle: title, packageDuration: found?.duration || f.packageDuration || '', totalAmount: (found?.price || 0) + Number(f.travelFee || 0) + (editStoreItems || []).reduce((s,it)=> s + (Number(it.price)||0) * (Number(it.quantity)||1), 0) }));
               }} className="w-full px-3 py-2 border rounded-none">
                 <option value="">— Selecciona paquete —</option>
-                {packagesList.map(p=> (<option key={p.id} value={p.title}>{p.title}</option>))}
+                {packagesList.map(p=> (<option key={p.id} value={p.title}>{p.title} — R$ {Number(p.price||0).toFixed(0)}</option>))}
               </select>
             </div>
             <div>
