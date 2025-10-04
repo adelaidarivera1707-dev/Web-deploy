@@ -323,6 +323,9 @@ const ContractPreview = ({ data, onConfirm, onBack }: ContractPreviewProps) => {
     <>
       <div className="min-h-screen bg-gray-50 py-12 pt-32">
       <div ref={contractRef} className="max-w-4xl mx-auto bg-white shadow-xl rounded-lg overflow-hidden">
+        {Boolean((data as any).pendingApproval) && (
+          <div className="bg-yellow-100 text-yellow-900 text-sm px-4 py-2 text-center">Sua reserva está pendente de aprovação. O administrador entrará em contato para confirmar a data e horário do seu evento.</div>
+        )}
         {/* Header */}
         <div className="bg-primary text-white p-8 text-center relative">
           <div className="absolute top-4 left-4">
