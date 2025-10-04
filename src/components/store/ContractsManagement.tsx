@@ -235,6 +235,7 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
 
   const openEdit = (c: ContractItem) => {
     setEditing(c);
+    setEditStoreItems(Array.isArray(c.storeItems) ? JSON.parse(JSON.stringify(c.storeItems)) : []);
     setEditForm({
       clientName: c.clientName || '',
       clientEmail: c.clientEmail || '',
