@@ -1,17 +1,19 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { db } from '../../utils/firebaseClient';
 import { addDoc, collection, deleteDoc, doc, getDocs, query, updateDoc } from 'firebase/firestore';
+import { Calendar as CalendarIcon, Tag, FileText, Link as LinkIcon, Image as ImageIcon, CreditCard, Hash } from 'lucide-react';
 
 interface Investment {
   id: string;
   date: string; // ISO date (yyyy-mm-dd)
-  category: 'publicidad' | 'equipo' | 'software' | 'otros';
+  category: string;
   description: string;
   totalValue: number; // in R$
   installmentsCount: number;
   installmentValue: number;
   paymentMethod: string;
   productUrl?: string;
+  productImageUrl?: string;
   createdAt?: string;
 }
 
@@ -25,7 +27,7 @@ interface Installment {
   paidAt?: string | null;
 }
 
-const categories: Array<Investment['category']> = ['publicidad', 'equipo', 'software', 'otros'];
+const baseCategories: string[] = ['publicidad', 'equipo', 'software', 'otros'];
 
 const InvestmentsManagement: React.FC = () => {
   const [items, setItems] = useState<Investment[]>([]);
@@ -34,6 +36,7 @@ const InvestmentsManagement: React.FC = () => {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Investment | null>(null);
+  const [categories, setCategories] = useState<string[]>(baseCategories.slice());
 
   const fetchAll = async () => {
     setLoading(true);
