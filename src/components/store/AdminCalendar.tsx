@@ -332,7 +332,7 @@ const AdminCalendar: React.FC = () => {
                     {selected.formSnapshot!.selectedDresses
                       .map((id: string) => dressOptions.find(d => d.id === id))
                       .filter(Boolean)
-                      .map(dress => (
+                      .map((dress: any) => (
                         <div key={(dress as any).id} className="flex items-center gap-2">
                           <div className="w-10 h-16 rounded overflow-hidden bg-gray-100 relative">
                             {(dress as any).image && <img src={(dress as any).image} alt={(dress as any).name} className="absolute inset-0 w-full h-full object-cover" />}
