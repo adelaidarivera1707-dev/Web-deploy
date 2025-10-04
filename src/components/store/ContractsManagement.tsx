@@ -40,7 +40,7 @@ interface ContractItem {
 
 const uid = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
 
-const ContractsManagement = () => {
+const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?: () => void }> = ({ openContractId, onOpened }) => {
   const [contracts, setContracts] = useState<ContractItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
@@ -111,6 +111,18 @@ const ContractsManagement = () => {
   };
 
   useEffect(() => { fetchContracts(); }, []);
+
+  useEffect(() => {
+    if (!openContractId) return;
+    if (loading) return;
+    const found = contracts.find(c => c.id === openContractId);
+    if (found) {
+      openView(found);
+      if (onOpened) onOpened();
+    } else {
+      fetchContracts();
+    }
+  }, [openContractId, contracts, loading]);
 
   useEffect(() => {
     const loadDresses = async () => {
