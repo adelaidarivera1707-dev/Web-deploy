@@ -252,8 +252,8 @@ const InvestmentsManagement: React.FC = () => {
 };
 
 const InvestmentModal: React.FC<{ open: boolean; onClose: () => void; categories: string[]; onAddCategory: (c: string) => void; initial: Investment | null; onSaved: (payload: Partial<Investment> & { id?: string }) => void; }> = ({ open, onClose, categories, onAddCategory, initial, onSaved }) => {
-  const [date, setDate] = useState<string>(initial?.date || '');
-  const [category, setCategory] = useState<Investment['category']>(initial?.category || 'publicidad');
+  const [date, setDate] = useState<string>(initial?.date || new Date().toISOString().slice(0,10));
+  const [category, setCategory] = useState<string>(initial?.category || 'publicidad');
   const [description, setDescription] = useState(initial?.description || '');
   const [total, setTotal] = useState<string>(initial ? String(initial.totalValue || '') : '');
   const [count, setCount] = useState<string>(initial ? String(initial.installmentsCount || 1) : '1');
