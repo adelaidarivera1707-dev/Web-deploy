@@ -1155,4 +1155,49 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
   );
 };
 
+// Helper: add store item with variants
+const StoreItemAdder: React.FC<{ products: any[]; onAdd: (item: { id: string; name: string; price: number; quantity: number; variantName?: string }) => void }> = ({ products, onAdd }) => {
+  const [pid, setPid] = useState<string>('');
+  const [variant, setVariant] = useState<string>('');
+  const [qty, setQty] = useState<number>(1);
+
+  const getVariantOptions = (p: any): { label: string; price: number }[] => {
+    if (!p) return [];
+    const base = Number(p.price || 0);
+    const opts: { label: string; price: number }[] = [];
+    if (Array.isArray(p.variantes) && p.variantes.length) {
+      for (const v of p.variantes) opts.push({ label: String((v as any).nombre || (v as any).name || ''), price: Number((v as any).precio || (v as any).price || 0) });
+    } else if (Array.isArray(p.variants) && p.variants.length) {
+      for (const v of p.variants) {
+        const price = (v as any).price != null ? Number((v as any).price) : base + Number((v as any).priceDelta || 0);
+        opts.push({ label: String((v as any).name || ''), price });
+      }
+    }
+    if (opts.length === 0) opts.push({ label: '', price: base });
+    return opts;
+  };
+
+  const selected = products.find(p => p.id === pid);
+  const variants = getVariantOptions(selected);
+  const selectedVariant = variants.find(v => v.label === variant) || variants[0];
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
+      <select value={pid} onChange={e=> { setPid(e.target.value); setVariant(''); }} className="border px-2 py-2 rounded-none">
+        <option value="">— Selecciona producto —</option>
+        {products.map(p=> (
+          <option key={p.id} value={p.id}>{p.name}</option>
+        ))}
+      </select>
+      <select value={variant} onChange={e=> setVariant(e.target.value)} className="border px-2 py-2 rounded-none" disabled={!pid}>
+        {variants.map(v=> (
+          <option key={v.label} value={v.label}>{v.label ? `${v.label} — R$ ${v.price.toFixed(0)}` : `R$ ${v.price.toFixed(0)}`}</option>
+        ))}
+      </select>
+      <input type="number" min={1} value={qty} onChange={e=> setQty(Number(e.target.value)||1)} className="border px-2 py-2 rounded-none" />
+      <button onClick={()=>{ if(!pid) return; onAdd({ id: pid, name: selected?.name || 'Producto', price: Number(selectedVariant?.price || 0), quantity: qty, variantName: selectedVariant?.label || undefined }); setPid(''); setVariant(''); setQty(1); }} className="border-2 border-black text-black px-3 py-2 rounded-none hover:bg-black hover:text-white">Añadir</button>
+    </div>
+  );
+};
+
 export default ContractsManagement;
