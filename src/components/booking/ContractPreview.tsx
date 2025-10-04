@@ -12,7 +12,7 @@ import { maternityPackages } from '../../data/maternityData';
 import SignaturePad from './SignaturePad';
 import Button from '../ui/Button';
 import { useFeatureFlags } from '../../contexts/FeatureFlagsContext';
-import { Camera, X, CheckCircle } from 'lucide-react';
+import { Camera, X, CheckCircle, AlertTriangle } from 'lucide-react';
 import { generatePDF } from '../../utils/pdf';
 import { saveContract, updateContractStatus } from '../../utils/contractService';
 import { getAuth, signInAnonymously } from 'firebase/auth';
@@ -42,6 +42,8 @@ const ContractPreview = ({ data, onConfirm, onBack }: ContractPreviewProps) => {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [dresses, setDresses] = useState<DressOption[]>([]);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+  const [pendingApproval, setPendingApproval] = useState<boolean>(false);
+  const [showPendingModal, setShowPendingModal] = useState<boolean>(false);
   const contractRef = useRef<HTMLDivElement>(null);
   const { flags } = useFeatureFlags();
 
@@ -108,7 +110,10 @@ const ContractPreview = ({ data, onConfirm, onBack }: ContractPreviewProps) => {
       const currentUid = auth.currentUser?.uid || 'anonymous';
 
       // Save contract data to Firestore early including userUid
-      const contractId = await saveContract(data, currentUid);
+      const saveRes = await saveContract(data, currentUid);
+      const contractId = typeof saveRes === 'string' ? saveRes : saveRes.id;
+      const isPending = typeof saveRes === 'object' ? Boolean((saveRes as any).pendingApproval || (saveRes as any).status === 'pending_approval') : false;
+      setPendingApproval(isPending);
 
       // Optional Calendar scheduling (if enabled)
       if (flags.payments?.calendarEnabled !== false) {
@@ -207,7 +212,7 @@ const ContractPreview = ({ data, onConfirm, onBack }: ContractPreviewProps) => {
         console.warn('Confirmation email failed', e);
       }
 
-      setShowSuccessModal(true);
+      if (pendingApproval || isPending) setShowPendingModal(true); else setShowSuccessModal(true);
     } catch (error: any) {
       console.error('Error finalizing contract:', error);
       const msg = error?.message || String(error);
@@ -323,7 +328,7 @@ const ContractPreview = ({ data, onConfirm, onBack }: ContractPreviewProps) => {
     <>
       <div className="min-h-screen bg-gray-50 py-12 pt-32">
       <div ref={contractRef} className="max-w-4xl mx-auto bg-white shadow-xl rounded-lg overflow-hidden">
-        {Boolean((data as any).pendingApproval) && (
+        {(pendingApproval || Boolean((data as any).pendingApproval)) && (
           <div className="bg-yellow-100 text-yellow-900 text-sm px-4 py-2 text-center">Sua reserva está pendente de aprovação. O administrador entrará em contato para confirmar a data e horário do seu evento.</div>
         )}
         {/* Header */}
@@ -827,6 +832,33 @@ const ContractPreview = ({ data, onConfirm, onBack }: ContractPreviewProps) => {
         </div>
       </div>
       </div>
+
+      {/* Pending Approval Modal */}
+      {showPendingModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 relative">
+            <button onClick={()=> { setShowPendingModal(false); onConfirm(); }} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+              <X size={24} />
+            </button>
+            <div className="text-center">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 mb-4">
+                <AlertTriangle className="h-8 w-8 text-yellow-600" />
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Reserva pendente de aprovação</h3>
+              <div className="space-y-3 text-sm text-gray-700 mb-6">
+                <p>Sua reserva está pendente de aprovação. Entre em contato com o estúdio para confirmar a data e horário do seu evento.</p>
+                <p>Em caso de aprovação, este mesmo contrato será válido sem necessidade de um novo envio.</p>
+              </div>
+              <div className="grid grid-cols-1 gap-3">
+                {pdfUrl && (
+                  <a href={pdfUrl} target="_blank" rel="noopener noreferrer" className="w-full bg-secondary text-black py-2 px-4 rounded-md hover:bg-opacity-90 transition-colors text-center">Baixar PDF novamente</a>
+                )}
+                <button onClick={()=> { setShowPendingModal(false); onConfirm(); }} className="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-opacity-90 transition-colors">Entendi</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Success Modal */}
       {showSuccessModal && (
