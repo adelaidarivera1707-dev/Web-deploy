@@ -373,7 +373,24 @@ function resolveName(products: ProductLite[], id: 'all' | 'none' | string) {
   return products.find(p => p.id === id)?.name || 'Producto';
 }
 
-function computeMonthlyCompare(orders: OrderItem[], contracts: any[], aId: 'all' | string, bId: 'none' | string) {
+function inPeriod(dateStr: string | undefined, period: { type: 'all' | 'year' | 'month' | 'custom'; start?: string; end?: string }) {
+  if (!dateStr) return false;
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return false;
+  if (period.type === 'all') return true;
+  if (period.type === 'year') { const now = new Date(); return d.getFullYear() === now.getFullYear(); }
+  if (period.type === 'month') { const now = new Date(); return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth(); }
+  if (period.type === 'custom') {
+    const start = period.start ? new Date(period.start) : null;
+    const end = period.end ? new Date(period.end) : null;
+    if (start && d < start) return false;
+    if (end) { const ed = new Date(end); ed.setHours(23,59,59,999); if (d > ed) return false; }
+    return true;
+  }
+  return true;
+}
+
+function computeMonthlyCompare(orders: OrderItem[], contracts: any[], aId: 'all' | string, bId: 'none' | string, period?: { type: 'all' | 'year' | 'month' | 'custom'; start?: string; end?: string }) {
   const now = new Date();
   const today = new Date(); today.setHours(0,0,0,0);
   const months = Array.from({ length: 12 }).map((_, i) => {
@@ -390,11 +407,11 @@ function computeMonthlyCompare(orders: OrderItem[], contracts: any[], aId: 'all'
 
   for (const o of orders) {
     if (!o.created_at) continue;
+    if (period && !inPeriod(o.created_at, period)) continue;
     const d = new Date(o.created_at);
     if (isNaN(d.getTime())) continue;
     const m = d.getMonth();
 
-    // A: total or product
     if (aId === 'all') {
       months[m].a += Number(o.total || 0) || 0;
     } else if (Array.isArray(o.items)) {
@@ -403,7 +420,6 @@ function computeMonthlyCompare(orders: OrderItem[], contracts: any[], aId: 'all'
         .reduce((sum, it) => sum + getItemAmount(it), 0);
     }
 
-    // B: skip if none
     if (bId !== 'none') {
       if (Array.isArray(o.items)) {
         months[m].b += o.items
@@ -413,11 +429,11 @@ function computeMonthlyCompare(orders: OrderItem[], contracts: any[], aId: 'all'
     }
   }
 
-  // include photography services (contracts) into 'a' series when viewing 'all'
   if (aId === 'all') {
     for (const c of (contracts || [])) {
       const dateStr = (c.eventDate as string) || (c.contractDate as string) || (c.createdAt as string) || '';
       if (!dateStr) continue;
+      if (period && !inPeriod(dateStr, period)) continue;
       const d = new Date(dateStr);
       if (isNaN(d.getTime())) continue;
       const m = d.getMonth();
@@ -425,13 +441,31 @@ function computeMonthlyCompare(orders: OrderItem[], contracts: any[], aId: 'all'
       const completed = Boolean(c.eventCompleted);
       const isFuture = d.getTime() >= today.getTime();
       if (completed) {
-        months[m].a += amount; // ventas
+        months[m].a += amount;
       } else if (isFuture) {
-        months[m].forecast += amount; // ingresos futuros
+        months[m].forecast += amount;
       }
     }
   }
 
+  return months;
+}
+
+function computeContractsCountByMonth(contracts: any[], period: { type: 'all' | 'year' | 'month' | 'custom'; start?: string; end?: string }) {
+  const now = new Date();
+  const months = Array.from({ length: 12 }).map((_, i) => {
+    const d = new Date(now.getFullYear(), i, 1);
+    const label = d.toLocaleString('es', { month: 'short' });
+    return { key: i, month: label.charAt(0).toUpperCase() + label.slice(1), a: 0 } as any;
+  });
+  for (const c of contracts) {
+    const dateStr = (c.contractDate as string) || (c.createdAt as string) || '';
+    if (!dateStr) continue;
+    if (!inPeriod(dateStr, period)) continue;
+    const d = new Date(dateStr); if (isNaN(d.getTime())) continue;
+    const m = d.getMonth();
+    months[m].a += 1;
+  }
   return months;
 }
 
