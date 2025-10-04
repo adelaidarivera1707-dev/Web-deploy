@@ -288,11 +288,34 @@ const InvestmentModal: React.FC<{ open: boolean; onClose: () => void; categories
     setNewCat('');
   }, [open, initial]);
 
+  const parseCurrency = (s: string): number => {
+    if (s == null) return 0;
+    const raw = String(s).trim();
+    if (!raw) return 0;
+    if (raw.includes(',')) {
+      const cleaned = raw.replace(/\./g, '').replace(/,/g, '.');
+      const n = parseFloat(cleaned);
+      return isFinite(n) ? n : 0;
+    }
+    if (raw.includes('.')) {
+      const last = raw.lastIndexOf('.');
+      const after = raw.slice(last + 1);
+      if (after.length <= 2) {
+        const n = parseFloat(raw);
+        return isFinite(n) ? n : 0;
+      }
+      const n = parseFloat(raw.replace(/\./g, ''));
+      return isFinite(n) ? n : 0;
+    }
+    const n = parseFloat(raw);
+    return isFinite(n) ? n : 0;
+  };
+
   const perInstallment = useMemo(() => {
-    const t = Number(total) || 0;
+    const t = parseCurrency(total);
     const c = Math.max(1, Number(count) || 1);
-    const base = Math.floor((t / c) * 100) / 100;
-    return base;
+    const value = t / c;
+    return Math.round(value * 100) / 100;
   }, [total, count]);
 
   if (!open) return null;
@@ -304,6 +327,13 @@ const InvestmentModal: React.FC<{ open: boolean; onClose: () => void; categories
         <div className="p-4 border-b">
           <h3 className="text-lg font-semibold">{initial ? 'Editar inversión' : 'Nueva inversión'}</h3>
         </div>
+        {productImageUrl && productImageUrl.startsWith('http') && (
+          <div className="px-4 pt-4">
+            <div className="rounded-lg overflow-hidden border">
+              <img src={productImageUrl} alt="Producto" className="w-full max-h-64 object-contain bg-white" />
+            </div>
+          </div>
+        )}
         <div className="p-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3">
           <div className="flex flex-col">
             <label className="text-xs text-gray-600 flex items-center gap-1"><CalendarIcon size={14}/> Fecha</label>
@@ -335,23 +365,18 @@ const InvestmentModal: React.FC<{ open: boolean; onClose: () => void; categories
           <div className="flex flex-col lg:col-span-2">
             <label className="text-xs text-gray-600 flex items-center gap-1"><ImageIcon size={14}/> Imagen del producto (URL)</label>
             <input type="url" value={productImageUrl} onChange={e=> setProductImageUrl(e.target.value)} className="px-3 py-2 border rounded-none" placeholder="https://.../imagen.jpg" />
-            {productImageUrl && productImageUrl.startsWith('http') && (
-              <div className="mt-2 rounded border p-2 bg-gray-50">
-                <img src={productImageUrl} alt="Producto" className="max-h-32 object-contain mx-auto" />
-              </div>
-            )}
           </div>
           <div className="flex flex-col">
             <label className="text-xs text-gray-600 flex items-center gap-1">R$ Valor total</label>
             <input type="number" step="0.01" min="0" value={total} onChange={e=> setTotal(e.target.value)} className="px-3 py-2 border rounded-none" required />
           </div>
           <div className="flex flex-col">
-            <label className="text-xs text-gray-600 flex items-center gap-1"><Hash size={14}/> Número de cuotas</label>
+            <label className="text-xs text-gray-600 flex items-center gap-1"><Hash size={14}/> # de cuotas</label>
             <input type="number" min="1" value={count} onChange={e=> setCount(e.target.value)} className="px-3 py-2 border rounded-none" required />
           </div>
           <div className="flex flex-col">
             <label className="text-xs text-gray-600 flex items-center gap-1">R$ Valor por cuota</label>
-            <input type="number" step="0.01" value={perInstallment.toFixed(2)} readOnly className="px-3 py-2 border rounded-none bg-gray-50" />
+            <input type="text" value={perInstallment.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} readOnly className="px-3 py-2 border rounded-none bg-gray-50" />
           </div>
           <div className="flex flex-col">
             <label className="text-xs text-gray-600 flex items-center gap-1"><CreditCard size={14}/> Forma de pago</label>
@@ -365,10 +390,11 @@ const InvestmentModal: React.FC<{ open: boolean; onClose: () => void; categories
             date,
             category,
             description,
-            totalValue: Number(total),
+            totalValue: parseCurrency(total),
             installmentsCount: Number(count),
             paymentMethod,
             productUrl,
+            productImageUrl,
           })} className="px-4 py-2 rounded-none bg-black text-white hover:opacity-90">
             Guardar
           </button>
