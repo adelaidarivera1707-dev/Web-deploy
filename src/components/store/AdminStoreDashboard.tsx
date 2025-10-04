@@ -35,6 +35,7 @@ const AdminStoreDashboard: React.FC<AdminProps> = ({ onNavigate }) => {
   const [contracts, setContracts] = useState<any[]>([]);
   const [selectedProductId, setSelectedProductId] = useState<'all' | string>('all');
   const [selectedProductIdB, setSelectedProductIdB] = useState<'none' | string>('none');
+  const [investmentInstallments, setInvestmentInstallments] = useState<any[]>([]);
   const [period, setPeriod] = useState<{ type: 'all' | 'year' | 'month' | 'custom'; start?: string; end?: string }>({ type: 'all' });
   const [metric, setMetric] = useState<'revenue' | 'contracts'>('revenue');
   const { flags, setPageEnabled } = useFeatureFlags();
@@ -125,6 +126,15 @@ const AdminStoreDashboard: React.FC<AdminProps> = ({ onNavigate }) => {
       } catch {
         psList = [];
         setProducts([]);
+      }
+
+      // fetch investment installments for chart
+      try {
+        const instSnap = await getDocs(collection(db, 'investment_installments'));
+        const inst = instSnap.docs.map(d => ({ id: d.id, ...(d.data() as any) }));
+        setInvestmentInstallments(inst);
+      } catch {
+        setInvestmentInstallments([]);
       }
 
       // assign random product to orders missing items
@@ -354,7 +364,7 @@ const AdminStoreDashboard: React.FC<AdminProps> = ({ onNavigate }) => {
         <div className="h-64">
           <Suspense fallback={<div className="h-64 flex items-center justify-center">Cargando gráfico...</div>}>
             <ChartPerformance
-              data={metric === 'revenue' ? computeMonthlyCompare(allOrders, filteredContracts as any, selectedProductId, selectedProductIdB, period) : computeContractsCountByMonth(filteredContracts as any, period)}
+              data={metric === 'revenue' ? computeMonthlyCompare(allOrders, filteredContracts as any, selectedProductId, selectedProductIdB, period, investmentInstallments) : computeContractsCountByMonth(filteredContracts as any, period)}
               products={products}
               selectedProductId={selectedProductId}
               selectedProductIdB={selectedProductIdB}
@@ -390,13 +400,13 @@ function inPeriod(dateStr: string | undefined, period: { type: 'all' | 'year' | 
   return true;
 }
 
-function computeMonthlyCompare(orders: OrderItem[], contracts: any[], aId: 'all' | string, bId: 'none' | string, period?: { type: 'all' | 'year' | 'month' | 'custom'; start?: string; end?: string }) {
+function computeMonthlyCompare(orders: OrderItem[], contracts: any[], aId: 'all' | string, bId: 'none' | string, period: { type: 'all' | 'year' | 'month' | 'custom'; start?: string; end?: string }, investmentInstallments: any[]) {
   const now = new Date();
   const today = new Date(); today.setHours(0,0,0,0);
   const months = Array.from({ length: 12 }).map((_, i) => {
     const d = new Date(now.getFullYear(), i, 1);
     const label = d.toLocaleString('es', { month: 'short' });
-    return { key: i, month: label.charAt(0).toUpperCase() + label.slice(1), a: 0, b: 0, forecast: 0 } as any;
+    return { key: i, month: label.charAt(0).toUpperCase() + label.slice(1), a: 0, b: 0, forecast: 0, investments: 0 } as any;
   });
 
   const getItemAmount = (it: OrderLineItem) => {
@@ -433,7 +443,7 @@ function computeMonthlyCompare(orders: OrderItem[], contracts: any[], aId: 'all'
     for (const c of (contracts || [])) {
       const dateStr = (c.eventDate as string) || (c.contractDate as string) || (c.createdAt as string) || '';
       if (!dateStr) continue;
-      if (period && !inPeriod(dateStr, period)) continue;
+      if (!inPeriod(dateStr, period)) continue;
       const d = new Date(dateStr);
       if (isNaN(d.getTime())) continue;
       const m = d.getMonth();
@@ -446,6 +456,17 @@ function computeMonthlyCompare(orders: OrderItem[], contracts: any[], aId: 'all'
         months[m].forecast += amount;
       }
     }
+  }
+
+  // investments: sum installments by due month within period
+  for (const inst of (investmentInstallments || [])) {
+    const dateStr = String(inst.dueDate || '');
+    if (!dateStr) continue;
+    if (!inPeriod(dateStr, period)) continue;
+    const d = new Date(dateStr); if (isNaN(d.getTime())) continue;
+    const m = d.getMonth();
+    const amount = Number(inst.amount || 0) || 0;
+    months[m].investments += amount;
   }
 
   return months;

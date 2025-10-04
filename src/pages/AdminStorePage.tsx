@@ -5,6 +5,7 @@ import ContractsManagement from '../components/store/ContractsManagement';
 import PhotoPackagesManagement from '../components/store/PhotoPackagesManagement';
 import StoreSettings from '../components/store/StoreSettings';
 import CouponsManagement from '../components/store/CouponsManagement';
+import InvestmentsManagement from '../components/store/InvestmentsManagement';
 import ProductEditorModal from '../components/store/ProductEditorModal';
 import DressEditorModal from '../components/store/DressEditorModal';
 import { db, storage } from '../utils/firebaseClient';
@@ -13,7 +14,7 @@ import { Trash2 } from 'lucide-react';
 import AdminCalendar from '../components/store/AdminCalendar';
 
 const AdminStorePage: React.FC = () => {
-  const [adminView, setAdminView] = useState<'dashboard' | 'products' | 'orders' | 'contracts' | 'packages' | 'coupons' | 'settings' | 'calendar'>(() => {
+  const [adminView, setAdminView] = useState<'dashboard' | 'products' | 'orders' | 'contracts' | 'packages' | 'coupons' | 'settings' | 'calendar' | 'investments'>(() => {
     try { return (localStorage.getItem('admin_view') as any) || 'dashboard'; } catch { return 'dashboard'; }
   });
   const [adminFullscreen, setAdminFullscreen] = useState<boolean>(() => {
