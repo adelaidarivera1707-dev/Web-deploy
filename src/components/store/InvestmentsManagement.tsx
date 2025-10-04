@@ -210,6 +210,7 @@ const InvestmentsManagement: React.FC = () => {
                   installmentValue: Math.round((t / c) * 100) / 100,
                   paymentMethod: payload.paymentMethod,
                   productUrl: payload.productUrl || '',
+                  productImageUrl: payload.productImageUrl || '',
                   createdAt: new Date().toISOString(),
                 });
                 await createInstallments(invRef.id, String(payload.date), t, c);
