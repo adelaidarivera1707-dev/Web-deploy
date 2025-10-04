@@ -271,10 +271,10 @@ const StorePage: React.FC = () => {
               <div className="text-sm">Tienes un paquete reservado. Puedes finalizar tu pedido cuando quieras.</div>
               <button
                 onClick={() => navigate('/booking', { state: { skipStorePopup: true } })}
-                className="px-4 py-2 rounded-none border-2 border-white bg-white text-black hover:bg-gray-100"
-                aria-label="Finalizar pedido"
+                className="px-4 py-2 rounded-none border-2 border-orange-500 bg-orange-500 text-white hover:bg-orange-600 hover:border-orange-600"
+                aria-label="Finalizar e preencher o contrato"
               >
-                Finalizar pedido
+                Finalizar e preencher o contrato
               </button>
             </div>
           </div>
