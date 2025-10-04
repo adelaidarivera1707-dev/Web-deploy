@@ -313,7 +313,9 @@ const AdminCalendar: React.FC = () => {
               <div className="flex items-center gap-2"><IconCalendar size={16}/> <span>Fecha:</span> <strong>{selected.eventDate}</strong> <Clock size={16}/> <span>Hora:</span> <strong>{selected.eventTime || '-'}</strong></div>
               <div className="flex items-center gap-2"><MapPin size={16}/> <span>Ubicación:</span> <strong>{selected.eventLocation || '-'}</strong></div>
               <div className="flex items-center gap-2"><Phone size={16}/> <span>Tel.:</span> <strong>{selected.formSnapshot?.phone || '-'}</strong></div>
-              <div className="flex items-center gap-2"><DollarSign size={16}/> <span>Pago:</span> <strong>{selected.paymentMethod || '-'}</strong> • <span>Depósito:</span> <strong>{selected.depositPaid ? 'Pago' : 'Pendiente'}</strong> • <span>Saldo:</span> <strong>{selected.finalPaymentPaid ? 'Pago' : 'Pendiente'}</strong></div>
+              {(() => { const calc = computeAmounts(selected); return (
+                <div className="flex items-center gap-2"><DollarSign size={16}/> <span>Pago:</span> <strong>{selected.paymentMethod || '-'}</strong> • <span>Depósito:</span> <strong>{selected.depositPaid ? 'Pago' : `Pendiente (R$ ${calc.depositAmount.toFixed(0)})`}</strong> • <span>Saldo:</span> <strong>{selected.finalPaymentPaid ? 'Pago' : `Pendiente (R$ ${calc.remainingAmount.toFixed(0)})`}</strong></div>
+              ); })()}
 
               {Array.isArray(selected.formSnapshot?.selectedDresses) && selected.formSnapshot!.selectedDresses.length > 0 && (
                 <div>
