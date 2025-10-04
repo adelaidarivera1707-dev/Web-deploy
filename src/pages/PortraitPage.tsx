@@ -130,15 +130,15 @@ const PortraitPage = () => {
             const psnap = await getDoc(doc(db, 'packages', pkgId));
             const pkgData = psnap.exists() ? (psnap.data() as any) : null;
             if (!pkgData) continue;
-            const item = {
-              id: String(inc.productId),
-              type: 'store' as const,
-              name: String(pkgData.title || 'Paquete'),
+            const serviceItem = {
+              id: `pkg:${pkgId}`,
+              type: (pkgData.type || 'portrait') as 'events' | 'portrait' | 'maternity',
+              name: String(pkgData.title || 'Pacote'),
               price: 'R$ 0',
-              duration: '',
+              duration: String(pkgData.duration || ''),
               image: String(pkgData.image_url || ''),
-            };
-            for (let i = 0; i < Number(inc.quantity||0); i++) addToCart(item);
+            } as const;
+            for (let i = 0; i < Number(inc.quantity||0); i++) addToCart(serviceItem as any);
             continue;
           }
           const snap = await getDoc(doc(db, 'products', inc.productId));
