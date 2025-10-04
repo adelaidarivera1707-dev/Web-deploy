@@ -163,11 +163,47 @@ const AdminStoreDashboard: React.FC<AdminProps> = ({ onNavigate }) => {
     return () => window.removeEventListener('contractsUpdated', handler as EventListener);
   }, []);
 
+  const isInPeriod = (dateStr?: string) => {
+    if (!dateStr) return false;
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return false;
+    if (period.type === 'all') return true;
+    if (period.type === 'year') { const now = new Date(); return d.getFullYear() === now.getFullYear(); }
+    if (period.type === 'month') { const now = new Date(); return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth(); }
+    if (period.type === 'custom') {
+      const start = period.start ? new Date(period.start) : null;
+      const end = period.end ? new Date(period.end) : null;
+      if (start && d < start) return false;
+      if (end) { const ed = new Date(end); ed.setHours(23,59,59,999); if (d > ed) return false; }
+      return true;
+    }
+    return true;
+  };
+
+  const contractAmounts = (c: any) => {
+    const svcList: any[] = Array.isArray(c.services) && c.services.length ? c.services : (Array.isArray(c.formSnapshot?.cartItems) ? c.formSnapshot.cartItems : []);
+    const servicesTotalRaw = svcList.reduce((sum, it: any) => {
+      const qty = Number(it?.quantity ?? 1);
+      const price = Number(String(it?.price || '').replace(/[^0-9]/g, ''));
+      return sum + (price * qty);
+    }, 0);
+    const storeTotal = (Array.isArray(c.storeItems) ? c.storeItems : []).reduce((sum: number, it: any) => sum + (Number(it.price) * Number(it.quantity || 1)), 0);
+    const travel = Number(c.travelFee || 0);
+    const totalFromDoc = Number(c.totalAmount || 0);
+    const services = servicesTotalRaw > 0 ? servicesTotalRaw : Math.max(0, totalFromDoc - storeTotal - travel);
+    const total = Math.round(services + storeTotal + travel);
+    return { services, storeTotal, travel, total };
+  };
+
+  const filteredContracts = useMemo(() => {
+    return (contracts || []).filter((c: any) => isInPeriod(c.contractDate || c.eventDate || c.createdAt));
+  }, [contracts, period]);
+
   const salesTotals = useMemo(() => {
-    const services = (allOrders || []).reduce((sum, o) => sum + (o.status === 'completado' ? Number(o.total || 0) : 0), 0);
-    const packages = (contracts || []).reduce((sum, c: any) => sum + (c.eventCompleted ? Number(c.totalAmount || 0) : 0), 0);
+    const packages = filteredContracts.reduce((sum, c: any) => sum + contractAmounts(c).services, 0);
+    const services = filteredContracts.reduce((sum, c: any) => sum + contractAmounts(c).storeTotal, 0);
     return { services, packages };
-  }, [allOrders, contracts]);
+  }, [filteredContracts]);
 
   const statCards = useMemo(() => ([
     { label: 'Ventas Serv. Adicionales', value: `R$ ${salesTotals.services.toFixed(0)}` , icon: <DollarSign className="text-amber-500" size={18} /> },
