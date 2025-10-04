@@ -147,6 +147,20 @@ const AdminStoreDashboard: React.FC<AdminProps> = ({ onNavigate }) => {
     })();
   }, []);
 
+  useEffect(() => {
+    const handler = () => {
+      (async () => {
+        try {
+          const cs = await getDocs(collection(db, 'contracts'));
+          const list = cs.docs.map(d => ({ id: d.id, ...(d.data() as any) }));
+          setContracts(list);
+        } catch { setContracts([]); }
+      })();
+    };
+    window.addEventListener('contractsUpdated', handler as EventListener);
+    return () => window.removeEventListener('contractsUpdated', handler as EventListener);
+  }, []);
+
   const salesTotals = useMemo(() => {
     const services = (allOrders || []).reduce((sum, o) => sum + (o.status === 'completado' ? Number(o.total || 0) : 0), 0);
     const packages = (contracts || []).reduce((sum, c: any) => sum + (c.eventCompleted ? Number(c.totalAmount || 0) : 0), 0);
