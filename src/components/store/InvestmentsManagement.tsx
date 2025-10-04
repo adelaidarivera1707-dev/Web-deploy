@@ -385,4 +385,60 @@ const InvestmentModal: React.FC<{ open: boolean; onClose: () => void; categories
   );
 };
 
+const InvestmentDetailsModal: React.FC<{ open: boolean; onClose: () => void; investment: Investment; installments: Installment[]; onTogglePaid: (id: string, paid: boolean) => void; }> = ({ open, onClose, investment, installments, onTogglePaid }) => {
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" role="dialog" aria-modal>
+      <div className="bg-white rounded-xl w-full max-w-3xl max-h-[85vh] overflow-auto relative">
+        <button onClick={onClose} className="absolute top-3 right-3 bg-white border rounded-full p-1 shadow hover:bg-gray-50" aria-label="Cerrar">✕</button>
+        <div className="p-4 border-b">
+          <h3 className="text-lg font-semibold">{investment.description}</h3>
+        </div>
+        {investment.productImageUrl && (
+          <div className="px-4 pt-4">
+            <div className="rounded-lg overflow-hidden border">
+              <img src={investment.productImageUrl} alt="Produto" className="w-full max-h-72 object-contain bg-white" />
+            </div>
+          </div>
+        )}
+        <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div>
+            <div className="text-sm text-gray-600">Fecha</div>
+            <div className="font-medium">{investment.date}</div>
+          </div>
+          <div>
+            <div className="text-sm text-gray-600">Categoría</div>
+            <div className="font-medium capitalize">{investment.category}</div>
+          </div>
+          <div>
+            <div className="text-sm text-gray-600">Valor total</div>
+            <div className="font-medium">R$ {Number(investment.totalValue || 0).toFixed(2)}</div>
+          </div>
+          <div>
+            <div className="text-sm text-gray-600"># de cuotas</div>
+            <div className="font-medium">{investment.installmentsCount} × R$ {Number(investment.installmentValue || 0).toFixed(2)}</div>
+          </div>
+          {investment.productUrl && (
+            <div className="md:col-span-2">
+              <a href={investment.productUrl} target="_blank" rel="noreferrer" className="text-blue-600 underline text-sm">ver producto</a>
+            </div>
+          )}
+        </div>
+        <div className="p-4">
+          <div className="font-medium mb-2">Cuotas mensuales</div>
+          <div className="space-y-2">
+            {installments.map(inst => (
+              <label key={inst.id} className="flex items-center gap-3 p-2 border rounded">
+                <input type="checkbox" checked={inst.status === 'pagado'} onChange={e => onTogglePaid(inst.id, e.target.checked)} />
+                <span className="text-sm flex-1">{inst.installmentNumber}/{investment.installmentsCount} • {inst.dueDate} • R$ {inst.amount.toFixed(2)}</span>
+                {inst.status === 'pagado' && <span className="text-green-600 text-xs">pagado</span>}
+              </label>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default InvestmentsManagement;
