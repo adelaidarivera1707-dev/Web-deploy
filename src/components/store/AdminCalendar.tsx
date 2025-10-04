@@ -102,6 +102,12 @@ const AdminCalendar: React.FC = () => {
   useEffect(() => { load(); }, []);
 
   useEffect(() => {
+    const handler = () => load();
+    window.addEventListener('contractsUpdated', handler as EventListener);
+    return () => window.removeEventListener('contractsUpdated', handler as EventListener);
+  }, []);
+
+  useEffect(() => {
     const loadDresses = async () => {
       try {
         const snap = await getDocs(collection(db, 'products'));
