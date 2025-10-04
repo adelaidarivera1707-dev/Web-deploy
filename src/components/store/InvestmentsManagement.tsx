@@ -193,6 +193,7 @@ const InvestmentsManagement: React.FC = () => {
           open={modalOpen}
           onClose={() => setModalOpen(false)}
           categories={categories}
+          onAddCategory={(c: string) => setCategories(prev => Array.from(new Set([...prev, c])))}
           initial={editing}
           onSaved={async (payload) => {
             try {
