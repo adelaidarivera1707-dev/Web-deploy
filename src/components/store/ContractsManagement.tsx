@@ -51,6 +51,7 @@ const ContractsManagement = () => {
   const [workflow, setWorkflow] = useState<WorkflowCategory[] | null>(null);
   const [savingWf, setSavingWf] = useState(false);
   const [wfEditMode, setWfEditMode] = useState(false);
+  const [contractsTab, setContractsTab] = useState<'all' | 'pending'>('all');
 
   const [templatesOpen, setTemplatesOpen] = useState(false);
   const pdfRef = useRef<HTMLDivElement | null>(null);
@@ -144,10 +145,11 @@ const ContractsManagement = () => {
   }, [editing, creating]);
 
   const filtered = useMemo(() => {
+    const base = contracts.filter(c => contractsTab === 'pending' ? (String((c as any).status || '') === 'pending_approval') : true);
     const list = (() => {
-      if (!search.trim()) return contracts;
+      if (!search.trim()) return base;
       const s = search.toLowerCase();
-      return contracts.filter(c => {
+      return base.filter(c => {
         const nameMatch = (c.clientName || '').toLowerCase().includes(s);
         const typeMatch = (c.eventType || '').toLowerCase().includes(s);
         const phoneSource = (c as any).clientPhone || (c as any).phone || (c as any).client_phone || (c as any).formSnapshot?.phone || '';
@@ -349,7 +351,13 @@ const ContractsManagement = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="section-title">Gestión de Contratos</h2>
+        <div className="flex items-center gap-3">
+          <h2 className="section-title">Gestión de Contratos</h2>
+          <div className="ml-2 inline-flex border rounded overflow-hidden">
+            <button onClick={()=> setContractsTab('all')} className={`px-3 py-1 text-sm ${contractsTab==='all' ? 'bg-black text-white' : ''}`}>Todos</button>
+            <button onClick={()=> setContractsTab('pending')} className={`px-3 py-1 text-sm ${contractsTab==='pending' ? 'bg-black text-white' : ''}`}>Pendiente de aprobación</button>
+          </div>
+        </div>
         <div className="flex items-center gap-2">
           <button onClick={()=> setCreating(true)} className="border-2 border-black bg-black text-white px-3 py-2 rounded-none hover:opacity-90 inline-flex items-center gap-2"><Plus size={14}/> Nuevo contrato</button>
           <button onClick={async ()=>{ await fetchTemplates(); setTemplatesOpen(true); }} className="border-2 border-black text-black px-3 py-2 rounded-none hover:bg-black hover:text-white">Workflows</button>
@@ -398,7 +406,14 @@ const ContractsManagement = () => {
                   </div>
                 </div>
                 <div className="col-span-1 text-right">
-                  <button onClick={(e)=>{e.stopPropagation(); remove(c.id);}} title="Eliminar" className="border-2 border-red-600 text-red-600 px-2 py-1 rounded-none hover:bg-red-600 hover:text-white inline-flex items-center"><Trash2 size={14}/></button>
+                  {String((c as any).status || '') === 'pending_approval' ? (
+                    <div className="flex items-center justify-end gap-1">
+                      <button onClick={async (e)=>{ e.stopPropagation(); await updateDoc(doc(db,'contracts', c.id), { status: 'confirmed' } as any); await fetchContracts(); window.dispatchEvent(new CustomEvent('adminToast', { detail: { message: 'Reserva aprobada', type: 'success' } })); }} className="border-2 border-green-600 text-green-600 px-2 py-1 rounded-none hover:bg-green-600 hover:text-white">Aprobar</button>
+                      <button onClick={async (e)=>{ e.stopPropagation(); await updateDoc(doc(db,'contracts', c.id), { status: 'released' } as any); await fetchContracts(); window.dispatchEvent(new CustomEvent('adminToast', { detail: { message: 'Reserva liberada', type: 'info' } })); }} className="border-2 border-gray-600 text-gray-600 px-2 py-1 rounded-none hover:bg-gray-600 hover:text-white">Liberar</button>
+                    </div>
+                  ) : (
+                    <button onClick={(e)=>{e.stopPropagation(); remove(c.id);}} title="Eliminar" className="border-2 border-red-600 text-red-600 px-2 py-1 rounded-none hover:bg-red-600 hover:text-white inline-flex items-center"><Trash2 size={14}/></button>
+                  )}
                 </div>
               </div>
             );
