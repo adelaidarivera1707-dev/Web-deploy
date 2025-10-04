@@ -173,6 +173,20 @@ const AdminStoreDashboard: React.FC<AdminProps> = ({ onNavigate }) => {
     return () => window.removeEventListener('contractsUpdated', handler as EventListener);
   }, []);
 
+  useEffect(() => {
+    const handler = () => {
+      (async () => {
+        try {
+          const instSnap = await getDocs(collection(db, 'investment_installments'));
+          const inst = instSnap.docs.map(d => ({ id: d.id, ...(d.data() as any) }));
+          setInvestmentInstallments(inst);
+        } catch { setInvestmentInstallments([]); }
+      })();
+    };
+    window.addEventListener('investmentsUpdated', handler as EventListener);
+    return () => window.removeEventListener('investmentsUpdated', handler as EventListener);
+  }, []);
+
   const isInPeriod = (dateStr?: string) => {
     if (!dateStr) return false;
     const d = new Date(dateStr);
