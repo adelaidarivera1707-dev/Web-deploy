@@ -33,6 +33,9 @@ const ChartPerformance: React.FC<Props> = ({ data, products, selectedProductId, 
         {mode === 'revenue' && selectedProductIdB !== 'none' && (
           <Line type="monotone" dataKey="b" name={resolveName(selectedProductIdB)} stroke="#0ea5e9" strokeWidth={2} dot={false} />
         )}
+        {mode === 'revenue' && (
+          <Line type="monotone" dataKey="investments" name="Inversiones" stroke="#ef4444" strokeWidth={2} dot={false} />
+        )}
       </LineChart>
     </ResponsiveContainer>
   );
