@@ -268,7 +268,7 @@ const StorePage: React.FC = () => {
         <div className={`fixed bottom-0 inset-x-0 z-[60] transition-transform duration-300 ease-out ${showFinalizeBar ? 'translate-y-0' : 'translate-y-full'}`}>
           <div className="bg-black text-white">
             <div className="container-custom py-3 flex items-center justify-between gap-3">
-              <div className="text-sm">Tienes un paquete reservado. Puedes finalizar tu pedido cuando quieras.</div>
+              <div className="text-sm">Continuar sem comprar produtos da loja</div>
               <button
                 onClick={() => navigate('/booking', { state: { skipStorePopup: true } })}
                 className="px-4 py-2 rounded-none border-2 border-orange-500 bg-orange-500 text-white hover:bg-orange-600 hover:border-orange-600"
