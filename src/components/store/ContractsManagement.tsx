@@ -157,6 +157,16 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
       }
     };
     if (editing || creating) fetchPkgs();
+    const fetchProducts = async () => {
+      try {
+        const snap = await getDocs(collection(db, 'products'));
+        const list = snap.docs.map(d => ({ id: d.id, ...(d.data() as any) }));
+        setProductsList(list);
+      } catch {
+        setProductsList([]);
+      }
+    };
+    if (editing || creating) fetchProducts();
   }, [editing, creating]);
 
   const filtered = useMemo(() => {
