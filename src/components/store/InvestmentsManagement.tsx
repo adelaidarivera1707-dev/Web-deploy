@@ -251,7 +251,7 @@ const InvestmentsManagement: React.FC = () => {
   );
 };
 
-const InvestmentModal: React.FC<{ open: boolean; onClose: () => void; categories: Array<Investment['category']>; initial: Investment | null; onSaved: (payload: Partial<Investment> & { id?: string }) => void; }> = ({ open, onClose, categories, initial, onSaved }) => {
+const InvestmentModal: React.FC<{ open: boolean; onClose: () => void; categories: string[]; onAddCategory: (c: string) => void; initial: Investment | null; onSaved: (payload: Partial<Investment> & { id?: string }) => void; }> = ({ open, onClose, categories, onAddCategory, initial, onSaved }) => {
   const [date, setDate] = useState<string>(initial?.date || '');
   const [category, setCategory] = useState<Investment['category']>(initial?.category || 'publicidad');
   const [description, setDescription] = useState(initial?.description || '');
