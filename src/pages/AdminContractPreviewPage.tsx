@@ -165,6 +165,9 @@ const AdminContractPreviewPage = () => {
       <div ref={captureRef} className="relative">
         <div style={watermarkStyle} className="print:block" />
         <div style={signatureOverlay}>COPIA</div>
+        {String((contract as any)?.status || '') === 'pending_approval' && (
+          <div className="bg-yellow-100 text-yellow-900 text-sm px-4 py-2 text-center">Sua reserva está pendente de aprovação. O administrador entrará em contato para confirmar a data e horário do seu evento.</div>
+        )}
         <ContractPreview
           data={data}
           onConfirm={() => {}}
