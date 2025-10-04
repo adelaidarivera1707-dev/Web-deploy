@@ -61,6 +61,9 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
   const [tplEditing, setTplEditing] = useState<WorkflowTemplate | null>(null);
   const [defaults, setDefaults] = useState<{ packages?: string; products?: string }>({});
   const [packagesList, setPackagesList] = useState<{ id: string; title: string; duration?: string; price?: number }[]>([]);
+  const [productsList, setProductsList] = useState<any[]>([]);
+  const [editStoreItems, setEditStoreItems] = useState<any[]>([]);
+  const [createStoreItems, setCreateStoreItems] = useState<any[]>([]);
   const [creating, setCreating] = useState(false);
   const [createForm, setCreateForm] = useState<any>({ clientName: '', clientEmail: '', clientPhone: '', eventType: '', eventDate: '', eventTime: '', eventLocation: '', packageTitle: '', packageDuration: '', paymentMethod: 'pix', totalAmount: 0, travelFee: 0, message: '' });
   const [dressOptions, setDressOptions] = useState<{ id: string; name: string; image: string; color?: string }[]>([]);
