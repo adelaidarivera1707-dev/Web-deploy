@@ -226,6 +226,7 @@ const InvestmentsManagement: React.FC = () => {
                   installmentValue: Math.round((t / c) * 100) / 100,
                   paymentMethod: payload.paymentMethod,
                   productUrl: payload.productUrl || '',
+                  productImageUrl: payload.productImageUrl || '',
                 });
                 if (!before || before.date !== payload.date || Number(before.totalValue) !== t || Number(before.installmentsCount) !== c) {
                   const list = installments.filter(i => i.investmentId === invId);
