@@ -17,13 +17,13 @@ interface ContractItem {
   depositPaid?: boolean;
   finalPaymentPaid?: boolean;
   eventCompleted?: boolean;
-  status?: 'pending' | 'booked' | 'delivered' | 'cancelled' | 'pending_payment' | 'confirmed';
+  status?: 'pending' | 'booked' | 'delivered' | 'cancelled' | 'pending_payment' | 'confirmed' | 'pending_approval' | 'released';
   pdfUrl?: string | null;
   phone?: string;
   formSnapshot?: any;
 }
 
-type StatusFilter = 'all' | 'pending' | 'booked' | 'delivered' | 'cancelled' | 'pending_payment';
+type StatusFilter = 'all' | 'pending' | 'booked' | 'delivered' | 'cancelled' | 'pending_payment' | 'pending_approval' | 'released';
 
 const startOfMonth = (y: number, m: number) => new Date(y, m, 1);
 const endOfMonth = (y: number, m: number) => new Date(y, m + 1, 0);
@@ -36,8 +36,10 @@ const toLocalDate = (s?: string) => {
 
 function getEventColor(c: ContractItem): string {
   if (c.status === 'cancelled') return 'bg-red-500 text-white hover:opacity-90';
+  if (c.status === 'released') return 'bg-gray-200 text-gray-700 hover:opacity-90';
   if (c.status === 'delivered' || (c.eventCompleted && c.finalPaymentPaid)) return 'bg-green-600 text-white hover:opacity-90';
   if (c.status === 'pending_payment' || c.depositPaid === false) return 'bg-gray-400 text-white hover:opacity-90';
+  if (c.status === 'pending_approval') return 'bg-orange-500 text-white hover:opacity-90';
   if (c.status === 'confirmed' || (c.depositPaid && !c.eventCompleted && c.status !== 'cancelled')) return 'bg-blue-600 text-white hover:opacity-90';
   return 'bg-yellow-500 text-black hover:opacity-90';
 }
@@ -213,10 +215,13 @@ const AdminCalendar: React.FC = () => {
           </select>
           <select value={filterStatus} onChange={e=> setFilterStatus(e.target.value as StatusFilter)} className="px-2 py-1 border rounded-none text-sm">
             <option value="all">Todos</option>
+            <option value="pending_approval">Pendiente de aprobación</option>
             <option value="pending_payment">Pendiente de pago</option>
             <option value="booked">Contratado</option>
+            <option value="confirmed">Confirmado</option>
             <option value="delivered">Entregado</option>
             <option value="cancelled">Cancelado</option>
+            <option value="released">Liberado</option>
           </select>
           <button onClick={()=> setAdding(true)} className="ml-2 px-2 py-1 border-2 border-black text-black rounded-none hover:bg-black hover:text-white inline-flex items-center gap-1 text-sm"><Plus size={14}/> Añadir evento</button>
         </div>
@@ -296,11 +301,13 @@ const AdminCalendar: React.FC = () => {
 
               <div className="flex items-center gap-2"><span>Estado:</span>
                 <select value={selected.status || (selected.eventCompleted && selected.finalPaymentPaid ? 'delivered' : (selected.depositPaid === false ? 'pending_payment' : 'booked'))} onChange={async e=>{ const st = e.target.value as ContractItem['status']; await handleSaveStatus(selected.id, st); setSelected(s=> s ? ({ ...s, status: st }) : s); }} className="px-2 py-1 border rounded-none text-sm">
+                  <option value="pending_approval">Pendiente de aprobación</option>
                   <option value="booked">Contratado</option>
                   <option value="confirmed">Confirmado</option>
                   <option value="pending_payment">Pendiente de pago</option>
                   <option value="delivered">Entregado</option>
                   <option value="cancelled">Cancelado</option>
+                  <option value="released">Liberado</option>
                 </select>
               </div>
             </div>
