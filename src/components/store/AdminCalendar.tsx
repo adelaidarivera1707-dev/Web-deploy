@@ -210,14 +210,11 @@ const AdminCalendar: React.FC = () => {
   };
 
   const openContractPreview = (c: ContractItem) => {
-    if (c.pdfUrl) {
-      window.open(c.pdfUrl, '_blank');
-      return;
-    }
+    const baseId = String(c.id || '').split('__')[0] || c.id;
     try {
-      sessionStorage.setItem('admin_contract_preview', JSON.stringify(c));
+      window.dispatchEvent(new CustomEvent('adminOpenContract', { detail: { id: baseId } }));
     } catch {}
-    window.open('/admin/contract-preview', '_blank');
+    setSelected(null);
   };
 
   return (
