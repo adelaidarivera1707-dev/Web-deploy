@@ -205,12 +205,16 @@ const AdminStoreDashboard: React.FC<AdminProps> = ({ onNavigate }) => {
     return { services, packages };
   }, [filteredContracts]);
 
-  const statCards = useMemo(() => ([
-    { label: 'Ventas Serv. Adicionales', value: `R$ ${salesTotals.services.toFixed(0)}` , icon: <DollarSign className="text-amber-500" size={18} /> },
-    { label: 'Ventas Paquetes Foto', value: `R$ ${salesTotals.packages.toFixed(0)}` , icon: <Package className="text-primary" size={18} /> },
-    { label: 'Ingresos Totales', value: `$${stats.income}`, icon: <DollarSign className="text-amber-500" size={18} /> },
-    { label: 'Nuevos Clientes', value: stats.customers, icon: <Users className="text-fuchsia-500" size={18} /> },
-  ]), [salesTotals, stats]);
+  const statCards = useMemo(() => {
+    const income = filteredContracts.reduce((sum, c: any) => sum + contractAmounts(c).total, 0);
+    const customers = new Set(filteredContracts.map((c:any)=> c.clientEmail || c.clientName)).size;
+    return ([
+      { label: 'Ventas Serv. Adicionales', value: `R$ ${salesTotals.services.toFixed(0)}` , icon: <DollarSign className="text-amber-500" size={18} /> },
+      { label: 'Ventas Paquetes Foto', value: `R$ ${salesTotals.packages.toFixed(0)}` , icon: <Package className="text-primary" size={18} /> },
+      { label: 'Ingresos Totales', value: `R$ ${income.toFixed(0)}`, icon: <DollarSign className="text-amber-500" size={18} /> },
+      { label: 'Nuevos Clientes', value: customers, icon: <Users className="text-fuchsia-500" size={18} /> },
+    ]);
+  }, [salesTotals, filteredContracts]);
 
   const nearestContracts = useMemo(() => {
     const today = new Date(); today.setHours(0,0,0,0);
