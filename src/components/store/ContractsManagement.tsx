@@ -1138,6 +1138,7 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
                 status: 'booked' as const,
                 ...(createForm.packageTitle ? { packageTitle: createForm.packageTitle } : {}),
                 ...(createForm.packageDuration ? { packageDuration: createForm.packageDuration } : {}),
+                storeItems: createStoreItems || [],
               };
               if (createForm.clientPhone) payload.formSnapshot = { ...(payload.formSnapshot || {}), phone: createForm.clientPhone };
               await addDoc(collection(db, 'contracts'), payload);
