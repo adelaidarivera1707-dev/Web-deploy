@@ -239,6 +239,16 @@ const InvestmentsManagement: React.FC = () => {
           }}
         />
       )}
+
+      {details.open && details.inv && (
+        <InvestmentDetailsModal
+          open={details.open}
+          onClose={() => setDetails({ open: false, inv: null })}
+          investment={details.inv}
+          installments={(groupedByInvestment.get(details.inv.id) || []).sort((a,b)=> a.installmentNumber - b.installmentNumber)}
+          onTogglePaid={(instId: string, paid: boolean) => markPaid(instId, paid)}
+        />
+      )}
     </div>
   );
 };
