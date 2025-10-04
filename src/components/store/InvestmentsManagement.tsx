@@ -47,6 +47,9 @@ const InvestmentsManagement: React.FC = () => {
       const inst = instSnap.docs.map(d => ({ id: d.id, ...(d.data() as any) })) as Installment[];
       setItems(inv);
       setInstallments(inst);
+      const catSet = new Set<string>(baseCategories);
+      inv.forEach(v => { const c = String(v.category || '').trim(); if (c) catSet.add(c); });
+      setCategories(Array.from(catSet));
     } catch {
       setItems([]);
       setInstallments([]);
