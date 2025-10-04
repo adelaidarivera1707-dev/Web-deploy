@@ -459,7 +459,7 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
           <div className="flex items-center justify-between p-4 border-b">
             <div>
               <div className="text-lg font-medium">{viewing.clientName} — {viewing.eventType || 'Trabajo'}</div>
-              <div className="text-xs text-gray-500">Fecha principal: {viewing.eventDate || '-' } ��� Hora: {viewing.eventTime || (viewing as any).eventTime || '-'}</div>
+              <div className="text-xs text-gray-500">Fecha principal: {viewing.eventDate || '-' } • Hora: {viewing.eventTime || (viewing as any).eventTime || '-'}</div>
             </div>
             <div className="flex items-center gap-2">
               <button onClick={()=> viewing && openEdit(viewing)} className="border px-3 py-2 rounded-none text-sm">Modificar datos</button>
@@ -583,7 +583,7 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
                         <h3 className="text-base font-medium text-primary mb-2">CLÁUSULA 6ª – DA CLÁUSULA PENAL</h3>
                         <div className="space-y-2">
                           <p>6.1. O descumprimento, por qualquer das partes, das obrigações assumidas neste contrato, sujeitará a parte infratora ao pagamento de multa equivalente a 1/3 (um terço) do valor total do contrato, sem prejuízo de eventuais perdas e danos.</p>
-                          <p>6.2. A cláusula penal não afasta a possibilidade de cobrança judicial ou extrajudicial de danos adicionais comprovadamente sofridos pela parte prejudicada.</p>
+                          <p>6.2. A cláusula penal não afasta a possibilidade de cobran��a judicial ou extrajudicial de danos adicionais comprovadamente sofridos pela parte prejudicada.</p>
                           <p>6.3. No caso de a CONTRATADA não comparecer no dia do evento ou não entregar o material contratado nos prazos estabelecidos, a multa será aplicada de forma imediata, facultando ao(à) CONTRATANTE a execução do contrato e o ajuizamento de ação para reparação integral dos prejuízos, incluindo eventual indenização por danos morais.</p>
                           <p>6.4. Em caso fortuito ou força maior, devidamente comprovados, não se aplicam as penalidades acima descritas, sendo o contrato desfeito sem prejuízo a ambas as partes.</p>
                         </div>
@@ -1003,6 +1003,24 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
             <div className="md:col-span-2">
               <label className="text-xs text-gray-600">Notas</label>
               <textarea value={editForm.message || ''} onChange={e => setEditForm((f: any) => ({ ...f, message: e.target.value }))} className="w-full px-3 py-2 border rounded-none max-h-24" rows={2} />
+            </div>
+
+            <div className="md:col-span-2 border-t pt-3">
+              <div className="text-sm font-medium mb-2">Agregar producto de la tienda</div>
+              <StoreItemAdder products={productsList} onAdd={(item)=> setEditStoreItems(list=> [...list, item])} />
+              {editStoreItems.length > 0 && (
+                <div className="mt-3">
+                  <div className="text-xs text-gray-600 mb-1">Productos agregados</div>
+                  <div className="space-y-1 text-sm">
+                    {editStoreItems.map((it, idx)=> (
+                      <div key={`esi-${idx}`} className="flex items-center justify-between border p-2 rounded">
+                        <div>{it.name}{it.variantName ? ` — ${it.variantName}` : ''} × {Number(it.quantity||1)} • R$ {(Number(it.price)||0).toFixed(0)}</div>
+                        <button onClick={()=> setEditStoreItems(list => list.filter((_,i)=> i!==idx))} className="text-red-600 text-xs border px-2 py-1 rounded-none hover:bg-red-600 hover:text-white">Eliminar</button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
           <div className="mt-4 flex justify-end gap-2">
