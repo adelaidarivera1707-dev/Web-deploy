@@ -295,37 +295,55 @@ const InvestmentModal: React.FC<{ open: boolean; onClose: () => void; categories
         </div>
         <div className="p-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3">
           <div className="flex flex-col">
-            <label className="text-xs text-gray-600">Fecha</label>
+            <label className="text-xs text-gray-600 flex items-center gap-1"><CalendarIcon size={14}/> Fecha</label>
             <input type="date" value={date} onChange={e=> setDate(e.target.value)} className="px-3 py-2 border rounded-none" required />
           </div>
           <div className="flex flex-col">
-            <label className="text-xs text-gray-600">Categoría</label>
-            <select value={category} onChange={e=> setCategory(e.target.value as any)} className="px-3 py-2 border rounded-none">
-              {categories.map(c => <option key={c} value={c}>{c}</option>)}
-            </select>
+            <label className="text-xs text-gray-600 flex items-center gap-1"><Tag size={14}/> Categoría</label>
+            <div className="flex gap-2">
+              <select value={category} onChange={e=> setCategory(e.target.value)} className="px-3 py-2 border rounded-none flex-1">
+                {categories.map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
+              <button type="button" onClick={() => setShowNewCat(v=>!v)} className="px-2 py-2 border rounded-none">{showNewCat ? 'Cancelar' : 'Nueva'}</button>
+            </div>
+            {showNewCat && (
+              <div className="mt-2 flex gap-2">
+                <input type="text" value={newCat} onChange={e=> setNewCat(e.target.value)} className="px-3 py-2 border rounded-none flex-1" placeholder="Nueva categoría" />
+                <button type="button" onClick={() => { const c = newCat.trim(); if (c) { onAddCategory(c); setCategory(c); setShowNewCat(false); setNewCat(''); } }} className="px-3 py-2 border rounded-none bg-black text-white">Agregar</button>
+              </div>
+            )}
           </div>
           <div className="flex flex-col md:col-span-2">
-            <label className="text-xs text-gray-600">Producto / Descripción</label>
+            <label className="text-xs text-gray-600 flex items-center gap-1"><FileText size={14}/> Producto / Descripción</label>
             <input type="text" value={description} onChange={e=> setDescription(e.target.value)} className="px-3 py-2 border rounded-none" placeholder="Ej: Lente 50mm 1.8" required />
           </div>
           <div className="flex flex-col lg:col-span-2">
-            <label className="text-xs text-gray-600">Link del producto (opcional)</label>
+            <label className="text-xs text-gray-600 flex items-center gap-1"><LinkIcon size={14}/> Link del producto (opcional)</label>
             <input type="url" value={productUrl} onChange={e=> setProductUrl(e.target.value)} className="px-3 py-2 border rounded-none" placeholder="https://..." />
           </div>
+          <div className="flex flex-col lg:col-span-2">
+            <label className="text-xs text-gray-600 flex items-center gap-1"><ImageIcon size={14}/> Imagen del producto (URL)</label>
+            <input type="url" value={productImageUrl} onChange={e=> setProductImageUrl(e.target.value)} className="px-3 py-2 border rounded-none" placeholder="https://.../imagen.jpg" />
+            {productImageUrl && productImageUrl.startsWith('http') && (
+              <div className="mt-2 rounded border p-2 bg-gray-50">
+                <img src={productImageUrl} alt="Producto" className="max-h-32 object-contain mx-auto" />
+              </div>
+            )}
+          </div>
           <div className="flex flex-col">
-            <label className="text-xs text-gray-600">Valor total (R$)</label>
+            <label className="text-xs text-gray-600 flex items-center gap-1">R$ Valor total</label>
             <input type="number" step="0.01" min="0" value={total} onChange={e=> setTotal(e.target.value)} className="px-3 py-2 border rounded-none" required />
           </div>
           <div className="flex flex-col">
-            <label className="text-xs text-gray-600">Número de cuotas</label>
+            <label className="text-xs text-gray-600 flex items-center gap-1"><Hash size={14}/> Número de cuotas</label>
             <input type="number" min="1" value={count} onChange={e=> setCount(e.target.value)} className="px-3 py-2 border rounded-none" required />
           </div>
           <div className="flex flex-col">
-            <label className="text-xs text-gray-600">Valor por cuota (R$)</label>
+            <label className="text-xs text-gray-600 flex items-center gap-1">R$ Valor por cuota</label>
             <input type="number" step="0.01" value={perInstallment.toFixed(2)} readOnly className="px-3 py-2 border rounded-none bg-gray-50" />
           </div>
           <div className="flex flex-col">
-            <label className="text-xs text-gray-600">Forma de pago</label>
+            <label className="text-xs text-gray-600 flex items-center gap-1"><CreditCard size={14}/> Forma de pago</label>
             <input type="text" value={paymentMethod} onChange={e=> setPaymentMethod(e.target.value)} className="px-3 py-2 border rounded-none" placeholder="tarjeta, PIX, transferencia" />
           </div>
         </div>
