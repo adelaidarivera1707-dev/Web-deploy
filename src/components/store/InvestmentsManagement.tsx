@@ -265,13 +265,16 @@ const InvestmentModal: React.FC<{ open: boolean; onClose: () => void; categories
 
   useEffect(() => {
     if (!open) return;
-    setDate(initial?.date || '');
+    setDate(initial?.date || new Date().toISOString().slice(0,10));
     setCategory(initial?.category || 'publicidad');
     setDescription(initial?.description || '');
     setTotal(initial ? String(initial.totalValue || '') : '');
     setCount(initial ? String(initial.installmentsCount || 1) : '1');
     setPaymentMethod(initial?.paymentMethod || 'tarjeta');
     setProductUrl(initial?.productUrl || '');
+    setProductImageUrl(initial?.productImageUrl || '');
+    setShowNewCat(false);
+    setNewCat('');
   }, [open, initial]);
 
   const perInstallment = useMemo(() => {
