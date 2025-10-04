@@ -268,6 +268,7 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
       message: String(editForm.message || editing.message || ''),
       totalAmount: Number(editForm.totalAmount ?? editing.totalAmount ?? 0),
       travelFee: Number(editForm.travelFee ?? editing.travelFee ?? 0),
+      storeItems: editStoreItems,
       ...(editForm.eventTime !== undefined ? { eventTime: String(editForm.eventTime || '') } : {}),
       ...(editForm.eventLocation !== undefined ? { eventLocation: String(editForm.eventLocation || '') } : {}),
       ...(editForm.packageTitle !== undefined ? { packageTitle: String(editForm.packageTitle || '') } : {}),
