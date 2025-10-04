@@ -288,6 +288,7 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
       travelFee: merged.travelFee,
       paymentMethod: merged.paymentMethod,
       message: merged.message,
+      storeItems: merged.storeItems || [],
       ...(merged.eventTime !== undefined ? { eventTime: merged.eventTime } : {}),
       ...(merged.eventLocation !== undefined ? { eventLocation: merged.eventLocation } : {}),
       ...(merged.packageTitle !== undefined ? { packageTitle: merged.packageTitle } : {}),
