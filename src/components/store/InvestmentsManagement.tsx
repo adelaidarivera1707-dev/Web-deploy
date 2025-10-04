@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { db } from '../../utils/firebaseClient';
-import { addDoc, collection, doc, getDocs, query, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDocs, query, updateDoc } from 'firebase/firestore';
 
 interface Investment {
   id: string;
@@ -11,6 +11,7 @@ interface Investment {
   installmentsCount: number;
   installmentValue: number;
   paymentMethod: string;
+  productUrl?: string;
   createdAt?: string;
 }
 
@@ -31,19 +32,8 @@ const InvestmentsManagement: React.FC = () => {
   const [installments, setInstallments] = useState<Installment[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const [date, setDate] = useState<string>('');
-  const [category, setCategory] = useState<Investment['category']>('publicidad');
-  const [description, setDescription] = useState('');
-  const [total, setTotal] = useState<string>('');
-  const [count, setCount] = useState<string>('1');
-  const [paymentMethod, setPaymentMethod] = useState('tarjeta');
-
-  const perInstallment = useMemo(() => {
-    const t = Number(total) || 0;
-    const c = Math.max(1, Number(count) || 1);
-    const base = Math.floor((t / c) * 100) / 100; // round down to cents
-    return base;
-  }, [total, count]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editing, setEditing] = useState<Investment | null>(null);
 
   const fetchAll = async () => {
     setLoading(true);
@@ -73,8 +63,7 @@ const InvestmentsManagement: React.FC = () => {
     const batch: Promise<any>[] = [];
     for (let i = 0; i < c; i++) {
       const due = new Date(start.getFullYear(), start.getMonth() + i, start.getDate());
-      // distribute remainder cents to the earliest installments
-      const extraCent = i < remainder ? 0.01 : 0;
+      const extraCent = i < remainder ? 0.01 : 0; // distribute remainder to earliest installments
       const amount = Math.round((base + extraCent) * 100) / 100;
       batch.push(addDoc(collection(db, 'investment_installments'), {
         investmentId,
@@ -88,36 +77,6 @@ const InvestmentsManagement: React.FC = () => {
     await Promise.all(batch);
   };
 
-  const handleAdd = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const t = Number(total);
-    const c = Math.max(1, Number(count));
-    if (!date || !description || !isFinite(t) || t <= 0 || !isFinite(c) || c <= 0) return;
-    setLoading(true);
-    try {
-      const invRef = await addDoc(collection(db, 'investments'), {
-        date,
-        category,
-        description,
-        totalValue: t,
-        installmentsCount: c,
-        installmentValue: Math.round((t / c) * 100) / 100,
-        paymentMethod,
-        createdAt: new Date().toISOString(),
-      });
-      await createInstallments(invRef.id, date, t, c);
-      await fetchAll();
-      // toast
-      window.dispatchEvent(new CustomEvent('adminToast', { detail: { message: 'Inversión registrada', type: 'success', refresh: false } }));
-      // reset form
-      setDate(''); setCategory('publicidad'); setDescription(''); setTotal(''); setCount('1'); setPaymentMethod('tarjeta');
-    } catch (e) {
-      window.dispatchEvent(new CustomEvent('adminToast', { detail: { message: 'No se pudo registrar la inversión', type: 'error' } }));
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const getStatus = (investmentId: string) => {
     const list = installments.filter(i => i.investmentId === investmentId);
     if (!list.length) return 'pendiente';
@@ -128,7 +87,23 @@ const InvestmentsManagement: React.FC = () => {
     try {
       await updateDoc(doc(db, 'investment_installments', installmentId), { status: paid ? 'pagado' : 'pendiente', paidAt: paid ? new Date().toISOString() : null });
       await fetchAll();
+      window.dispatchEvent(new Event('investmentsUpdated'));
     } catch {}
+  };
+
+  const handleDeleteInvestment = async (inv: Investment) => {
+    const ok = confirm('¿Borrar esta inversión y todas sus cuotas?');
+    if (!ok) return;
+    try {
+      const list = installments.filter(i => i.investmentId === inv.id);
+      await Promise.all(list.map(i => deleteDoc(doc(db, 'investment_installments', i.id))));
+      await deleteDoc(doc(db, 'investments', inv.id));
+      await fetchAll();
+      window.dispatchEvent(new CustomEvent('adminToast', { detail: { message: 'Inversión eliminada', type: 'success' } }));
+      window.dispatchEvent(new Event('investmentsUpdated'));
+    } catch {
+      window.dispatchEvent(new CustomEvent('adminToast', { detail: { message: 'No se pudo eliminar', type: 'error' } }));
+    }
   };
 
   const groupedByInvestment = useMemo(() => {
@@ -144,43 +119,8 @@ const InvestmentsManagement: React.FC = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="section-title">Inversiones</h2>
+        <button onClick={() => { setEditing(null); setModalOpen(true); }} className="px-4 py-2 rounded-none border-2 border-black text-black hover:bg-black hover:text-white">Agregar</button>
       </div>
-
-      <form onSubmit={handleAdd} className="bg-white rounded-xl border border-gray-200 p-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3">
-        <div className="flex flex-col">
-          <label className="text-xs text-gray-600">Fecha</label>
-          <input type="date" value={date} onChange={e=> setDate(e.target.value)} className="px-3 py-2 border rounded-none" required />
-        </div>
-        <div className="flex flex-col">
-          <label className="text-xs text-gray-600">Categoría</label>
-          <select value={category} onChange={e=> setCategory(e.target.value as any)} className="px-3 py-2 border rounded-none">
-            {categories.map(c => <option key={c} value={c}>{c}</option>)}
-          </select>
-        </div>
-        <div className="flex flex-col md:col-span-2">
-          <label className="text-xs text-gray-600">Producto / Descripción</label>
-          <input type="text" value={description} onChange={e=> setDescription(e.target.value)} className="px-3 py-2 border rounded-none" placeholder="Ej: Lente 50mm 1.8" required />
-        </div>
-        <div className="flex flex-col">
-          <label className="text-xs text-gray-600">Valor total (R$)</label>
-          <input type="number" step="0.01" min="0" value={total} onChange={e=> setTotal(e.target.value)} className="px-3 py-2 border rounded-none" required />
-        </div>
-        <div className="flex flex-col">
-          <label className="text-xs text-gray-600">Número de cuotas</label>
-          <input type="number" min="1" value={count} onChange={e=> setCount(e.target.value)} className="px-3 py-2 border rounded-none" required />
-        </div>
-        <div className="flex flex-col">
-          <label className="text-xs text-gray-600">Valor por cuota (R$)</label>
-          <input type="number" step="0.01" value={perInstallment.toFixed(2)} readOnly className="px-3 py-2 border rounded-none bg-gray-50" />
-        </div>
-        <div className="flex flex-col">
-          <label className="text-xs text-gray-600">Forma de pago</label>
-          <input type="text" value={paymentMethod} onChange={e=> setPaymentMethod(e.target.value)} className="px-3 py-2 border rounded-none" placeholder="tarjeta, PIX, transferencia" />
-        </div>
-        <div className="flex items-end">
-          <button type="submit" disabled={loading} className="px-4 py-2 rounded-none border-2 border-black text-black hover:bg-black hover:text-white w-full">Agregar</button>
-        </div>
-      </form>
 
       <div className="bg-white rounded-xl border border-gray-200 overflow-auto">
         <table className="min-w-full text-sm">
@@ -195,12 +135,13 @@ const InvestmentsManagement: React.FC = () => {
               <th className="px-4 py-2">Forma de pago</th>
               <th className="px-4 py-2">Estado</th>
               <th className="px-4 py-2">Cuotas</th>
+              <th className="px-4 py-2">Acciones</th>
             </tr>
           </thead>
           <tbody>
             {items.length === 0 && (
               <tr>
-                <td className="px-4 py-3 text-gray-500" colSpan={9}>Sin inversiones</td>
+                <td className="px-4 py-3 text-gray-500" colSpan={10}>Sin inversiones</td>
               </tr>
             )}
             {items.map(inv => {
@@ -210,7 +151,14 @@ const InvestmentsManagement: React.FC = () => {
                 <tr key={inv.id} className="border-t">
                   <td className="px-4 py-2">{inv.date}</td>
                   <td className="px-4 py-2 capitalize">{inv.category}</td>
-                  <td className="px-4 py-2">{inv.description}</td>
+                  <td className="px-4 py-2">
+                    <div className="flex items-center gap-2">
+                      <span>{inv.description}</span>
+                      {inv.productUrl && (
+                        <a href={inv.productUrl} target="_blank" rel="noreferrer" className="text-blue-600 underline text-xs">link</a>
+                      )}
+                    </div>
+                  </td>
                   <td className="px-4 py-2">R$ {Number(inv.totalValue || 0).toFixed(2)}</td>
                   <td className="px-4 py-2">{inv.installmentsCount}</td>
                   <td className="px-4 py-2">R$ {Number(inv.installmentValue || 0).toFixed(2)}</td>
@@ -227,11 +175,168 @@ const InvestmentsManagement: React.FC = () => {
                       ))}
                     </div>
                   </td>
+                  <td className="px-4 py-2 whitespace-nowrap">
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => { setEditing(inv); setModalOpen(true); }} className="px-2 py-1 border rounded-none hover:bg-gray-50">Editar</button>
+                      <button onClick={() => handleDeleteInvestment(inv)} className="px-2 py-1 border border-red-600 text-red-600 rounded-none hover:bg-red-50">Borrar</button>
+                    </div>
+                  </td>
                 </tr>
               );
             })}
           </tbody>
         </table>
+      </div>
+
+      {modalOpen && (
+        <InvestmentModal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          categories={categories}
+          initial={editing}
+          onSaved={async (payload) => {
+            try {
+              setLoading(true);
+              if (!payload.id) {
+                const t = Number(payload.totalValue);
+                const c = Math.max(1, Number(payload.installmentsCount));
+                const invRef = await addDoc(collection(db, 'investments'), {
+                  date: payload.date,
+                  category: payload.category,
+                  description: payload.description,
+                  totalValue: t,
+                  installmentsCount: c,
+                  installmentValue: Math.round((t / c) * 100) / 100,
+                  paymentMethod: payload.paymentMethod,
+                  productUrl: payload.productUrl || '',
+                  createdAt: new Date().toISOString(),
+                });
+                await createInstallments(invRef.id, payload.date, t, c);
+              } else {
+                const invId = payload.id;
+                const before = items.find(i => i.id === invId);
+                const t = Number(payload.totalValue);
+                const c = Math.max(1, Number(payload.installmentsCount));
+                await updateDoc(doc(db, 'investments', invId), {
+                  date: payload.date,
+                  category: payload.category,
+                  description: payload.description,
+                  totalValue: t,
+                  installmentsCount: c,
+                  installmentValue: Math.round((t / c) * 100) / 100,
+                  paymentMethod: payload.paymentMethod,
+                  productUrl: payload.productUrl || '',
+                });
+                if (!before || before.date !== payload.date || Number(before.totalValue) !== t || Number(before.installmentsCount) !== c) {
+                  const list = installments.filter(i => i.investmentId === invId);
+                  await Promise.all(list.map(i => deleteDoc(doc(db, 'investment_installments', i.id))));
+                  await createInstallments(invId, payload.date, t, c);
+                }
+              }
+              await fetchAll();
+              setModalOpen(false);
+              setEditing(null);
+              window.dispatchEvent(new CustomEvent('adminToast', { detail: { message: 'Datos guardados', type: 'success' } }));
+              window.dispatchEvent(new Event('investmentsUpdated'));
+            } catch {
+              window.dispatchEvent(new CustomEvent('adminToast', { detail: { message: 'No se pudo guardar', type: 'error' } }));
+            } finally {
+              setLoading(false);
+            }
+          }}
+        />
+      )}
+    </div>
+  );
+};
+
+const InvestmentModal: React.FC<{ open: boolean; onClose: () => void; categories: Array<Investment['category']>; initial: Investment | null; onSaved: (payload: Partial<Investment> & { id?: string }) => void; }> = ({ open, onClose, categories, initial, onSaved }) => {
+  const [date, setDate] = useState<string>(initial?.date || '');
+  const [category, setCategory] = useState<Investment['category']>(initial?.category || 'publicidad');
+  const [description, setDescription] = useState(initial?.description || '');
+  const [total, setTotal] = useState<string>(initial ? String(initial.totalValue || '') : '');
+  const [count, setCount] = useState<string>(initial ? String(initial.installmentsCount || 1) : '1');
+  const [paymentMethod, setPaymentMethod] = useState(initial?.paymentMethod || 'tarjeta');
+  const [productUrl, setProductUrl] = useState<string>(initial?.productUrl || '');
+
+  useEffect(() => {
+    if (!open) return;
+    setDate(initial?.date || '');
+    setCategory(initial?.category || 'publicidad');
+    setDescription(initial?.description || '');
+    setTotal(initial ? String(initial.totalValue || '') : '');
+    setCount(initial ? String(initial.installmentsCount || 1) : '1');
+    setPaymentMethod(initial?.paymentMethod || 'tarjeta');
+    setProductUrl(initial?.productUrl || '');
+  }, [open, initial]);
+
+  const perInstallment = useMemo(() => {
+    const t = Number(total) || 0;
+    const c = Math.max(1, Number(count) || 1);
+    const base = Math.floor((t / c) * 100) / 100;
+    return base;
+  }, [total, count]);
+
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" role="dialog" aria-modal>
+      <div className="bg-white rounded-xl w-full max-w-3xl max-h-[85vh] overflow-auto relative">
+        <button onClick={onClose} className="absolute top-3 right-3 bg-white border rounded-full p-1 shadow hover:bg-gray-50" aria-label="Cerrar">✕</button>
+        <div className="p-4 border-b">
+          <h3 className="text-lg font-semibold">{initial ? 'Editar inversión' : 'Nueva inversión'}</h3>
+        </div>
+        <div className="p-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3">
+          <div className="flex flex-col">
+            <label className="text-xs text-gray-600">Fecha</label>
+            <input type="date" value={date} onChange={e=> setDate(e.target.value)} className="px-3 py-2 border rounded-none" required />
+          </div>
+          <div className="flex flex-col">
+            <label className="text-xs text-gray-600">Categoría</label>
+            <select value={category} onChange={e=> setCategory(e.target.value as any)} className="px-3 py-2 border rounded-none">
+              {categories.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </div>
+          <div className="flex flex-col md:col-span-2">
+            <label className="text-xs text-gray-600">Producto / Descripción</label>
+            <input type="text" value={description} onChange={e=> setDescription(e.target.value)} className="px-3 py-2 border rounded-none" placeholder="Ej: Lente 50mm 1.8" required />
+          </div>
+          <div className="flex flex-col lg:col-span-2">
+            <label className="text-xs text-gray-600">Link del producto (opcional)</label>
+            <input type="url" value={productUrl} onChange={e=> setProductUrl(e.target.value)} className="px-3 py-2 border rounded-none" placeholder="https://..." />
+          </div>
+          <div className="flex flex-col">
+            <label className="text-xs text-gray-600">Valor total (R$)</label>
+            <input type="number" step="0.01" min="0" value={total} onChange={e=> setTotal(e.target.value)} className="px-3 py-2 border rounded-none" required />
+          </div>
+          <div className="flex flex-col">
+            <label className="text-xs text-gray-600">Número de cuotas</label>
+            <input type="number" min="1" value={count} onChange={e=> setCount(e.target.value)} className="px-3 py-2 border rounded-none" required />
+          </div>
+          <div className="flex flex-col">
+            <label className="text-xs text-gray-600">Valor por cuota (R$)</label>
+            <input type="number" step="0.01" value={perInstallment.toFixed(2)} readOnly className="px-3 py-2 border rounded-none bg-gray-50" />
+          </div>
+          <div className="flex flex-col">
+            <label className="text-xs text-gray-600">Forma de pago</label>
+            <input type="text" value={paymentMethod} onChange={e=> setPaymentMethod(e.target.value)} className="px-3 py-2 border rounded-none" placeholder="tarjeta, PIX, transferencia" />
+          </div>
+        </div>
+        <div className="p-4 border-t flex items-center justify-end gap-2">
+          <button onClick={onClose} className="px-4 py-2 rounded-none border">Cancelar</button>
+          <button onClick={() => onSaved({
+            id: initial?.id,
+            date,
+            category,
+            description,
+            totalValue: Number(total),
+            installmentsCount: Number(count),
+            paymentMethod,
+            productUrl,
+          })} className="px-4 py-2 rounded-none bg-black text-white hover:opacity-90">
+            Guardar
+          </button>
+        </div>
       </div>
     </div>
   );
