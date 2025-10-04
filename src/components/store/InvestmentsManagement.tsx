@@ -153,9 +153,12 @@ const InvestmentsManagement: React.FC = () => {
                   <td className="px-4 py-2 capitalize">{inv.category}</td>
                   <td className="px-4 py-2">
                     <div className="flex items-center gap-2">
+                      {inv.productImageUrl && (
+                        <img src={inv.productImageUrl} alt="Producto" className="w-10 h-10 object-cover rounded border" />
+                      )}
                       <span>{inv.description}</span>
                       {inv.productUrl && (
-                        <a href={inv.productUrl} target="_blank" rel="noreferrer" className="text-blue-600 underline text-xs">link</a>
+                        <a href={inv.productUrl} target="_blank" rel="noreferrer" className="text-blue-600 underline text-xs" aria-label="Abrir link de compra">ver</a>
                       )}
                     </div>
                   </td>
