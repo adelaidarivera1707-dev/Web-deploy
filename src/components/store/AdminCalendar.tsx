@@ -40,7 +40,7 @@ function getEventColor(c: ContractItem): string {
   if (c.status === 'delivered' || (c.eventCompleted && c.finalPaymentPaid)) return 'bg-green-600 text-white hover:opacity-90';
   if (c.status === 'pending_payment' || c.depositPaid === false) return 'bg-gray-400 text-white hover:opacity-90';
   if (c.status === 'pending_approval') return 'bg-orange-500 text-white hover:opacity-90';
-  if (c.status === 'confirmed' || (c.depositPaid && !c.eventCompleted && c.status !== 'cancelled')) return 'bg-blue-600 text-white hover:opacity-90';
+  if (c.status === 'confirmed' || (c.depositPaid && !c.eventCompleted)) return 'bg-blue-600 text-white hover:opacity-90';
   return 'bg-yellow-500 text-black hover:opacity-90';
 }
 
