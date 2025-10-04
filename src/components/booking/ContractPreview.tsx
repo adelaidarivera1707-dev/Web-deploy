@@ -851,7 +851,7 @@ const ContractPreview = ({ data, onConfirm, onBack }: ContractPreviewProps) => {
               <div className="space-y-3 text-sm text-gray-600 mb-6">
                 <div className="flex items-center justify-center space-x-2">
                   <CheckCircle className="h-4 w-4 text-green-600" />
-                  <span>C��pia enviada para o estúdio</span>
+                  <span>Copia enviada para o estúdio</span>
                 </div>
                 <div className="flex items-center justify-center space-x-2">
                   <CheckCircle className="h-4 w-4 text-green-600" />
