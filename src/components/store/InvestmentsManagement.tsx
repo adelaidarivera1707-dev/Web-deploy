@@ -135,14 +135,10 @@ const InvestmentsManagement: React.FC = () => {
           <thead>
             <tr className="bg-gray-50 text-left">
               <th className="px-4 py-2">Fecha</th>
-              <th className="px-4 py-2">Categoría</th>
               <th className="px-4 py-2">Producto / Descripción</th>
               <th className="px-4 py-2">Valor total</th>
-              <th className="px-4 py-2">Nº cuotas</th>
+              <th className="px-4 py-2">No de cuotas</th>
               <th className="px-4 py-2">Valor por cuota</th>
-              <th className="px-4 py-2">Forma de pago</th>
-              <th className="px-4 py-2">Estado</th>
-              <th className="px-4 py-2">Cuotas</th>
               <th className="px-4 py-2">Acciones</th>
             </tr>
           </thead>
