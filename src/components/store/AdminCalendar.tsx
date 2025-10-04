@@ -180,6 +180,21 @@ const AdminCalendar: React.FC = () => {
   const months = Array.from({ length: 12 }, (_, i) => new Date(2000, i, 1).toLocaleString('es', { month: 'long' }));
   const years = Array.from({ length: 7 }, (_, i) => today.getFullYear() - 3 + i);
 
+  const computeAmounts = (c: ContractItem) => {
+    const svcList: any[] = Array.isArray((c as any).services) && (c as any).services.length > 0 ? (c as any).services : (Array.isArray((c as any).formSnapshot?.cartItems) ? (c as any).formSnapshot.cartItems : []);
+    const servicesTotal = svcList.reduce((sum, it: any) => {
+      const qty = Number(it?.quantity ?? 1);
+      const price = Number(String(it?.price || '').replace(/[^0-9]/g, ''));
+      return sum + (price * qty);
+    }, 0);
+    const storeTotal = (Array.isArray((c as any).storeItems) ? (c as any).storeItems : []).reduce((sum: number, it: any) => sum + (Number(it.price) * Number(it.quantity || 1)), 0);
+    const travel = Number((c as any).travelFee || 0);
+    const totalAmount = Math.round((servicesTotal || 0) + (storeTotal || 0) + (travel || 0));
+    const depositAmount = servicesTotal <= 0 && storeTotal > 0 ? Math.ceil((storeTotal + travel) * 0.5) : Math.ceil(servicesTotal * 0.2 + storeTotal * 0.5);
+    const remainingAmount = Math.max(0, Math.round(totalAmount - depositAmount));
+    return { servicesTotal, storeTotal, travel, totalAmount, depositAmount, remainingAmount };
+  };
+
   const handleSaveStatus = async (id: string, status: ContractItem['status']) => {
     await updateDoc(doc(db, 'contracts', id), { status } as any);
     await load();
