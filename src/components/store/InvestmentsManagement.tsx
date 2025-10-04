@@ -259,6 +259,9 @@ const InvestmentModal: React.FC<{ open: boolean; onClose: () => void; categories
   const [count, setCount] = useState<string>(initial ? String(initial.installmentsCount || 1) : '1');
   const [paymentMethod, setPaymentMethod] = useState(initial?.paymentMethod || 'tarjeta');
   const [productUrl, setProductUrl] = useState<string>(initial?.productUrl || '');
+  const [productImageUrl, setProductImageUrl] = useState<string>(initial?.productImageUrl || '');
+  const [showNewCat, setShowNewCat] = useState(false);
+  const [newCat, setNewCat] = useState('');
 
   useEffect(() => {
     if (!open) return;
