@@ -459,7 +459,7 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
           <div className="flex items-center justify-between p-4 border-b">
             <div>
               <div className="text-lg font-medium">{viewing.clientName} — {viewing.eventType || 'Trabajo'}</div>
-              <div className="text-xs text-gray-500">Fecha principal: {viewing.eventDate || '-' } • Hora: {viewing.eventTime || (viewing as any).eventTime || '-'}</div>
+              <div className="text-xs text-gray-500">Fecha principal: {viewing.eventDate || '-' } ��� Hora: {viewing.eventTime || (viewing as any).eventTime || '-'}</div>
             </div>
             <div className="flex items-center gap-2">
               <button onClick={()=> viewing && openEdit(viewing)} className="border px-3 py-2 rounded-none text-sm">Modificar datos</button>
@@ -1054,10 +1054,10 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
               <select value={createForm.packageTitle} onChange={(e)=>{
                 const title = e.target.value;
                 const found = packagesList.find(p=>p.title===title);
-                setCreateForm((f:any)=> ({ ...f, packageTitle: title, packageDuration: found?.duration || f.packageDuration || '' }));
+                setCreateForm((f:any)=> ({ ...f, packageTitle: title, packageDuration: found?.duration || f.packageDuration || '', totalAmount: (found?.price || 0) + Number(f.travelFee || 0) + (createStoreItems || []).reduce((s,it)=> s + (Number(it.price)||0) * (Number(it.quantity)||1), 0) }));
               }} className="w-full px-3 py-2 border rounded-none">
                 <option value="">— Selecciona paquete —</option>
-                {packagesList.map(p=> (<option key={p.id} value={p.title}>{p.title}</option>))}
+                {packagesList.map(p=> (<option key={p.id} value={p.title}>{p.title} — R$ {Number(p.price||0).toFixed(0)}</option>))}
               </select>
             </div>
             <div>
