@@ -217,6 +217,7 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
     const next = !Boolean(current[field]);
     await updateDoc(doc(db, 'contracts', id), { [field]: next } as any);
     await fetchContracts();
+    try { window.dispatchEvent(new CustomEvent('contractsUpdated')); } catch {}
   };
 
   const openEdit = (c: ContractItem) => {
@@ -283,6 +284,7 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
     setViewing(v => v && v.id === id ? ({ ...v, ...payload }) as any : v);
     setEditing(null);
     await fetchContracts();
+    try { window.dispatchEvent(new CustomEvent('contractsUpdated')); } catch {}
   };
 
   const openView = async (c: ContractItem) => {
@@ -314,6 +316,7 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
     try {
       await updateDoc(doc(db, 'contracts', viewing.id), { workflow } as any);
       await fetchContracts();
+      try { window.dispatchEvent(new CustomEvent('contractsUpdated')); } catch {}
     } finally {
       setSavingWf(false);
     }
@@ -340,12 +343,14 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
     const nextRem = [ ...(viewing.reminders || []).filter(r => r.type !== 'finalPayment'), { type: 'finalPayment' as const, sendAt } ];
     await updateDoc(doc(db, 'contracts', viewing.id), { reminders: nextRem } as any);
     await fetchContracts();
+    try { window.dispatchEvent(new CustomEvent('contractsUpdated')); } catch {}
   };
 
   const remove = async (id: string) => {
     if (!confirm('¿Eliminar este contrato?')) return;
     await deleteDoc(doc(db, 'contracts', id));
     await fetchContracts();
+    try { window.dispatchEvent(new CustomEvent('contractsUpdated')); } catch {}
   };
 
   const isPast = (c: ContractItem) => {
@@ -420,8 +425,8 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
                 <div className="col-span-1 text-right">
                   {String((c as any).status || '') === 'pending_approval' ? (
                     <div className="flex items-center justify-end gap-1">
-                      <button onClick={async (e)=>{ e.stopPropagation(); await updateDoc(doc(db,'contracts', c.id), { status: 'confirmed' } as any); await fetchContracts(); window.dispatchEvent(new CustomEvent('adminToast', { detail: { message: 'Reserva aprobada', type: 'success' } })); }} className="border-2 border-green-600 text-green-600 px-2 py-1 rounded-none hover:bg-green-600 hover:text-white">Aprobar</button>
-                      <button onClick={async (e)=>{ e.stopPropagation(); await updateDoc(doc(db,'contracts', c.id), { status: 'released' } as any); await fetchContracts(); window.dispatchEvent(new CustomEvent('adminToast', { detail: { message: 'Reserva liberada', type: 'info' } })); }} className="border-2 border-gray-600 text-gray-600 px-2 py-1 rounded-none hover:bg-gray-600 hover:text-white">Liberar</button>
+                      <button onClick={async (e)=>{ e.stopPropagation(); await updateDoc(doc(db,'contracts', c.id), { status: 'confirmed' } as any); await fetchContracts(); try { window.dispatchEvent(new CustomEvent('contractsUpdated')); } catch {}; window.dispatchEvent(new CustomEvent('adminToast', { detail: { message: 'Reserva aprobada', type: 'success' } })); }} className="border-2 border-green-600 text-green-600 px-2 py-1 rounded-none hover:bg-green-600 hover:text-white">Aprobar</button>
+                      <button onClick={async (e)=>{ e.stopPropagation(); await updateDoc(doc(db,'contracts', c.id), { status: 'released' } as any); await fetchContracts(); try { window.dispatchEvent(new CustomEvent('contractsUpdated')); } catch {}; window.dispatchEvent(new CustomEvent('adminToast', { detail: { message: 'Reserva liberada', type: 'info' } })); }} className="border-2 border-gray-600 text-gray-600 px-2 py-1 rounded-none hover:bg-gray-600 hover:text-white">Liberar</button>
                     </div>
                   ) : (
                     <button onClick={(e)=>{e.stopPropagation(); remove(c.id);}} title="Eliminar" className="border-2 border-red-600 text-red-600 px-2 py-1 rounded-none hover:bg-red-600 hover:text-white inline-flex items-center"><Trash2 size={14}/></button>
@@ -1087,6 +1092,7 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
               setCreating(false);
               setCreateForm({ clientName: '', clientEmail: '', clientPhone: '', eventType: '', eventDate: '', eventTime: '', eventLocation: '', packageTitle: '', packageDuration: '', paymentMethod: 'pix', totalAmount: 0, travelFee: 0, message: '' });
               await fetchContracts();
+              try { window.dispatchEvent(new CustomEvent('contractsUpdated')); } catch {}
             }} className="border-2 border-black bg-black text-white px-3 py-2 rounded-none hover:opacity-90">Crear</button>
           </div>
         </div>
