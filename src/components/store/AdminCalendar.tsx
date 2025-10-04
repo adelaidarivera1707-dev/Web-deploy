@@ -174,8 +174,8 @@ const AdminCalendar: React.FC = () => {
   }, [filteredEvents]);
 
   const goToday = () => { const t = new Date(); setCurrent({ y: t.getFullYear(), m: t.getMonth() }); setFilterMonth(t.getMonth()); setFilterYear(t.getFullYear()); };
-  const prevMonth = () => setCurrent(c => ({ y: c.m === 0 ? c.y - 1 : c.y, m: c.m === 0 ? 11 : c.m - 1 }));
-  const nextMonth = () => setCurrent(c => ({ y: c.m === 11 ? c.y + 1 : c.y, m: c.m === 11 ? 0 : c.m + 1 }));
+  const prevMonth = () => setCurrent(c => { const y = c.m === 0 ? c.y - 1 : c.y; const m = c.m === 0 ? 11 : c.m - 1; setFilterMonth(m); setFilterYear(y); return { y, m }; });
+  const nextMonth = () => setCurrent(c => { const y = c.m === 11 ? c.y + 1 : c.y; const m = c.m === 11 ? 0 : c.m + 1; setFilterMonth(m); setFilterYear(y); return { y, m }; });
 
   const months = Array.from({ length: 12 }, (_, i) => new Date(2000, i, 1).toLocaleString('es', { month: 'long' }));
   const years = Array.from({ length: 7 }, (_, i) => today.getFullYear() - 3 + i);
