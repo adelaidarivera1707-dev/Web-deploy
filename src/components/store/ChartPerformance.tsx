@@ -26,7 +26,7 @@ const ChartPerformance: React.FC<Props> = ({ data, products, selectedProductId, 
         <YAxis />
         <Tooltip formatter={formatTooltip as any} />
         <Legend />
-        <Line type="monotone" dataKey="a" name={resolveName(selectedProductId)} stroke="#111827" strokeWidth={2} dot={false} />
+        <Line type="monotone" dataKey="a" name={resolveName(selectedProductId)} stroke={mode === 'contracts' ? '#818cf8' : '#111827'} strokeWidth={2} dot={false} />
         {mode === 'revenue' && (
           <Line type="monotone" dataKey="forecast" name="Ingresos Futuros" stroke="#6b7280" strokeWidth={2} strokeDasharray="6 6" dot={false} />
         )}
