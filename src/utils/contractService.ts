@@ -38,7 +38,7 @@ export interface OrderData {
   createdAt: string;
 }
 
-export const saveContract = async (formData: BookingFormData, userUid?: string): Promise<string> => {
+export const saveContract = async (formData: BookingFormData, userUid?: string): Promise<{ id: string; status?: string; pendingApproval?: boolean }> => {
   try {
     const timeToMinutes = (t: string) => { const [h, m] = (t || '00:00').split(':').map(Number); return (h||0)*60 + (m||0); };
     const minutesToTime = (m: number) => { const h = Math.floor(m/60)%24; const mm = m%60; return `${String(h).padStart(2,'0')}:${String(mm).padStart(2,'0')}`; };
@@ -185,7 +185,7 @@ export const saveContract = async (formData: BookingFormData, userUid?: string):
       }
     }
 
-    return docRef.id;
+    return { id: docRef.id, status: (contractData as any).status, pendingApproval };
   } catch (error: any) {
     console.error('Error saving contract:', error);
     // Enhance error with code/message for better debugging in UI
