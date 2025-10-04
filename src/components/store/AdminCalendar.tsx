@@ -65,7 +65,33 @@ const AdminCalendar: React.FC = () => {
       try { q = query(col, orderBy('createdAt', 'desc')); } catch (_) { q = col; }
       const snap = await getDocs(q);
       const list = snap.docs.map(d => ({ id: d.id, ...(d.data() as any) })) as ContractItem[];
-      setEvents(list);
+      const expanded: ContractItem[] = list.flatMap((c: any) => {
+        const fs = c.formSnapshot || {};
+        const svc: any[] = Array.isArray(c.services) && c.services.length > 0
+          ? c.services
+          : (Array.isArray(fs.cartItems) ? fs.cartItems : []);
+        if (svc && svc.length > 0) {
+          return svc.map((it: any, index: number) => {
+            const evDate = String(fs[`date_${index}`] || c.eventDate || '');
+            const evTime = String(fs[`time_${index}`] || c.eventTime || '');
+            const evLoc = String(fs[`eventLocation_${index}`] || c.eventLocation || '');
+            const duration = String(it?.duration || c.packageDuration || '');
+            const evType = String(it?.type || c.eventType || '');
+            return {
+              ...c,
+              id: `${c.id}__${index}`,
+              eventDate: evDate,
+              eventTime: evTime,
+              eventLocation: evLoc,
+              packageDuration: duration,
+              eventType: evType,
+              clientName: `${c.clientName}${it?.name ? ` — ${it.name}` : ''}`
+            } as ContractItem;
+          });
+        }
+        return [c as ContractItem];
+      });
+      setEvents(expanded);
     } catch (e) {
       setEvents([]);
     } finally {
