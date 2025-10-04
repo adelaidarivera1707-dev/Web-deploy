@@ -188,17 +188,19 @@ const AdminCalendar: React.FC = () => {
 
   const computeAmounts = (c: ContractItem) => {
     const svcList: any[] = Array.isArray((c as any).services) && (c as any).services.length > 0 ? (c as any).services : (Array.isArray((c as any).formSnapshot?.cartItems) ? (c as any).formSnapshot.cartItems : []);
-    const servicesTotal = svcList.reduce((sum, it: any) => {
+    const servicesTotalRaw = svcList.reduce((sum, it: any) => {
       const qty = Number(it?.quantity ?? 1);
       const price = Number(String(it?.price || '').replace(/[^0-9]/g, ''));
       return sum + (price * qty);
     }, 0);
     const storeTotal = (Array.isArray((c as any).storeItems) ? (c as any).storeItems : []).reduce((sum: number, it: any) => sum + (Number(it.price) * Number(it.quantity || 1)), 0);
     const travel = Number((c as any).travelFee || 0);
-    const totalAmount = Math.round((servicesTotal || 0) + (storeTotal || 0) + (travel || 0));
-    const depositAmount = servicesTotal <= 0 && storeTotal > 0 ? Math.ceil((storeTotal + travel) * 0.5) : Math.ceil(servicesTotal * 0.2 + storeTotal * 0.5);
+    const totalFromDoc = Number((c as any).totalAmount || 0);
+    const servicesEstimated = servicesTotalRaw > 0 ? servicesTotalRaw : Math.max(0, totalFromDoc - storeTotal - travel);
+    const totalAmount = Math.round(servicesEstimated + storeTotal + travel);
+    const depositAmount = servicesEstimated <= 0 && storeTotal > 0 ? Math.ceil((storeTotal + travel) * 0.5) : Math.ceil(servicesEstimated * 0.2 + storeTotal * 0.5);
     const remainingAmount = Math.max(0, Math.round(totalAmount - depositAmount));
-    return { servicesTotal, storeTotal, travel, totalAmount, depositAmount, remainingAmount };
+    return { servicesTotal: servicesEstimated, storeTotal, travel, totalAmount, depositAmount, remainingAmount };
   };
 
   const handleSaveStatus = async (id: string, status: ContractItem['status']) => {
