@@ -3,14 +3,17 @@ import { PaymentMethod } from '../../types/booking';
 import { CreditCard, Wallet, QrCode } from 'lucide-react';
 import { formatPrice as formatBRL } from '../../utils/format';
 
+import { type DBCoupon, isItemApplicable, isCouponActiveNow, computeCouponDiscountForCart } from '../../utils/couponsService';
+
 interface BookingCartProps {
   cartItems: any[];
   travelCost: number;
   paymentMethod: PaymentMethod;
   formData?: any;
+  resolvedCoupons?: Record<number, DBCoupon | null>;
 }
 
-const BookingCart = ({ cartItems, travelCost, paymentMethod, formData = {} }: BookingCartProps) => {
+const BookingCart = ({ cartItems, travelCost, paymentMethod, formData = {}, resolvedCoupons = {} }: BookingCartProps) => {
   const calculateItemTotal = (item: any): number => {
     let price = formatPrice(item.price);
     
