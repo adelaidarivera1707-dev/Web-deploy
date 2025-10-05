@@ -7,6 +7,7 @@ import { db } from '../../utils/firebaseClient';
 import { collection, getDocs } from 'firebase/firestore';
 import type { DressOption } from '../../types/booking';
 import BookingCart from './BookingCart';
+import { findCouponByCode, isCouponActiveNow, isItemApplicable, computeCouponDiscountForCart, type DBCoupon } from '../../utils/couponsService';
 
 // Helpers for BR formatting/validation
 function onlyDigits(s: string) { return s.replace(/\D/g, ''); }
@@ -169,6 +170,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ initialData, packages, onSubm
   });
   const [errors, setErrors] = useState<{[key: string]: string}>({});
   const [dresses, setDresses] = useState<DressOption[]>([]);
+  const [resolvedCoupons, setResolvedCoupons] = useState<Record<number, DBCoupon | null>>({});
 
   const serviceTypes = [
     { id: 'portrait', name: 'Retratos' },
@@ -655,40 +657,58 @@ const BookingForm: React.FC<BookingFormProps> = ({ initialData, packages, onSubm
                         type="text"
                         name={`discountCoupon_${index}`}
                         value={formData[`discountCoupon_${index}`] || ''}
-                        onChange={(e) => setFormData(prev => ({ ...prev, [`discountCoupon_${index}`]: e.target.value }))}
+                        onChange={async (e) => {
+                          const code = e.target.value;
+                          setFormData(prev => ({ ...prev, [`discountCoupon_${index}`]: code }));
+                          const trimmed = code.trim();
+                          if (!trimmed) { setResolvedCoupons(prev => ({ ...prev, [index]: null })); return; }
+                          try {
+                            const found = await findCouponByCode(trimmed);
+                            const itemLike = { id: item.id, name: item.name, type: item.type, price: item.price, quantity: item.quantity } as any;
+                            if (found && isCouponActiveNow(found) && isItemApplicable(found.appliesTo as any, itemLike)) {
+                              // compute to ensure discount > 0
+                              const { discount } = computeCouponDiscountForCart(found, [itemLike]);
+                              if (discount > 0) { setResolvedCoupons(prev => ({ ...prev, [index]: found })); }
+                              else { setResolvedCoupons(prev => ({ ...prev, [index]: null })); }
+                            } else {
+                              setResolvedCoupons(prev => ({ ...prev, [index]: null }));
+                            }
+                          } catch {
+                            setResolvedCoupons(prev => ({ ...prev, [index]: null }));
+                          }
+                        }}
                         className={`input-base focus:outline-none focus:ring-2 focus:ring-secondary ${
                           (() => {
-                            const coupon = formData[`discountCoupon_${index}`];
-                            if (!coupon || coupon.trim() === '') {
+                            const code = formData[`discountCoupon_${index}`];
+                            if (!code || code.trim() === '') {
                               return 'border-gray-300 text-gray-900';
                             }
-                            const hasDiscount = coupon === 'FREE' && item.id && item.id.includes('prewedding') && !item.id.includes('teaser');
-                            return hasDiscount 
-                              ? 'border-green-500 text-green-600 bg-green-50' 
+                            const rc = resolvedCoupons[index];
+                            return rc
+                              ? 'border-green-500 text-green-600 bg-green-50'
                               : 'border-red-500 text-red-600 bg-red-50';
                           })()
                         }`}
                         placeholder="Insira seu cupom de descuento"
                       />
                       {(() => {
-                        const coupon = formData[`discountCoupon_${index}`];
-                        if (!coupon || coupon.trim() === '') {
+                        const code = formData[`discountCoupon_${index}`];
+                        if (!code || code.trim() === '') {
                           return (
                             <p className="text-xs text-gray-500 mt-1">
                               Insira seu cupom de desconto se disponível
                             </p>
                           );
                         }
-                        const hasDiscount = coupon === 'FREE' && item.id && item.id.includes('prewedding') && !item.id.includes('teaser');
-                        
-                        if (hasDiscount) {
+                        const rc = resolvedCoupons[index];
+                        if (rc) {
+                          const perc = rc.discountType === 'percentage' ? `${Math.round(Number(rc.discountValue||0))}%` : (rc.discountType === 'full' ? '100%' : `R$ ${Number(rc.discountValue||0).toFixed(2)}`);
                           return (
                             <p className="text-xs text-green-600 mt-1 font-medium">
-                              ��� Cupom aplicado com sucesso! Desconto de 100%
+                              🎉 Cupom {rc.code} aplicado! Desconto de {perc}
                             </p>
                           );
                         }
-                        
                         return (
                           <p className="text-xs text-red-600 mt-1 font-medium">
                             ❌ Cupom inválido ou não aplicável a este serviço
@@ -810,6 +830,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ initialData, packages, onSubm
               travelCost={formData.travelCost}
               paymentMethod={formData.paymentMethod}
               formData={formData}
+              resolvedCoupons={resolvedCoupons}
             />
           </div>
         </div>
