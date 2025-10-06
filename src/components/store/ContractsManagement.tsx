@@ -63,6 +63,7 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
   const [packagesList, setPackagesList] = useState<{ id: string; title: string; duration?: string; price?: number }[]>([]);
   const [productsList, setProductsList] = useState<any[]>([]);
   const [editStoreItems, setEditStoreItems] = useState<any[]>([]);
+  const [editSelectedDresses, setEditSelectedDresses] = useState<string[]>([]);
   const [createStoreItems, setCreateStoreItems] = useState<any[]>([]);
   const [creating, setCreating] = useState(false);
   const [createForm, setCreateForm] = useState<any>({ clientName: '', clientEmail: '', clientPhone: '', eventType: '', eventDate: '', eventTime: '', eventLocation: '', packageTitle: '', packageDuration: '', paymentMethod: 'pix', totalAmount: 0, travelFee: 0, message: '' });
@@ -143,8 +144,8 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
         setDressOptions([]);
       }
     };
-    if (viewing) loadDresses();
-  }, [viewing]);
+    if (viewing || editing) loadDresses();
+  }, [viewing, editing]);
 
   useEffect(() => {
     const fetchPkgs = async () => {
@@ -236,6 +237,7 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
   const openEdit = (c: ContractItem) => {
     setEditing(c);
     setEditStoreItems(Array.isArray(c.storeItems) ? JSON.parse(JSON.stringify(c.storeItems)) : []);
+    setEditSelectedDresses(Array.isArray((c as any).formSnapshot?.selectedDresses) ? [...(c as any).formSnapshot.selectedDresses] : []);
     setEditForm({
       clientName: c.clientName || '',
       clientEmail: c.clientEmail || '',
@@ -296,6 +298,9 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
       ...( { depositAmount: calc.depositAmount, remainingAmount: calc.remainingAmount } as any )
     } as any;
 
+    const existingSnapshot = (editing as any).formSnapshot || {};
+    const newSnapshot = { ...existingSnapshot, selectedDresses: editSelectedDresses };
+    (payload as any).formSnapshot = newSnapshot;
     await updateDoc(doc(db, 'contracts', id), payload as any);
     setViewing(v => v && v.id === id ? ({ ...v, ...payload }) as any : v);
     setEditing(null);
@@ -1005,6 +1010,22 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
               <textarea value={editForm.message || ''} onChange={e => setEditForm((f: any) => ({ ...f, message: e.target.value }))} className="w-full px-3 py-2 border rounded-none max-h-24" rows={2} />
             </div>
 
+            <div className="md:col-span-2 border-t pt-3">
+              <div className="text-sm font-medium mb-2">Vestidos seleccionados</div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {dressOptions.map((d) => (
+                  <label key={d.id} className="block cursor-pointer">
+                    <div className="relative aspect-[9/16] overflow-hidden rounded border">
+                      {d.image && <img src={d.image} alt={d.name} className="absolute inset-0 w-full h-full object-cover" />}
+                      <input type="checkbox" className="absolute top-2 left-2 z-10 accent-black" checked={editSelectedDresses.includes(d.id)} onChange={() => setEditSelectedDresses(list => list.includes(d.id) ? list.filter(x => x !== d.id) : [...list, d.id])} />
+                      {editSelectedDresses.includes(d.id) && <div className="absolute inset-0 ring-2 ring-black pointer-events-none" />}
+                    </div>
+                    <div className="mt-1 text-xs text-gray-800 truncate text-center">{d.name}</div>
+                    {d.color && <div className="text-[10px] text-gray-500 text-center">{d.color}</div>}
+                  </label>
+                ))}
+              </div>
+            </div>
             <div className="md:col-span-2 border-t pt-3">
               <div className="text-sm font-medium mb-2">Agregar producto de la tienda</div>
               <StoreItemAdder products={productsList} onAdd={(item)=> setEditStoreItems(list=> [...list, item])} />
