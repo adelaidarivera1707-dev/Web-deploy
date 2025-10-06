@@ -407,7 +407,7 @@ const ContractPreview = ({ data, onConfirm, onBack }: ContractPreviewProps) => {
                 </h3>
                 <div className="space-y-3 text-sm text-gray-700">
                   <p>O(a) CONTRATANTE reconhece que os horários contratados são previamente definidos por ele(a) e que devem ser rigorosamente cumpridos.</p>
-                  <p>A CONTRATADA não se responsabiliza por atrasos de terceiros (como cerimônias religiosas, buffets, maquiadores, etc.) que impactem na realizaç��o do evento e demandem horas extras.</p>
+                  <p>A CONTRATADA não se responsabiliza por atrasos de terceiros (como cerimônias religiosas, buffets, maquiadores, etc.) que impactem na realização do evento e demandem horas extras.</p>
                   <p>A contratação de horas extras no dia do evento estará sujeita à disponibilidade da agenda da CONTRATADA, que se reserva o direito de aceitar ou recusar tal solicitação.</p>
                 </div>
               </section>
@@ -434,7 +434,7 @@ const ContractPreview = ({ data, onConfirm, onBack }: ContractPreviewProps) => {
                 <div className="space-y-3 text-sm text-gray-700">
                   <p>6.1. O descumprimento, por qualquer das partes, das obrigações assumidas neste contrato, sujeitará a parte infratora ao pagamento de multa equivalente a 1/3 (um terço) do valor total do contrato, sem prejuízo de eventuais perdas e danos.</p>
                   <p>6.2. A cláusula penal não afasta a possibilidade de cobrança judicial ou extrajudicial de danos adicionais comprovadamente sofridos pela parte prejudicada.</p>
-                  <p>6.3. No caso de a CONTRATADA não comparecer no dia do evento ou não entregar o material contratado nos prazos estabelecidos, a multa será aplicada de forma imediata, facultando ao(à) CONTRATANTE a execução do contrato e o ajuizamento de ação para reparação integral dos prejuízos, incluindo eventual indenização por danos morais.</p>
+                  <p>6.3. No caso de a CONTRATADA não comparecer no dia do evento ou não entregar o material contratado nos prazos estabelecidos, a multa será aplicada de forma imediata, facultando ao(à) CONTRATANTE a execução do contrato e o ajuizamento de a��ão para reparação integral dos prejuízos, incluindo eventual indenização por danos morais.</p>
                   <p>6.4. Em caso fortuito ou força maior, devidamente comprovados, não se aplicam as penalidades acima descritas, sendo o contrato desfeito sem prejuízo a ambas as partes.</p>
                 </div>
               </section>
@@ -541,7 +541,7 @@ const ContractPreview = ({ data, onConfirm, onBack }: ContractPreviewProps) => {
                               {selectedDresses.map((dress) => (
                                 <div key={dress.id} className="text-center">
                                   <div className="relative aspect-[9/16] overflow-hidden rounded-lg mb-2">
-                                    <img loading="lazy" src={resolveDressImage(dress.image)} alt={dress.name} className="absolute inset-0 w-full h-full object-cover" />
+                                    <img loading="eager" src={resolveDressImage(dress.image)} alt={dress.name} className="absolute inset-0 w-full h-full object-cover" />
                                   </div>
                                   <p className="text-sm font-medium text-gray-900">{dress.name}</p>
                                   <p className="text-xs text-gray-600">{dress.color}</p>
