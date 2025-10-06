@@ -368,16 +368,16 @@ const AdminStorePage: React.FC = () => {
         .admin-dark .bg-gray-100 { background-color: #1a1a1a !important; }
         .admin-dark input, .admin-dark select, .admin-dark textarea { background-color: #0e0e0e; color: #e5e5e5; border-color: #303030; }
         /* Buttons: active (selected) => white bg, black text */
-        .admin-dark .bg-black { background-color: #ffffff !important; }
-        .admin-dark .text-white { color: #000000 !important; }
+        .admin-dark .bg-black { background-color: #000000 !important; }
+        .admin-dark .text-white { color: #ffffff !important; }
         /* Buttons: inactive => white border, no bg, white text */
         .admin-dark .border-black { border-color: #ffffff !important; }
         .admin-dark .text-black { color: #ffffff !important; }
         /* Hover behavior: gray bg with black text */
         .admin-dark .hover\:bg-black:hover,
         .admin-dark .hover\:bg-white:hover,
-        .admin-dark .hover\:bg-gray-50:hover { background-color: #9ca3af !important; color: #000000 !important; }
-        .admin-dark .hover\:text-white:hover { color: #000000 !important; }
+        .admin-dark .hover\:bg-gray-50:hover { background-color: #000000 !important; color: #ffffff !important; border-color: #ffffff !important; }
+        .admin-dark .hover\:text-white:hover { color: #ffffff !important; }
       `}</style>
     </section>
   );
