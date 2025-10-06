@@ -741,7 +741,7 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
                   <select onChange={(e)=>{
                     const id = e.target.value; const tpl = templates.find(t=>t.id===id) || null; applyTemplateToContract(tpl);
                   }} className="border px-2 py-2 rounded-none text-sm">
-                    <option value="">Elegir plantilla���</option>
+                    <option value="">Elegir plantilla…</option>
                     {templates.map(t=> <option key={t.id} value={t.id}>{t.name}</option>)}
                   </select>
                   <button onClick={()=> loadDefaults()} className="text-xs text-gray-600 underline">Cargar predeterminados</button>
@@ -761,7 +761,7 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
                 <div><span className="text-gray-600">Hora firma:</span> <span className="font-medium">{(viewing as any).signatureTime || '-'}</span></div>
                 <div><span className="text-gray-600">Ubicación:</span> <span className="font-medium">{(viewing as any).eventLocation || '-'}</span></div>
                 <div><span className="text-gray-600">Paquete:</span> <span className="font-medium">{(viewing as any).packageTitle || '-'}</span></div>
-                <div><span className="text-gray-600">Duraci��n:</span> <span className="font-medium">{(viewing as any).packageDuration || '-'}</span></div>
+                <div><span className="text-gray-600">Duración:</span> <span className="font-medium">{(viewing as any).packageDuration || '-'}</span></div>
                 <div><span className="text-gray-600">Método de pago:</span> <span className="font-medium">{viewing.paymentMethod || '-'}</span></div>
                 {(() => {
                   const calc = computeAmounts(viewing);

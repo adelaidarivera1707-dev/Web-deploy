@@ -170,7 +170,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, bookingDat
                   <span className="font-medium">Método de Pagamento</span>
                 </div>
                 <p className="text-sm text-blue-700">
-                  {bookingData.paymentMethod === 'pix' && 'PIX - Pagamento instant��neo'}
+                  {bookingData.paymentMethod === 'pix' && 'PIX - Pagamento instantâneo'}
                   {bookingData.paymentMethod === 'credit' && 'Cartão de Crédito - Parcelamento disponível'}
                   {bookingData.paymentMethod === 'cash' && 'Dinheiro - 5% de desconto aplicado'}
                 </p>

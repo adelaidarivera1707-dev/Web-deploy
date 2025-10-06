@@ -721,7 +721,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ initialData, packages, onSubm
               ) : (
                 (!formData.storeItems || formData.storeItems.length === 0) ? (
                   <section>
-                    <h2 className="text-xl font-medium mb-6 pb-2 border-b">Informações do Servi����o</h2>
+                    <h2 className="text-xl font-medium mb-6 pb-2 border-b">Informações do Serviço</h2>
                     <div className="bg-yellow-50 border border-yellow-200 p-4">
                       <p className="text-yellow-800">Nenhum serviço selecionado. Por favor, adicione serviços ao carrinho primeiro.</p>
                     </div>
