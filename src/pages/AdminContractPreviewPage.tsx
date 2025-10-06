@@ -149,11 +149,21 @@ const AdminContractPreviewPage = () => {
     };
   }, []);
 
+  // Wait images inside capture container
+  async function waitForImages(container: HTMLElement) {
+    const imgs = Array.from(container.querySelectorAll('img')) as HTMLImageElement[];
+    await Promise.all(imgs.map(img => {
+      if (img.complete && img.naturalWidth > 0) return Promise.resolve(null);
+      return new Promise(res => { const done = () => res(null); img.onload = done; img.onerror = done; });
+    }));
+  }
+
   // Auto-generate and download on mount
   useEffect(() => {
     const t = setTimeout(async () => {
       if (!captureRef.current) return;
       const target = captureRef.current;
+      try { await waitForImages(target); } catch {}
       const blob = (await generatePDF(target as HTMLElement, { quality: 1, scale: 2, returnType: 'blob', longSinglePage: true, marginTopPt: 0, marginBottomPt: 0 })) as Blob;
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -162,7 +172,7 @@ const AdminContractPreviewPage = () => {
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-    }, 400);
+    }, 500);
     return () => clearTimeout(t);
   }, []);
 
@@ -200,6 +210,7 @@ const AdminContractPreviewPage = () => {
             onClick={async ()=>{
               if (!captureRef.current) return;
               const target = captureRef.current;
+              try { await waitForImages(target); } catch {}
               const blob = (await generatePDF(target as HTMLElement, { quality: 1, scale: 2, returnType: 'blob', longSinglePage: true, marginTopPt: 0, marginBottomPt: 0 })) as Blob;
               const url = URL.createObjectURL(blob);
               const a = document.createElement('a');

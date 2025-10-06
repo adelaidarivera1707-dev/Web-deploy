@@ -40,6 +40,20 @@ interface ContractItem {
 
 const uid = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
 
+// Resolve local dress image paths to proper URLs via Vite asset handling
+const DRESS_ASSETS_CM: Record<string, string> = import.meta.glob('/src/utils/fotos/vestidos/*', { eager: true, as: 'url' }) as any;
+function resolveDressImageCM(u?: string): string {
+  const val = String(u || '');
+  if (!val) return '';
+  if (/^https?:\/\//i.test(val)) return val;
+  if (val.startsWith('gs://')) return val;
+  const withSlash = val.startsWith('/') ? val : `/${val}`;
+  if (DRESS_ASSETS_CM[withSlash]) return DRESS_ASSETS_CM[withSlash];
+  const fname = withSlash.split('/').pop()?.toLowerCase();
+  const found = Object.entries(DRESS_ASSETS_CM).find(([k]) => k.split('/').pop()?.toLowerCase() === fname);
+  return found ? String(found[1]) : val;
+}
+
 const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?: () => void }> = ({ openContractId, onOpened }) => {
   const [contracts, setContracts] = useState<ContractItem[]>([]);
   const [loading, setLoading] = useState(false);
@@ -850,7 +864,7 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
                       .map(dress => (
                         <div key={(dress as any).id} className="text-center">
                           <div className="relative aspect-[9/16] overflow-hidden rounded-lg mb-1 bg-gray-100">
-                            {(dress as any).image && <img loading="lazy" src={(dress as any).image} alt={(dress as any).name} className="absolute inset-0 w-full h-full object-cover" />}
+                            {(dress as any).image && <img loading="eager" src={resolveDressImageCM((dress as any).image)} alt={(dress as any).name} className="absolute inset-0 w-full h-full object-cover" />}
                           </div>
                           <div className="text-xs font-medium text-gray-800 truncate">{(dress as any).name}</div>
                           {(dress as any).color && <div className="text-[10px] text-gray-500">{(dress as any).color}</div>}
@@ -1016,7 +1030,7 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
                 {dressOptions.map((d) => (
                   <label key={d.id} className="block cursor-pointer">
                     <div className="relative aspect-[9/16] overflow-hidden rounded border">
-                      {d.image && <img src={d.image} alt={d.name} className="absolute inset-0 w-full h-full object-cover" />}
+                      {d.image && <img loading="eager" src={resolveDressImageCM(d.image)} alt={d.name} className="absolute inset-0 w-full h-full object-cover" />}
                       <input type="checkbox" className="absolute top-2 left-2 z-10 accent-black" checked={editSelectedDresses.includes(d.id)} onChange={() => setEditSelectedDresses(list => list.includes(d.id) ? list.filter(x => x !== d.id) : [...list, d.id])} />
                       {editSelectedDresses.includes(d.id) && <div className="absolute inset-0 ring-2 ring-black pointer-events-none" />}
                     </div>
