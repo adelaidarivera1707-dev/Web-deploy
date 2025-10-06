@@ -42,16 +42,27 @@ const uid = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
 
 // Resolve local dress image paths to proper URLs via Vite asset handling
 const DRESS_ASSETS_CM: Record<string, string> = import.meta.glob('/src/utils/fotos/vestidos/*', { eager: true, as: 'url' }) as any;
-function resolveDressImageCM(u?: string): string {
+const normCM = (s: string) => s.normalize('NFD').replace(/\p{Diacritic}/gu,'').toLowerCase().replace(/\s+/g,' ').trim();
+function resolveDressByNameCM(name?: string): string {
+  const n = normCM(String(name || ''));
+  if (!n) return '';
+  const entry = Object.entries(DRESS_ASSETS_CM).find(([k]) => {
+    const fname = k.split('/').pop() || '';
+    const nf = normCM(fname.replace(/\.[a-z0-9]+$/i,''));
+    return nf === n || nf.includes(n) || n.includes(nf);
+  });
+  return entry ? String(entry[1]) : '';
+}
+function resolveDressImageCM(u?: string, name?: string): string {
   const val = String(u || '');
-  if (!val) return '';
+  if (!val) return resolveDressByNameCM(name);
   if (/^https?:\/\//i.test(val)) return val;
   if (val.startsWith('gs://')) return val;
   const withSlash = val.startsWith('/') ? val : `/${val}`;
   if (DRESS_ASSETS_CM[withSlash]) return DRESS_ASSETS_CM[withSlash];
   const fname = withSlash.split('/').pop()?.toLowerCase();
   const found = Object.entries(DRESS_ASSETS_CM).find(([k]) => k.split('/').pop()?.toLowerCase() === fname);
-  return found ? String(found[1]) : val;
+  return found ? String(found[1]) : resolveDressByNameCM(name);
 }
 
 const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?: () => void }> = ({ openContractId, onOpened }) => {
@@ -152,7 +163,7 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
             const c = String((p as any).category || '').toLowerCase();
             return c.includes('vestid') || c.includes('dress');
           })
-          .map((p: any) => ({ id: p.id, name: p.name || 'Vestido', image: p.image_url || p.image || '', color: Array.isArray(p.tags) && p.tags.length ? String(p.tags[0]) : '' }));
+          .map((p: any) => ({ id: p.id, name: p.name || 'Vestido', image: p.image_url || p.image || resolveDressByNameCM(p.name), color: Array.isArray(p.tags) && p.tags.length ? String(p.tags[0]) : '' }));
         setDressOptions(list);
       } catch (e) {
         setDressOptions([]);
@@ -864,7 +875,7 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
                       .map(dress => (
                         <div key={(dress as any).id} className="text-center">
                           <div className="relative aspect-[9/16] overflow-hidden rounded-lg mb-1 bg-gray-100">
-                            {(dress as any).image && <img loading="eager" src={resolveDressImageCM((dress as any).image)} alt={(dress as any).name} className="absolute inset-0 w-full h-full object-cover" />}
+                            {(dress as any).image && <img loading="eager" src={resolveDressImageCM((dress as any).image, (dress as any).name)} alt={(dress as any).name} className="absolute inset-0 w-full h-full object-cover" />}
                           </div>
                           <div className="text-xs font-medium text-gray-800 truncate">{(dress as any).name}</div>
                           {(dress as any).color && <div className="text-[10px] text-gray-500">{(dress as any).color}</div>}
@@ -1030,7 +1041,7 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
                 {dressOptions.map((d) => (
                   <label key={d.id} className="block cursor-pointer">
                     <div className="relative aspect-[9/16] overflow-hidden rounded border">
-                      {d.image && <img loading="eager" src={resolveDressImageCM(d.image)} alt={d.name} className="absolute inset-0 w-full h-full object-cover" />}
+                      {d.image && <img loading="eager" src={resolveDressImageCM(d.image, d.name)} alt={d.name} className="absolute inset-0 w-full h-full object-cover" />}
                       <input type="checkbox" className="absolute top-2 left-2 z-10 accent-black" checked={editSelectedDresses.includes(d.id)} onChange={() => setEditSelectedDresses(list => list.includes(d.id) ? list.filter(x => x !== d.id) : [...list, d.id])} />
                       {editSelectedDresses.includes(d.id) && <div className="absolute inset-0 ring-2 ring-black pointer-events-none" />}
                     </div>
