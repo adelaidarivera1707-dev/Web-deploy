@@ -20,6 +20,20 @@ import PaymentModal from './PaymentModal';
 import { sendConfirmationEmail } from '../../utils/email';
 import { gcalUpsertBooking, parseDurationToMinutes } from '../../utils/calendar';
 
+// Resolve local dress images stored as repo paths to proper URLs using Vite asset handling
+const DRESS_ASSETS: Record<string, string> = import.meta.glob('/src/utils/fotos/vestidos/*', { eager: true, as: 'url' }) as any;
+function resolveDressImage(u?: string): string {
+  const val = String(u || '');
+  if (!val) return '';
+  if (/^https?:\/\//i.test(val)) return val;
+  if (val.startsWith('gs://')) return val;
+  const withSlash = val.startsWith('/') ? val : `/${val}`;
+  if (DRESS_ASSETS[withSlash]) return DRESS_ASSETS[withSlash];
+  const fname = withSlash.split('/').pop()?.toLowerCase();
+  const found = Object.entries(DRESS_ASSETS).find(([k]) => k.split('/').pop()?.toLowerCase() === fname);
+  return found ? String(found[1]) : val;
+}
+
 function parseBRL(value: string): number {
   if (!value) return 0;
   const cleaned = String(value).replace(/[^0-9.,-]/g, '').replace(/\.(?=\d{3}(\D|$))/g, '');
@@ -393,7 +407,7 @@ const ContractPreview = ({ data, onConfirm, onBack }: ContractPreviewProps) => {
                 </h3>
                 <div className="space-y-3 text-sm text-gray-700">
                   <p>O(a) CONTRATANTE reconhece que os horários contratados são previamente definidos por ele(a) e que devem ser rigorosamente cumpridos.</p>
-                  <p>A CONTRATADA não se responsabiliza por atrasos de terceiros (como cerimônias religiosas, buffets, maquiadores, etc.) que impactem na realização do evento e demandem horas extras.</p>
+                  <p>A CONTRATADA não se responsabiliza por atrasos de terceiros (como cerimônias religiosas, buffets, maquiadores, etc.) que impactem na realizaç��o do evento e demandem horas extras.</p>
                   <p>A contratação de horas extras no dia do evento estará sujeita à disponibilidade da agenda da CONTRATADA, que se reserva o direito de aceitar ou recusar tal solicitação.</p>
                 </div>
               </section>
@@ -527,7 +541,7 @@ const ContractPreview = ({ data, onConfirm, onBack }: ContractPreviewProps) => {
                               {selectedDresses.map((dress) => (
                                 <div key={dress.id} className="text-center">
                                   <div className="relative aspect-[9/16] overflow-hidden rounded-lg mb-2">
-                                    <img loading="lazy" src={dress.image} alt={dress.name} className="absolute inset-0 w-full h-full object-cover" />
+                                    <img loading="lazy" src={resolveDressImage(dress.image)} alt={dress.name} className="absolute inset-0 w-full h-full object-cover" />
                                   </div>
                                   <p className="text-sm font-medium text-gray-900">{dress.name}</p>
                                   <p className="text-xs text-gray-600">{dress.color}</p>
