@@ -22,16 +22,27 @@ import { gcalUpsertBooking, parseDurationToMinutes } from '../../utils/calendar'
 
 // Resolve local dress images stored as repo paths to proper URLs using Vite asset handling
 const DRESS_ASSETS: Record<string, string> = import.meta.glob('/src/utils/fotos/vestidos/*', { eager: true, as: 'url' }) as any;
-function resolveDressImage(u?: string): string {
+const norm = (s: string) => s.normalize('NFD').replace(/\p{Diacritic}/gu,'').toLowerCase().replace(/\s+/g,' ').trim();
+function resolveDressByName(name?: string): string {
+  const n = norm(String(name || ''));
+  if (!n) return '';
+  const entry = Object.entries(DRESS_ASSETS).find(([k]) => {
+    const fname = k.split('/').pop() || '';
+    const nf = norm(fname.replace(/\.[a-z0-9]+$/i,''));
+    return nf === n || nf.includes(n) || n.includes(nf);
+  });
+  return entry ? String(entry[1]) : '';
+}
+function resolveDressImage(u?: string, name?: string): string {
   const val = String(u || '');
-  if (!val) return '';
+  if (!val) return resolveDressByName(name);
   if (/^https?:\/\//i.test(val)) return val;
   if (val.startsWith('gs://')) return val;
   const withSlash = val.startsWith('/') ? val : `/${val}`;
   if (DRESS_ASSETS[withSlash]) return DRESS_ASSETS[withSlash];
   const fname = withSlash.split('/').pop()?.toLowerCase();
   const found = Object.entries(DRESS_ASSETS).find(([k]) => k.split('/').pop()?.toLowerCase() === fname);
-  return found ? String(found[1]) : val;
+  return found ? String(found[1]) : resolveDressByName(name);
 }
 
 function parseBRL(value: string): number {
@@ -77,7 +88,7 @@ const ContractPreview = ({ data, onConfirm, onBack }: ContractPreviewProps) => {
             id: p.id,
             name: p.name || 'Vestido',
             color: Array.isArray(p.tags) && p.tags.length ? String(p.tags[0]) : '',
-            image: p.image_url || ''
+            image: p.image_url || p.image || resolveDressByName(p.name)
           }));
         setDresses(list);
       } catch (e) {
@@ -415,7 +426,7 @@ const ContractPreview = ({ data, onConfirm, onBack }: ContractPreviewProps) => {
               {/* Cláusula 5 */}
               <section>
                 <h3 className="text-lg font-medium text-primary mb-4 pb-2 border-b border-secondary">
-                  CLÁUSULA 5ª – DA RESCISÃO E MUDANÇA DE DATA
+                  CL��USULA 5ª – DA RESCISÃO E MUDANÇA DE DATA
                 </h3>
                 <div className="space-y-3 text-sm text-gray-700">
                   <p>O contrato poderá ser rescindido por qualquer das partes mediante aviso prévio por escrito de, no mínimo, 30 (trinta) dias.</p>
@@ -541,7 +552,7 @@ const ContractPreview = ({ data, onConfirm, onBack }: ContractPreviewProps) => {
                               {selectedDresses.map((dress) => (
                                 <div key={dress.id} className="text-center">
                                   <div className="relative aspect-[9/16] overflow-hidden rounded-lg mb-2">
-                                    <img loading="eager" src={resolveDressImage(dress.image)} alt={dress.name} className="absolute inset-0 w-full h-full object-cover" />
+                                    <img loading="eager" src={resolveDressImage(dress.image, dress.name)} alt={dress.name} className="absolute inset-0 w-full h-full object-cover" />
                                   </div>
                                   <p className="text-sm font-medium text-gray-900">{dress.name}</p>
                                   <p className="text-xs text-gray-600">{dress.color}</p>
