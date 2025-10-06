@@ -520,7 +520,7 @@ const ContractPreview = ({ data, onConfirm, onBack }: ContractPreviewProps) => {
                           </div>
                         </div>
 
-                        {item.type === 'maternity' && selectedDresses.length > 0 && (
+                        {selectedDresses.length > 0 && (/matern|gestant|pregnan/i.test(String(item?.type || data.serviceType || '')) ) && (
                           <div className="mt-4" data-pdf-block>
                             <h5 className="font-medium text-primary mb-2">Vestidos Selecionados</h5>
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
