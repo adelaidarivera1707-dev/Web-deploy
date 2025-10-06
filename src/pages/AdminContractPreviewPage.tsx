@@ -25,7 +25,7 @@ const AdminContractPreviewPage = () => {
     const rg = String(contract.formSnapshot?.rg || '');
     const address = String(contract.formSnapshot?.address || '');
 
-    const services: CartItem[] = (Array.isArray(contract.services) ? contract.services : []).map((it: any, idx: number) => {
+    let services: CartItem[] = (Array.isArray(contract.services) ? contract.services : []).map((it: any, idx: number) => {
       const qty = Number(it.quantity ?? 1);
       const priceNum = Number(String(it.price || '').replace(/[^0-9]/g, ''));
       const duration = String(contract.packageDuration || it.duration || '');
@@ -41,6 +41,26 @@ const AdminContractPreviewPage = () => {
         features: []
       };
     });
+
+    if ((!services || services.length === 0) && Array.isArray(contract.formSnapshot?.cartItems)) {
+      services = (contract.formSnapshot.cartItems as any[]).map((it: any, idx: number) => {
+        const qty = Number(it.quantity ?? 1);
+        const priceNum = Number(String(it.price || '').replace(/[^0-9]/g, ''));
+        const duration = String(contract.packageDuration || it.duration || '');
+        const rawType = String(contract.eventType || it.type || it.category || '');
+        const type = (/matern|gestant|pregnan/i.test(rawType) ? 'maternity' : (/event/i.test(rawType) ? 'events' : (/retr|portrait/i.test(rawType) ? 'portrait' : rawType)));
+        return {
+          id: String(it.id || `service-${idx}`),
+          name: String(it.name || it.id || 'Serviço'),
+          price: formatBRL(priceNum),
+          duration,
+          type,
+          quantity: qty,
+          image: '',
+          features: []
+        } as CartItem;
+      });
+    }
 
     const storeItems: StoreCartItem[] = (Array.isArray(contract.storeItems) ? contract.storeItems : []).map((it: any, idx: number) => ({
       id: String(it.id || `store-${idx}`),
