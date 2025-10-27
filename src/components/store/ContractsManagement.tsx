@@ -507,8 +507,8 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
           <div className="col-span-2">Progreso del flujo</div>
           <div className="col-span-1 text-right">Acciones</div>
         </div>
-        {loading && <div className="p-4 text-sm text-gray-500">Cargando...</div>}
-        {!loading && filtered.length === 0 && <div className="p-4 text-sm text-gray-500">Sin resultados</div>}
+        {loading && <div className="p-3 md:p-4 text-sm text-gray-500">Cargando...</div>}
+        {!loading && filtered.length === 0 && <div className="p-3 md:p-4 text-sm text-gray-500">Sin resultados</div>}
         <div className="divide-y">
           {filtered.map(c => {
             return (
