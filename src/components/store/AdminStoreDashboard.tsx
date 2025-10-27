@@ -252,10 +252,10 @@ const AdminStoreDashboard: React.FC<AdminProps> = ({ onNavigate }) => {
   }, [contracts]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <div>
-        <h1 className="section-title">Panel de Administración</h1>
-        <p className="text-gray-600">Gestiona tu tienda de productos personalizados</p>
+        <h1 className="section-title text-2xl md:text-3xl">Panel de Administración</h1>
+        <p className="text-gray-600 text-sm md:text-base">Gestiona tu tienda de productos personalizados</p>
       </div>
 
       {/* Period Filter at the top */}
