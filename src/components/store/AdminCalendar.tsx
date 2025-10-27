@@ -353,29 +353,29 @@ const AdminCalendar: React.FC<AdminCalendarProps> = ({ darkMode = false }) => {
         </div>
 
         {/* Calendar grid */}
-        <div className="flex-1 overflow-hidden flex flex-col bg-white">
-        <div className="grid grid-cols-7 text-center text-xs text-gray-500 py-2 px-1 border-b border-gray-200 flex-shrink-0 bg-gray-50">
+        <div className={`flex-1 overflow-hidden flex flex-col transition-colors ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
+        <div className={`grid grid-cols-7 text-center text-xs py-2 px-1 border-b flex-shrink-0 transition-colors ${darkMode ? 'border-gray-700 bg-gray-800 text-gray-400' : 'border-gray-200 bg-gray-50 text-gray-500'}`}>
           {['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'].map((d)=> <div key={d} className="py-1 font-medium">{d}</div>)}
         </div>
-        <div className="grid grid-cols-7 gap-px bg-gray-300 flex-1 auto-rows-fr overflow-hidden w-full h-full">
+        <div className={`grid grid-cols-7 gap-px flex-1 auto-rows-fr overflow-hidden w-full h-full transition-colors ${darkMode ? 'bg-gray-700' : 'bg-gray-300'}`}>
           {monthDays.map((cell, idx)=>{
             const isToday = cell.date && new Date(cell.date.getFullYear(), cell.date.getMonth(), cell.date.getDate()).getTime() === new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
             const key = cell.date ? `${cell.date.getFullYear()}-${String(cell.date.getMonth()+1).padStart(2,'0')}-${String(cell.date.getDate()).padStart(2,'0')}` : `empty-${idx}`;
             const dayEvents = cell.date ? (eventsByDay.get(key) || []) : [];
             return (
-              <div key={key} className="bg-white p-2 relative overflow-hidden flex flex-col border-gray-300">
+              <div key={key} className={`p-2 relative overflow-hidden flex flex-col transition-colors ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
                 <div className="flex items-center justify-between gap-1 mb-1 flex-shrink-0">
-                  <div className="text-sm font-medium">
+                  <div className={`text-sm font-medium transition-colors ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                     {cell.date ? (isToday ? (
                       <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-secondary text-black text-xs font-bold">
                         {cell.date.getDate()}
                       </span>
                     ) : (
-                      <span className="text-gray-700">{cell.date.getDate()}</span>
+                      <span>{cell.date.getDate()}</span>
                     )) : ''}
                   </div>
                   {cell.date && (eventsByDay.get(key) || []).length > 0 && (
-                    <button onClick={() => setShowDailyList(key)} className="text-xs px-1 py-0.5 border rounded-none hover:bg-gray-200 flex-shrink-0 transition-colors" title={`${(eventsByDay.get(key) || []).length} eventos`}>📋</button>
+                    <button onClick={() => setShowDailyList(key)} className={`text-xs px-1 py-0.5 border rounded-none flex-shrink-0 transition-colors ${darkMode ? 'border-gray-600 hover:bg-gray-700' : 'border-gray-300 hover:bg-gray-200'}`} title={`${(eventsByDay.get(key) || []).length} eventos`}>📋</button>
                   )}
                 </div>
                 <div className="space-y-1 flex-1 overflow-y-auto">
@@ -388,7 +388,7 @@ const AdminCalendar: React.FC<AdminCalendarProps> = ({ darkMode = false }) => {
                     );
                   })}
                   {dayEvents.length > 5 && (
-                    <button onClick={() => setShowDailyList(key)} className="w-full text-left px-1.5 py-1 rounded text-xs bg-gray-200 text-gray-700 hover:bg-gray-300">
+                    <button onClick={() => setShowDailyList(key)} className={`w-full text-left px-1.5 py-1 rounded text-xs transition-colors ${darkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}>
                       +{dayEvents.length - 5} más
                     </button>
                   )}
