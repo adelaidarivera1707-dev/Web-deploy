@@ -99,7 +99,7 @@ const DatePicker: React.FC<{ value: string; onChange: (val: string) => void; min
     return { year: d.getFullYear(), month: d.getMonth() };
   });
   const first = new Date(view.year, view.month, 1);
-  const startWeekday = (first.getDay() + 6) % 7; // Monday-first
+  const startWeekday = first.getDay(); // Sunday-first
   const daysInMonth = new Date(view.year, view.month+1, 0).getDate();
   const minDate = min ? parseLocalDate(min) : today;
   const asStr = (y:number,m:number,d:number)=> `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
@@ -117,7 +117,7 @@ const DatePicker: React.FC<{ value: string; onChange: (val: string) => void; min
         <button type="button" onClick={()=>setView(v=>({year: v.month===11? v.year+1:v.year, month: v.month===11?0:v.month+1}))} className="px-2 py-1 border rounded">»</button>
       </div>
       <div className="grid grid-cols-7 gap-1 text-center text-xs text-gray-500 mb-1">
-        {['S','T','Q','Q','S','S','D'].map((d, i) => <div key={`${d}-${i}`}>{d}</div>)}
+        {['D','L','M','M','J','V','S'].map((d, i) => <div key={`${d}-${i}`}>{d}</div>)}
       </div>
       <div className="grid grid-cols-7 gap-1">
         {cells.map((d, idx)=> d ? (
