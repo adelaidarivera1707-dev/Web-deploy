@@ -279,6 +279,13 @@ const AdminCalendar: React.FC = () => {
             <option value="cancelled">Cancelado</option>
             <option value="released">Liberado</option>
           </select>
+          <input
+            type="text"
+            value={filterPhone}
+            onChange={e => setFilterPhone(e.target.value)}
+            placeholder="Filtrar por teléfono"
+            className="px-2 py-1 border rounded-none text-sm w-32"
+          />
           <button onClick={()=> setAdding(true)} className="ml-2 px-2 py-1 border-2 border-black text-black rounded-none hover:bg-black hover:text-white inline-flex items-center gap-1 text-sm"><Plus size={14}/> Añadir evento</button>
         </div>
       </div>
