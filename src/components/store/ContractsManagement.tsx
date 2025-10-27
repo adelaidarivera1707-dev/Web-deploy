@@ -993,6 +993,18 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
               <input value={(editForm as any).clientPhone || ''} onChange={e => setEditForm((f: any) => ({ ...f, clientPhone: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
             </div>
             <div>
+              <label className="text-xs text-gray-600">CPF</label>
+              <input value={(editForm as any).clientCPF || ''} onChange={e => setEditForm((f: any) => ({ ...f, clientCPF: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
+            </div>
+            <div>
+              <label className="text-xs text-gray-600">RG</label>
+              <input value={(editForm as any).clientRG || ''} onChange={e => setEditForm((f: any) => ({ ...f, clientRG: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
+            </div>
+            <div className="md:col-span-2">
+              <label className="text-xs text-gray-600">Endereço</label>
+              <input value={(editForm as any).clientAddress || ''} onChange={e => setEditForm((f: any) => ({ ...f, clientAddress: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
+            </div>
+            <div>
               <label className="text-xs text-gray-600">Tipo de evento</label>
               <input value={editForm.eventType || ''} onChange={e => setEditForm((f: any) => ({ ...f, eventType: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
             </div>
