@@ -447,19 +447,21 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <h2 className="section-title">Gestión de Contratos</h2>
-          <div className="ml-2 inline-flex border rounded overflow-hidden">
+          <div className="ml-2 inline-flex border rounded overflow-visible">
             <button onClick={()=> setContractsTab('events')} className={`px-3 py-1 text-sm ${contractsTab==='events' ? 'bg-black text-white' : ''}`}>Eventos</button>
             <button onClick={()=> setContractsTab('finished')} className={`px-3 py-1 text-sm ${contractsTab==='finished' ? 'bg-black text-white' : ''}`}>Finalizados</button>
-            <button onClick={()=> setContractsTab('pending')} className={`relative px-3 py-1 text-sm ${contractsTab==='pending' ? 'bg-black text-white' : ''}`}>
-              Pendiente de Aprobacion
+            <div className="relative">
+              <button onClick={()=> setContractsTab('pending')} className={`px-3 py-1 text-sm ${contractsTab==='pending' ? 'bg-black text-white' : ''}`}>
+                Pendiente de Aprobacion
+              </button>
               {contracts.filter(c => String((c as any).status || '') === 'pending_approval').length > 0 && (
-                <span className={`absolute -top-2 -right-2 w-5 h-5 rounded-full text-xs font-bold flex items-center justify-center ${
+                <span className={`absolute -top-3 -right-3 w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center ${
                   contractsTab === 'pending' ? 'bg-white text-black' : 'bg-red-600 text-white'
                 }`}>
                   {contracts.filter(c => String((c as any).status || '') === 'pending_approval').length}
                 </span>
               )}
-            </button>
+            </div>
           </div>
         </div>
         <div className="flex items-center gap-2">
