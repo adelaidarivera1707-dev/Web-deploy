@@ -28,6 +28,9 @@ const ChartPerformance: React.FC<Props> = ({ data, products, selectedProductId, 
         <Legend />
         <Line type="monotone" dataKey="a" name={resolveName(selectedProductId)} stroke={mode === 'contracts' ? '#818cf8' : '#111827'} strokeWidth={2} dot={false} />
         {mode === 'revenue' && (
+          <Line type="monotone" dataKey="earned" name="Dinero Ingresado" stroke="#22c55e" strokeWidth={2} dot={false} />
+        )}
+        {mode === 'revenue' && (
           <Line type="monotone" dataKey="forecast" name="Ingresos Futuros" stroke="#6b7280" strokeWidth={2} strokeDasharray="6 6" dot={false} />
         )}
         {mode === 'revenue' && selectedProductIdB !== 'none' && (
