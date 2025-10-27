@@ -266,6 +266,10 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
     setEditForm({
       clientName: c.clientName || '',
       clientEmail: c.clientEmail || '',
+      clientPhone: (c as any).clientPhone || (c as any).formSnapshot?.phone || '',
+      clientCPF: (c as any).clientCPF || '',
+      clientRG: (c as any).clientRG || '',
+      clientAddress: (c as any).clientAddress || '',
       eventType: c.eventType || '',
       eventDate: c.eventDate || '',
       eventTime: (c as any).eventTime || '',
