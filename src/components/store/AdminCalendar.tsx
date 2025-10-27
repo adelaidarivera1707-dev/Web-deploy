@@ -593,6 +593,75 @@ const AdminCalendar: React.FC = () => {
                 </tbody>
               </table>
             </div>
+
+            {/* Hidden content for PDF */}
+            <div className="daily-list-pdf hidden" style={{ padding: '20px', backgroundColor: '#fff' }}>
+              <h1 style={{ textAlign: 'center', marginBottom: '10px', fontSize: '24px', fontWeight: 'bold' }}>Eventos del día</h1>
+              <p style={{ textAlign: 'center', marginBottom: '20px', fontSize: '14px', color: '#666' }}>{new Date(showDailyList).toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+
+              {(eventsByDay.get(showDailyList) || []).map((ev, idx) => (
+                <div key={ev.id} style={{ marginBottom: '30px', pageBreakInside: 'avoid', borderTop: '1px solid #ddd', paddingTop: '15px' }}>
+                  <h2 style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '10px' }}>
+                    {idx + 1}. {ev.clientName || 'Evento sin nombre'}
+                  </h2>
+
+                  <table style={{ width: '100%', marginBottom: '15px', fontSize: '12px' }}>
+                    <tbody>
+                      <tr>
+                        <td style={{ padding: '4px', paddingRight: '20px' }}><strong>Hora:</strong> {ev.eventTime || '-'}</td>
+                        <td style={{ padding: '4px' }}><strong>Tipo:</strong> {ev.eventType || '-'}</td>
+                      </tr>
+                      <tr>
+                        <td style={{ padding: '4px', paddingRight: '20px' }}><strong>Teléfono:</strong> {ev.phone || (ev as any).formSnapshot?.phone || '-'}</td>
+                        <td style={{ padding: '4px' }}><strong>Duración:</strong> {ev.packageDuration || '-'}</td>
+                      </tr>
+                      <tr>
+                        <td colSpan={2} style={{ padding: '4px' }}><strong>Ubicación:</strong> {ev.eventLocation || '-'}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  {Array.isArray((ev as any).formSnapshot?.selectedDresses) && (ev as any).formSnapshot.selectedDresses.length > 0 && (
+                    <div style={{ marginBottom: '15px' }}>
+                      <h3 style={{ fontSize: '13px', fontWeight: 'bold', marginBottom: '8px' }}>Vestidos:</h3>
+                      <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                        {(ev as any).formSnapshot.selectedDresses
+                          .map((id: string) => dressOptions.find(d => d.id === id))
+                          .filter(Boolean)
+                          .map((dress: any) => (
+                            <div key={(dress as any).id} style={{ textAlign: 'center' }}>
+                              {(dress as any).image && (
+                                <img src={(dress as any).image} alt={(dress as any).name} style={{ width: '60px', height: '80px', objectFit: 'cover', marginBottom: '4px', border: '1px solid #ccc' }} />
+                              )}
+                              <div style={{ fontSize: '10px', maxWidth: '60px', overflow: 'hidden', textOverflow: 'ellipsis' }}>{(dress as any).name}</div>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div style={{ marginBottom: '10px', fontSize: '12px', backgroundColor: '#f5f5f5', padding: '10px', borderRadius: '4px' }}>
+                    <h3 style={{ fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>Resumen de Pago:</h3>
+                    <table style={{ width: '100%' }}>
+                      <tbody>
+                        <tr>
+                          <td style={{ padding: '2px' }}>Total:</td>
+                          <td style={{ textAlign: 'right', padding: '2px', fontWeight: 'bold' }}>R$ {Number(ev.totalAmount || 0).toFixed(0)}</td>
+                        </tr>
+                        <tr>
+                          <td style={{ padding: '2px' }}>Entrada (20%):</td>
+                          <td style={{ textAlign: 'right', padding: '2px', fontWeight: 'bold', color: ev.depositPaid ? 'green' : 'red' }}>R$ {(Number(ev.totalAmount || 0) * 0.2).toFixed(0)} {ev.depositPaid ? '✓ Pago' : 'Pendiente'}</td>
+                        </tr>
+                        <tr>
+                          <td style={{ padding: '2px' }}>Restante:</td>
+                          <td style={{ textAlign: 'right', padding: '2px', fontWeight: 'bold', color: ev.finalPaymentPaid ? 'green' : 'red' }}>R$ {(Number(ev.totalAmount || 0) * 0.8).toFixed(0)} {ev.finalPaymentPaid ? '✓ Pago' : 'Pendiente'}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}
