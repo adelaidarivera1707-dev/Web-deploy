@@ -284,6 +284,17 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
     if (!editing) return;
     const id = editing.id;
 
+    // Handle custom package
+    let packageTitle = editForm.packageTitle || '';
+    let packageDuration = editForm.packageDuration || '';
+    let customPackagePrice = 0;
+
+    if (editForm.isCustomPackage) {
+      packageTitle = `Paquete Personalizado (${editForm.customPackageType || 'personalizado'})`;
+      packageDuration = editForm.customPackageDuration || '';
+      customPackagePrice = Number(editForm.customPackagePrice || 0);
+    }
+
     // Merge editing with form changes to compute correctly
     const merged: ContractItem = {
       ...editing,
@@ -298,8 +309,8 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
       storeItems: editStoreItems,
       ...(editForm.eventTime !== undefined ? { eventTime: String(editForm.eventTime || '') } : {}),
       ...(editForm.eventLocation !== undefined ? { eventLocation: String(editForm.eventLocation || '') } : {}),
-      ...(editForm.packageTitle !== undefined ? { packageTitle: String(editForm.packageTitle || '') } : {}),
-      ...(editForm.packageDuration !== undefined ? { packageDuration: String(editForm.packageDuration || '') } : {}),
+      packageTitle: packageTitle,
+      packageDuration: packageDuration,
       ...(editForm.signatureTime !== undefined ? { signatureTime: String(editForm.signatureTime || '') } : {}),
     } as any;
 
@@ -311,20 +322,20 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
       eventType: merged.eventType,
       eventDate: merged.eventDate,
       eventCompleted: editing.eventCompleted,
-      totalAmount: calc.totalAmount,
+      totalAmount: editForm.isCustomPackage ? customPackagePrice + Number(editForm.travelFee || 0) + (editStoreItems || []).reduce((s,it)=> s + (Number(it.price)||0) * (Number(it.quantity)||1), 0) : calc.totalAmount,
       travelFee: merged.travelFee,
       paymentMethod: merged.paymentMethod,
       message: merged.message,
       storeItems: merged.storeItems || [],
       ...(merged.eventTime !== undefined ? { eventTime: merged.eventTime } : {}),
       ...(merged.eventLocation !== undefined ? { eventLocation: merged.eventLocation } : {}),
-      ...(merged.packageTitle !== undefined ? { packageTitle: merged.packageTitle } : {}),
-      ...(merged.packageDuration !== undefined ? { packageDuration: merged.packageDuration } : {}),
+      packageTitle: packageTitle,
+      packageDuration: packageDuration,
       ...( { depositAmount: calc.depositAmount, remainingAmount: calc.remainingAmount } as any )
     } as any;
 
     const existingSnapshot = (editing as any).formSnapshot || {};
-    const newSnapshot = { ...existingSnapshot, selectedDresses: editSelectedDresses };
+    const newSnapshot = { ...existingSnapshot, selectedDresses: editSelectedDresses, isCustomPackage: editForm.isCustomPackage, customPackageType: editForm.customPackageType, customPackageDuration: editForm.customPackageDuration, customPackagePrice: customPackagePrice };
     (payload as any).formSnapshot = newSnapshot;
     await updateDoc(doc(db, 'contracts', id), payload as any);
     setViewing(v => v && v.id === id ? ({ ...v, ...payload }) as any : v);
