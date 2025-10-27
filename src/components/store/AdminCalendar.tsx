@@ -281,7 +281,7 @@ const AdminCalendar: React.FC<AdminCalendarProps> = ({ darkMode = false }) => {
   return (
     <div className="flex h-full w-full bg-white">
       {/* Left Sidebar - Mini Calendar */}
-      <div className="w-64 border-r border-gray-800 bg-black p-4 flex flex-col overflow-y-auto flex-shrink-0">
+      <div className={`w-64 border-r p-4 flex flex-col overflow-y-auto flex-shrink-0 transition-colors ${darkMode ? 'bg-black border-gray-800' : 'bg-white border-gray-200'}`}>
         {/* Mini Calendar */}
         <div className="mb-6">
           <div className="flex items-center justify-between gap-2 mb-3">
