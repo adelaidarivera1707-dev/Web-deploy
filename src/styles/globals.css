@@ -285,3 +285,9 @@ button {
   opacity: 1 !important;
   pointer-events: all !important;
 }
+
+/* Admin dark mode */
+.admin-dark {
+  background-color: #1a1a1a;
+  color: #ffffff;
+}
