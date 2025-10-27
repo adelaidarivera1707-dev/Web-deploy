@@ -326,7 +326,10 @@ const AdminCalendar: React.FC<AdminCalendarProps> = ({ darkMode = false }) => {
           <div className="text-lg font-semibold text-white">
             {new Date(filterYear, filterMonth, 1).toLocaleString('es', { month: 'long', year: 'numeric' })}
           </div>
-          <button onClick={goToday} className="px-4 py-2 rounded-full bg-secondary text-black font-medium hover:opacity-90 transition-opacity">Hoy</button>
+          <div className="flex items-center gap-2">
+            <button onClick={goToday} className="px-4 py-2 rounded-full bg-secondary text-black font-medium hover:opacity-90 transition-opacity">Hoy</button>
+            <button onClick={()=> setAdding(true)} className="p-2 rounded-full bg-green-600 text-white hover:bg-green-700 transition-colors" title="Añadir evento"><Plus size={18}/></button>
+          </div>
         </div>
 
         {/* Calendar grid */}
