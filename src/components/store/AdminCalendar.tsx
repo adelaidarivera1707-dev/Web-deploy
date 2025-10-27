@@ -334,7 +334,7 @@ const AdminCalendar: React.FC<AdminCalendarProps> = ({ darkMode = false }) => {
 
         {/* Calendar grid */}
         <div className="flex-1 overflow-hidden flex flex-col bg-black">
-          <div className="grid grid-cols-7 text-center text-xs py-3 px-1 border-b border-gray-800 flex-shrink-0 bg-gray-950">
+          <div className="grid grid-cols-7 text-center text-xs py-3 px-1 border-b border-gray-800 flex-shrink-0 bg-gray-950 lg:bg-gray-950 max-lg:bg-black">
             {['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'].map((d)=> <div key={d} className="py-1 font-medium text-gray-400">{d}</div>)}
           </div>
           <div className="grid grid-cols-7 gap-px flex-1 auto-rows-fr overflow-hidden w-full h-full bg-gray-900">
