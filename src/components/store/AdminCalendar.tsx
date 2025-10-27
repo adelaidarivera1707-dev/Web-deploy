@@ -303,7 +303,12 @@ const AdminCalendar: React.FC = () => {
             const dayEvents = cell.date ? (eventsByDay.get(key) || []) : [];
             return (
               <div key={key} className="bg-white min-h-28 p-2 relative">
-                <div className="text-xs">{cell.date ? (isToday ? <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-secondary text-black">{cell.date.getDate()}</span> : <span className="text-gray-500">{cell.date.getDate()}</span>) : ''}</div>
+                <div className="flex items-center justify-between">
+                  <div className="text-xs">{cell.date ? (isToday ? <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-secondary text-black">{cell.date.getDate()}</span> : <span className="text-gray-500">{cell.date.getDate()}</span>) : ''}</div>
+                  {cell.date && (eventsByDay.get(key) || []).length > 0 && (
+                    <button onClick={() => setShowDailyList(key)} className="text-xs px-1 py-0.5 border rounded-none hover:bg-gray-100" title="Ver día">📋</button>
+                  )}
+                </div>
                 <div className="mt-1 space-y-1">
                   {dayEvents.map(ev => {
                     const durationMin = parseDurationToMinutes(ev.packageDuration || '2 horas');
