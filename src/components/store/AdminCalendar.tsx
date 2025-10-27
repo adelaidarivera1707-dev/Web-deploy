@@ -750,17 +750,17 @@ const AdminCalendar: React.FC<AdminCalendarProps> = ({ darkMode = false }) => {
                 </select>
               </div>
               <div>
-                <label className="text-xs text-gray-600">Desplazamiento (R$)</label>
-                <input type="number" value={addForm.travelFee || 0} onChange={e=> setAddForm((f:any)=> ({ ...f, travelFee: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
+                <label className={`text-xs transition-colors ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Desplazamiento (R$)</label>
+                <input type="number" value={addForm.travelFee || 0} onChange={e=> setAddForm((f:any)=> ({ ...f, travelFee: e.target.value }))} className={`w-full px-3 py-2 border rounded-none transition-colors ${darkMode ? 'bg-gray-800 border-gray-700 text-gray-300' : 'bg-white border-gray-300 text-gray-900'}`} />
               </div>
               <div>
-                <label className="text-xs text-gray-600">Total (R$)</label>
-                <input type="number" value={addForm.totalAmount || 0} onChange={e=> setAddForm((f:any)=> ({ ...f, totalAmount: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
+                <label className={`text-xs transition-colors ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Total (R$)</label>
+                <input type="number" value={addForm.totalAmount || 0} onChange={e=> setAddForm((f:any)=> ({ ...f, totalAmount: e.target.value }))} className={`w-full px-3 py-2 border rounded-none transition-colors ${darkMode ? 'bg-gray-800 border-gray-700 text-gray-300' : 'bg-white border-gray-300 text-gray-900'}`} />
               </div>
             </div>
             <div className="mt-4 flex justify-end gap-2">
-              <button onClick={()=> setAdding(false)} className="px-3 py-2 border rounded-none">Cancelar</button>
-              <button onClick={handleAddEvent} className="px-3 py-2 border-2 border-black bg-black text-white rounded-none">Guardar</button>
+              <button onClick={()=> setAdding(false)} className={`px-3 py-2 border rounded-none transition-colors ${darkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-800' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}>Cancelar</button>
+              <button onClick={handleAddEvent} className={`px-3 py-2 border-2 rounded-none transition-colors ${darkMode ? 'border-gray-500 bg-gray-800 text-white hover:bg-gray-700' : 'border-black bg-black text-white hover:bg-gray-900'}`}>Guardar</button>
             </div>
           </div>
         </div>
