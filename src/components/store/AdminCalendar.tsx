@@ -306,17 +306,17 @@ const AdminCalendar: React.FC = () => {
       </div>
 
       {/* Calendar grid */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden max-h-[calc(100vh-300px)]">
-        <div className="grid grid-cols-7 text-center text-xs text-gray-500 py-2 border-b">
-          {['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'].map((d)=> <div key={d} className="py-1">{d}</div>)}
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="grid grid-cols-7 text-center text-xs text-gray-500 py-1 px-1 border-b">
+          {['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'].map((d)=> <div key={d} className="py-0.5">{d}</div>)}
         </div>
-        <div className="grid grid-cols-7 gap-px bg-gray-200 overflow-y-auto">
+        <div className="grid grid-cols-7 gap-px bg-gray-200">
           {monthDays.map((cell, idx)=>{
             const isToday = cell.date && new Date(cell.date.getFullYear(), cell.date.getMonth(), cell.date.getDate()).getTime() === new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
             const key = cell.date ? `${cell.date.getFullYear()}-${String(cell.date.getMonth()+1).padStart(2,'0')}-${String(cell.date.getDate()).padStart(2,'0')}` : `empty-${idx}`;
             const dayEvents = cell.date ? (eventsByDay.get(key) || []) : [];
             return (
-              <div key={key} className="bg-white min-h-20 p-2 relative overflow-hidden">
+              <div key={key} className="bg-white h-14 p-1 relative overflow-hidden flex flex-col">
                 <div className="flex items-center justify-between">
                   <div className="text-xs">{cell.date ? (isToday ? <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-secondary text-black">{cell.date.getDate()}</span> : <span className="text-gray-500">{cell.date.getDate()}</span>) : ''}</div>
                   {cell.date && (eventsByDay.get(key) || []).length > 0 && (
