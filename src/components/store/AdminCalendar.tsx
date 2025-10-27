@@ -384,13 +384,13 @@ const AdminCalendar: React.FC<AdminCalendarProps> = ({ darkMode = false }) => {
 
       {/* Expanded Day Modal */}
       {expandedDay && (
-        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4" onClick={()=> setExpandedDay(null)}>
-          <div className="bg-gray-900 rounded-lg w-full max-w-3xl max-h-[80vh] overflow-y-auto p-6 border border-gray-800" onClick={e=> e.stopPropagation()}>
+        <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-colors ${darkMode ? 'bg-black/80' : 'bg-white/80'}`} onClick={()=> setExpandedDay(null)}>
+          <div className={`rounded-lg w-full max-w-3xl max-h-[80vh] overflow-y-auto p-6 border transition-colors ${darkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200'}`} onClick={e=> e.stopPropagation()}>
             <div className="flex items-center justify-between mb-6">
-              <div className="text-2xl font-bold text-white">
+              <div className={`text-2xl font-bold transition-colors ${darkMode ? 'text-white' : 'text-black'}`}>
                 {new Date(expandedDay).toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
               </div>
-              <button onClick={()=> setExpandedDay(null)} className="text-gray-400 hover:text-white text-2xl">✕</button>
+              <button onClick={()=> setExpandedDay(null)} className={`text-2xl transition-colors ${darkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-black'}`}>✕</button>
             </div>
 
             {(eventsByDay.get(expandedDay) || []).length > 0 ? (
