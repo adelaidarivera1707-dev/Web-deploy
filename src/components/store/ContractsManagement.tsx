@@ -453,7 +453,7 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
         <div className="grid grid-cols-12 p-3 text-xs font-medium border-b">
           <div className="col-span-2">Fecha principal</div>
           <div className="col-span-3">Nombre del trabajo</div>
-          <div className="col-span-2">Teléfono</div>
+          <div className="col-span-2">Tel��fono</div>
           <div className="col-span-1">Tipo</div>
           <div className="col-span-1">Total</div>
           <div className="col-span-2">Progreso del flujo</div>
@@ -463,16 +463,6 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
         {!loading && filtered.length === 0 && <div className="p-4 text-sm text-gray-500">Sin resultados</div>}
         <div className="divide-y">
           {filtered.map(c => {
-            const wf = (c.workflow && c.workflow.length) ? c.workflow : defaultWorkflow(c);
-            const segments = wf.map(cat => {
-              const total = cat.tasks.length || 1;
-              const done = cat.tasks.filter(t => t.done).length;
-              return total === 0 ? 0 : Math.round((done/total)*100);
-            });
-            const deliveryCat = wf.find(cat => cat.name && cat.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu,'').includes('entrega'));
-            const dTotal = deliveryCat ? (deliveryCat.tasks.length || 0) : 0;
-            const dDone = deliveryCat ? deliveryCat.tasks.filter(t => t.done).length : 0;
-            const deliveryPct = dTotal > 0 ? Math.round((dDone / dTotal) * 100) : 0;
             return (
               <div key={c.id} className="grid grid-cols-12 p-3 items-center hover:bg-gray-50 cursor-pointer" onClick={() => openView(c)}>
                 <div className="col-span-2 text-sm">{c.eventDate || '-'}</div>
@@ -480,14 +470,24 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
                 <div className="col-span-2 text-sm">{((c as any).clientPhone || (c as any).phone || (c as any).client_phone || (c as any).formSnapshot?.phone || '') || '-'}</div>
                 <div className="col-span-1 text-sm">{c.eventType || '-'}</div>
                 <div className="col-span-1 font-semibold">R$ {Number(c.totalAmount || 0).toFixed(0)}</div>
-                <div className="col-span-2">
-                  <div className="w-full h-3 rounded bg-gray-200 overflow-hidden flex">
-                    {segments.map((p, i) => (
-                      <div key={i} className="relative flex-1 bg-gray-200">
-                        <div className="absolute inset-y-0 left-0" style={{ width: `${p}%`, backgroundColor: (deliveryPct >= 67 ? '#16a34a' : deliveryPct >= 34 ? '#eab308' : '#ef4444') }} />
-                      </div>
-                    ))}
-                  </div>
+                <div className="col-span-2" onClick={(e) => e.stopPropagation()}>
+                  <WorkflowStatusButtons
+                    depositPaid={c.depositPaid}
+                    finalPaymentPaid={c.finalPaymentPaid}
+                    isEditing={c.isEditing}
+                    eventCompleted={c.eventCompleted}
+                    onUpdate={async (updates) => {
+                      try {
+                        await updateDoc(doc(db, 'contracts', c.id), updates as any);
+                        await fetchContracts();
+                        window.dispatchEvent(new CustomEvent('contractsUpdated'));
+                        window.dispatchEvent(new CustomEvent('adminToast', { detail: { message: 'Estado actualizado', type: 'success' } }));
+                      } catch (e) {
+                        console.error('Error updating contract status:', e);
+                        window.dispatchEvent(new CustomEvent('adminToast', { detail: { message: 'Error al actualizar', type: 'error' } }));
+                      }
+                    }}
+                  />
                 </div>
                 <div className="col-span-1 text-right">
                   {String((c as any).status || '') === 'pending_approval' ? (
