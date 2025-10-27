@@ -304,52 +304,303 @@ const AdminCalendar: React.FC<AdminCalendarProps> = ({ darkMode = false }) => {
         </div>
 
         {/* Calendar grid */}
-        <div className={`flex-1 overflow-hidden flex flex-col transition-colors ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
-        <div className={`grid grid-cols-7 text-center text-xs py-2 px-1 border-b flex-shrink-0 transition-colors ${darkMode ? 'border-gray-700 bg-gray-800 text-gray-400' : 'border-gray-200 bg-gray-50 text-gray-500'}`}>
-          {['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'].map((d)=> <div key={d} className="py-1 font-medium">{d}</div>)}
-        </div>
-        <div className={`grid grid-cols-7 gap-px flex-1 auto-rows-fr overflow-hidden w-full h-full transition-colors ${darkMode ? 'bg-gray-700' : 'bg-gray-300'}`}>
-          {monthDays.map((cell, idx)=>{
-            const isToday = cell.date && new Date(cell.date.getFullYear(), cell.date.getMonth(), cell.date.getDate()).getTime() === new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
-            const key = cell.date ? `${cell.date.getFullYear()}-${String(cell.date.getMonth()+1).padStart(2,'0')}-${String(cell.date.getDate()).padStart(2,'0')}` : `empty-${idx}`;
-            const dayEvents = cell.date ? (eventsByDay.get(key) || []) : [];
-            return (
-              <div key={key} className={`p-2 relative overflow-hidden flex flex-col transition-colors ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
-                <div className="flex items-center justify-between gap-1 mb-1 flex-shrink-0">
-                  <div className={`text-sm font-medium transition-colors ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                    {cell.date ? (isToday ? (
-                      <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-secondary text-black text-xs font-bold">
-                        {cell.date.getDate()}
+        <div className="flex-1 overflow-hidden flex flex-col bg-black">
+          <div className="grid grid-cols-7 text-center text-xs py-3 px-1 border-b border-gray-800 flex-shrink-0 bg-gray-950">
+            {['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'].map((d)=> <div key={d} className="py-1 font-medium text-gray-400">{d}</div>)}
+          </div>
+          <div className="grid grid-cols-7 gap-px flex-1 auto-rows-fr overflow-hidden w-full h-full bg-gray-900">
+            {monthDays.map((cell, idx)=>{
+              const isToday = cell.date && new Date(cell.date.getFullYear(), cell.date.getMonth(), cell.date.getDate()).getTime() === new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+              const key = cell.date ? `${cell.date.getFullYear()}-${String(cell.date.getMonth()+1).padStart(2,'0')}-${String(cell.date.getDate()).padStart(2,'0')}` : `empty-${idx}`;
+              const dayEvents = cell.date ? (eventsByDay.get(key) || []) : [];
+              return (
+                <button key={key} onClick={() => cell.date && setExpandedDay(key)} className="p-2 relative overflow-hidden flex flex-col bg-gray-900 border border-gray-800 hover:bg-gray-800 transition-colors text-left cursor-pointer group">
+                  <div className="flex items-center justify-between gap-1 mb-1 flex-shrink-0">
+                    <div className="text-sm font-medium text-gray-300">
+                      {cell.date ? (isToday ? (
+                        <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-secondary text-black text-xs font-bold">
+                          {cell.date.getDate()}
+                        </span>
+                      ) : (
+                        <span>{cell.date.getDate()}</span>
+                      )) : ''}
+                    </div>
+                    {cell.date && (eventsByDay.get(key) || []).length > 0 && (
+                      <span className="text-xs bg-secondary text-black px-1.5 py-0.5 rounded-full font-semibold">
+                        {(eventsByDay.get(key) || []).length}
                       </span>
-                    ) : (
-                      <span>{cell.date.getDate()}</span>
-                    )) : ''}
+                    )}
                   </div>
-                  {cell.date && (eventsByDay.get(key) || []).length > 0 && (
-                    <button onClick={() => setShowDailyList(key)} className={`text-xs px-1 py-0.5 border rounded-none flex-shrink-0 transition-colors ${darkMode ? 'border-gray-600 hover:bg-gray-700' : 'border-gray-300 hover:bg-gray-200'}`} title={`${(eventsByDay.get(key) || []).length} eventos`}>📋</button>
-                  )}
-                </div>
-                <div className="space-y-1 flex-1 overflow-y-auto">
-                  {dayEvents.slice(0, 5).map(ev => {
-                    const label = `${(ev.eventTime || '00:00')} ${ev.clientName || 'Evento'}`;
-                    return (
-                      <button key={ev.id} onClick={()=> setSelected(ev)} className={`w-full text-left px-1.5 py-1 rounded text-xs ${getEventColor(ev)} flex items-start gap-1 truncate hover:shadow-md transition-shadow`}>
-                        <span className="truncate flex-1">{label}</span>
-                      </button>
-                    );
-                  })}
-                  {dayEvents.length > 5 && (
-                    <button onClick={() => setShowDailyList(key)} className={`w-full text-left px-1.5 py-1 rounded text-xs transition-colors ${darkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}>
-                      +{dayEvents.length - 5} más
-                    </button>
-                  )}
+                  <div className="space-y-0.5 flex-1 overflow-hidden">
+                    {dayEvents.slice(0, 3).map(ev => {
+                      const label = `${(ev.eventTime || '00:00')}`;
+                      return (
+                        <div key={ev.id} className={`w-full text-left px-1 py-0.5 rounded text-xs ${getEventColor(ev)} truncate opacity-90 group-hover:opacity-100`}>
+                          {label}
+                        </div>
+                      );
+                    })}
+                    {dayEvents.length > 3 && (
+                      <div className="text-xs text-gray-400 px-1">
+                        +{dayEvents.length - 3} más
+                      </div>
+                    )}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Expanded Day Modal */}
+      {expandedDay && (
+        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4" onClick={()=> setExpandedDay(null)}>
+          <div className="bg-gray-900 rounded-lg w-full max-w-3xl max-h-[80vh] overflow-y-auto p-6 border border-gray-800" onClick={e=> e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-6">
+              <div className="text-2xl font-bold text-white">
+                {new Date(expandedDay).toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+              </div>
+              <button onClick={()=> setExpandedDay(null)} className="text-gray-400 hover:text-white text-2xl">✕</button>
+            </div>
+
+            {(eventsByDay.get(expandedDay) || []).length > 0 ? (
+              <div className="space-y-4">
+                {(eventsByDay.get(expandedDay) || []).map((ev, idx) => (
+                  <div key={ev.id} className={`border rounded-lg p-4 ${getEventColor(ev).split(' ')[0]} bg-opacity-20 border-opacity-30`}>
+                    <div className="font-semibold text-lg text-white">{idx + 1}. {ev.clientName || 'Evento sin nombre'}</div>
+                    <div className="grid grid-cols-2 gap-3 text-sm mt-3">
+                      <div><span className="text-gray-400">Hora:</span> <span className="text-white font-medium">{ev.eventTime || '-'}</span></div>
+                      <div><span className="text-gray-400">Tipo:</span> <span className="text-white font-medium">{ev.eventType || '-'}</span></div>
+                      <div><span className="text-gray-400">Teléfono:</span> <span className="text-white font-medium">{ev.phone || (ev as any).formSnapshot?.phone || '-'}</span></div>
+                      <div><span className="text-gray-400">Duración:</span> <span className="text-white font-medium">{ev.packageDuration || '-'}</span></div>
+                      <div className="col-span-2"><span className="text-gray-400">Ubicación:</span> <span className="text-white font-medium">{ev.eventLocation || '-'}</span></div>
+                    </div>
+
+                    {Array.isArray((ev as any).formSnapshot?.selectedDresses) && (ev as any).formSnapshot.selectedDresses.length > 0 ? (
+                      <div className="mt-4 pt-4 border-t border-gray-700">
+                        <div className="text-sm font-medium text-white mb-3">Vestidos:</div>
+                        <div className="grid grid-cols-3 gap-3">
+                          {(ev as any).formSnapshot.selectedDresses
+                            .map((id: string) => dressOptions.find(d => d.id === id))
+                            .filter(Boolean)
+                            .map((dress: any) => (
+                              <div key={(dress as any).id} className="flex flex-col items-center">
+                                <div className="w-20 h-24 rounded overflow-hidden bg-gray-800 mb-2 border border-gray-700">
+                                  {(dress as any).image ? (
+                                    <img src={(dress as any).image} alt={(dress as any).name} className="w-full h-full object-cover" />
+                                  ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-xs text-gray-500">Sin foto</div>
+                                  )}
+                                </div>
+                                <span className="text-xs text-gray-300 text-center truncate w-full">{(dress as any).name}</span>
+                              </div>
+                            ))}
+                        </div>
+                      </div>
+                    ) : null}
+
+                    <div className="mt-4 pt-4 border-t border-gray-700">
+                      <div className="text-sm font-medium text-white mb-2">Resumen de Pago:</div>
+                      <div className="space-y-1 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Total:</span>
+                          <span className="text-white font-medium">R$ {Number(ev.totalAmount || 0).toFixed(0)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Entrada (20%):</span>
+                          <span className={`font-medium ${ev.depositPaid ? 'text-green-400' : 'text-red-400'}`}>R$ {(Number(ev.totalAmount || 0) * 0.2).toFixed(0)} {ev.depositPaid ? '✓' : ''}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Restante:</span>
+                          <span className={`font-medium ${ev.finalPaymentPaid ? 'text-green-400' : 'text-red-400'}`}>R$ {(Number(ev.totalAmount || 0) * 0.8).toFixed(0)} {ev.finalPaymentPaid ? '✓' : ''}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+                <div className="flex gap-2 mt-6">
+                  <button onClick={() => {
+                    const content = document.querySelector('.daily-list-print');
+                    if (!content) return;
+                    const printWindow = window.open('', '', 'width=800,height=600');
+                    if (printWindow) {
+                      printWindow.document.write(content.innerHTML);
+                      printWindow.document.close();
+                      printWindow.print();
+                    }
+                  }} className="flex-1 border-2 border-gray-600 text-gray-300 px-4 py-2 rounded-lg hover:bg-gray-800 inline-flex items-center justify-center gap-2 transition-colors">
+                    <Printer size={18} /> Imprimir
+                  </button>
+                  <button onClick={async () => {
+                    try {
+                      const events = eventsByDay.get(expandedDay) || [];
+                      const pdf = new jsPDF('p', 'mm', 'a4');
+                      const pageHeight = pdf.internal.pageSize.getHeight();
+                      const pageWidth = pdf.internal.pageSize.getWidth();
+                      const margin = 15;
+                      const contentWidth = pageWidth - 2 * margin;
+                      let yPosition = margin;
+
+                      const dateStr = new Date(expandedDay).toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+                      pdf.setFontSize(16);
+                      pdf.setFont(undefined, 'bold');
+                      pdf.text('Eventos del día', margin, yPosition);
+                      yPosition += 10;
+
+                      pdf.setFontSize(12);
+                      pdf.setFont(undefined, 'normal');
+                      pdf.text(dateStr, margin, yPosition);
+                      yPosition += 12;
+
+                      const loadImageAsBase64 = (url: string): Promise<string | null> => {
+                        return new Promise((resolve) => {
+                          const img = new Image();
+                          img.crossOrigin = 'anonymous';
+                          img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+                            const ctx = canvas.getContext('2d');
+                            if (ctx) {
+                              ctx.drawImage(img, 0, 0);
+                              resolve(canvas.toDataURL('image/jpeg', 0.7));
+                            } else {
+                              resolve(null);
+                            }
+                          };
+                          img.onerror = () => resolve(null);
+                          img.src = url;
+                        });
+                      };
+
+                      for (const ev of events) {
+                        if (yPosition > pageHeight - 30) {
+                          pdf.addPage();
+                          yPosition = margin;
+                        }
+
+                        pdf.setFontSize(11);
+                        pdf.setFont(undefined, 'bold');
+                        pdf.text(`${events.indexOf(ev) + 1}. ${ev.clientName || 'Evento sin nombre'}`, margin, yPosition);
+                        yPosition += 7;
+
+                        pdf.setFontSize(9);
+                        pdf.setFont(undefined, 'normal');
+
+                        const details = [
+                          `Hora: ${ev.eventTime || '-'}`,
+                          `Tipo: ${ev.eventType || '-'}`,
+                          `Teléfono: ${ev.phone || (ev as any).formSnapshot?.phone || '-'}`,
+                          `Duración: ${ev.packageDuration || '-'}`,
+                          `Ubicación: ${ev.eventLocation || '-'}`
+                        ];
+
+                        details.forEach(detail => {
+                          pdf.text(detail, margin + 3, yPosition);
+                          yPosition += 5;
+                        });
+
+                        if (Array.isArray((ev as any).formSnapshot?.selectedDresses) && (ev as any).formSnapshot.selectedDresses.length > 0) {
+                          yPosition += 3;
+                          pdf.setFont(undefined, 'bold');
+                          pdf.text('Vestidos:', margin + 3, yPosition);
+                          yPosition += 8;
+
+                          const selectedDressIds = (ev as any).formSnapshot.selectedDresses;
+                          const selectedDressObjects = selectedDressIds
+                            .map((id: string) => dressOptions.find(d => d.id === id))
+                            .filter(Boolean);
+
+                          const dressImagesPerRow = 3;
+                          const dressWidth = (contentWidth - 6) / dressImagesPerRow - 2;
+                          const dressHeight = dressWidth * 1.3;
+
+                          let xOffset = margin + 3;
+                          let dressCount = 0;
+
+                          for (const dress of selectedDressObjects) {
+                            if (yPosition + dressHeight > pageHeight - 20) {
+                              pdf.addPage();
+                              yPosition = margin;
+                              xOffset = margin + 3;
+                              dressCount = 0;
+                            }
+
+                            if (dressCount > 0 && dressCount % dressImagesPerRow === 0) {
+                              xOffset = margin + 3;
+                              yPosition += dressHeight + 5;
+                            }
+
+                            try {
+                              if ((dress as any).image) {
+                                const imageBase64 = await loadImageAsBase64((dress as any).image);
+                                if (imageBase64) {
+                                  pdf.addImage(imageBase64, 'JPEG', xOffset, yPosition, dressWidth, dressHeight);
+                                }
+                              }
+                            } catch (e) {
+                              console.warn('Error loading dress image:', e);
+                            }
+
+                            pdf.setFontSize(8);
+                            pdf.setFont(undefined, 'normal');
+                            const dressName = (dress as any).name || 'Vestido';
+                            const wrappedName = pdf.splitTextToSize(dressName, dressWidth - 1);
+                            let nameY = yPosition + dressHeight + 1;
+                            wrappedName.forEach((line: string) => {
+                              pdf.text(line, xOffset, nameY, { maxWidth: dressWidth - 1 });
+                              nameY += 3;
+                            });
+
+                            xOffset += dressWidth + 2;
+                            dressCount++;
+                          }
+
+                          yPosition += dressHeight + 12;
+                        }
+
+                        pdf.setFontSize(9);
+                        pdf.setFont(undefined, 'bold');
+                        pdf.text('Resumen de Pago:', margin + 3, yPosition);
+                        yPosition += 5;
+
+                        pdf.setFont(undefined, 'normal');
+                        const paymentLines = [
+                          `Total: R$ ${Number(ev.totalAmount || 0).toFixed(0)}`,
+                          `Entrada (20%): R$ ${(Number(ev.totalAmount || 0) * 0.2).toFixed(0)} ${ev.depositPaid ? '✓ Pago' : 'Pendiente'}`,
+                          `Restante: R$ ${(Number(ev.totalAmount || 0) * 0.8).toFixed(0)} ${ev.finalPaymentPaid ? '✓ Pago' : 'Pendiente'}`
+                        ];
+
+                        paymentLines.forEach(line => {
+                          pdf.text(line, margin + 3, yPosition);
+                          yPosition += 5;
+                        });
+
+                        yPosition += 8;
+                      }
+
+                      const dateKey = new Date(expandedDay).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-');
+                      pdf.save(`eventos_${dateKey}.pdf`);
+                    } catch (error) {
+                      console.error('Error generating PDF:', error);
+                      alert('Error al generar PDF. Intenta con Imprimir en su lugar.');
+                    }
+                  }} className="flex-1 border-2 border-green-600 text-green-400 px-4 py-2 rounded-lg hover:bg-green-900 hover:bg-opacity-20 inline-flex items-center justify-center gap-2 transition-colors">
+                    <Download size={18} /> PDF
+                  </button>
                 </div>
               </div>
-            );
-          })}
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-gray-400 text-lg">No hay eventos este día</p>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-      </div>
+      )}
 
       {/* Event modal */}
       {selected && (
