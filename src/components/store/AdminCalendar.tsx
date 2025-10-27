@@ -291,7 +291,7 @@ const AdminCalendar: React.FC<AdminCalendarProps> = ({ darkMode = false }) => {
             </div>
             <button onClick={nextMonth} className="p-2 rounded-full text-gray-400 hover:text-white hover:bg-gray-800 transition-colors flex-shrink-0"><ChevronRight size={16}/></button>
           </div>
-          <div className="grid grid-cols-7 gap-px p-2 bg-gray-900 rounded">
+          <div className="grid grid-cols-7 gap-px p-2 bg-gray-900 lg:bg-gray-900 rounded max-lg:bg-black">
             {['D','L','M','X','J','V','S'].map(d => <div key={d} className="text-center text-xs font-medium py-1 text-gray-500">{d}</div>)}
             {miniMonthDays.map((cell, idx) => {
               const isToday = cell.date && new Date(cell.date.getFullYear(), cell.date.getMonth(), cell.date.getDate()).getTime() === new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
