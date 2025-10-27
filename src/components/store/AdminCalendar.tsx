@@ -280,24 +280,24 @@ const AdminCalendar: React.FC<AdminCalendarProps> = ({ darkMode = false }) => {
   return (
     <div className="flex h-full w-full bg-white">
       {/* Left Sidebar */}
-      <div className="w-64 border-r border-gray-200 p-4 flex flex-col overflow-y-auto flex-shrink-0">
+      <div className={`w-64 border-r p-4 flex flex-col overflow-y-auto flex-shrink-0 transition-colors ${darkMode ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'}`}>
         {/* Mini Calendar */}
         <div className="mb-6">
           <div className="flex items-center justify-between gap-2 mb-2">
-            <button onClick={prevMonth} className="px-1 py-1 border rounded-none hover:bg-gray-100 flex-shrink-0"><ChevronLeft size={14}/></button>
-            <div className="text-sm font-semibold text-center flex-1">
-              {new Date(current.y, current.m, 1).toLocaleString('es', { month: 'long', year: 'numeric' })}
+            <button onClick={prevMonth} className={`px-1 py-1 border rounded-none flex-shrink-0 transition-colors ${darkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-800' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}><ChevronLeft size={14}/></button>
+            <div className={`text-xs font-semibold text-center flex-1 transition-colors ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+              {new Date(current.y, current.m, 1).toLocaleString('es', { month: 'short', year: '2-digit' })}
             </div>
-            <button onClick={nextMonth} className="px-1 py-1 border rounded-none hover:bg-gray-100 flex-shrink-0"><ChevronRight size={14}/></button>
+            <button onClick={nextMonth} className={`px-1 py-1 border rounded-none flex-shrink-0 transition-colors ${darkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-800' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}><ChevronRight size={14}/></button>
           </div>
-          <div className="grid grid-cols-7 gap-px bg-gray-200 p-1 rounded">
-            {['D','L','M','X','J','V','S'].map(d => <div key={d} className="text-center text-xs font-medium py-1 text-gray-600">{d}</div>)}
+          <div className={`grid grid-cols-7 gap-px p-1 rounded transition-colors ${darkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
+            {['D','L','M','X','J','V','S'].map(d => <div key={d} className={`text-center text-xs font-medium py-1 transition-colors ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>{d}</div>)}
             {miniMonthDays.map((cell, idx) => {
               const isToday = cell.date && new Date(cell.date.getFullYear(), cell.date.getMonth(), cell.date.getDate()).getTime() === new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
               const key = cell.date ? `${cell.date.getFullYear()}-${String(cell.date.getMonth()+1).padStart(2,'0')}-${String(cell.date.getDate()).padStart(2,'0')}` : `empty-${idx}`;
               const hasEvents = cell.date ? (eventsByDay.get(key) || []).length > 0 : false;
               return (
-                <button key={key} className={`text-center text-xs py-1 rounded transition-colors ${isToday ? 'bg-secondary text-black font-bold' : hasEvents ? 'bg-blue-100 text-blue-700 font-medium' : 'hover:bg-gray-100'}`}>
+                <button key={key} className={`text-center text-xs py-1 rounded transition-colors font-medium ${isToday ? 'bg-secondary text-black' : hasEvents ? (darkMode ? 'bg-blue-600 text-white' : 'bg-blue-100 text-blue-700') : (darkMode ? 'text-white hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100')}`}>
                   {cell.date ? cell.date.getDate() : ''}
                 </button>
               );
@@ -306,28 +306,17 @@ const AdminCalendar: React.FC<AdminCalendarProps> = ({ darkMode = false }) => {
         </div>
 
         {/* Hoy Button */}
-        <button onClick={goToday} className="w-full mb-4 px-3 py-2 border-2 border-black text-black rounded-none hover:bg-black hover:text-white text-sm font-medium transition-colors">Hoy</button>
+        <button onClick={goToday} className={`w-full mb-4 px-3 py-2 border-2 rounded-none text-sm font-medium transition-colors ${darkMode ? 'border-gray-500 text-gray-300 hover:bg-black hover:text-white' : 'border-black text-black hover:bg-black hover:text-white'}`}>Hoy</button>
 
-        {/* Month/Year Selectors */}
+        {/* Month/Year/Status Selectors - Compact */}
         <div className="space-y-2 mb-4">
-          <div>
-            <label className="text-xs text-gray-600 block mb-1">Mes</label>
-            <select value={filterMonth} onChange={e=> setFilterMonth(Number(e.target.value))} className="w-full px-2 py-1 border rounded-none text-sm">
-              {months.map((m,i)=> <option key={i} value={i}>{m}</option>)}
-            </select>
-          </div>
-          <div>
-            <label className="text-xs text-gray-600 block mb-1">Año</label>
-            <select value={filterYear} onChange={e=> setFilterYear(Number(e.target.value))} className="w-full px-2 py-1 border rounded-none text-sm">
-              {years.map(y=> <option key={y} value={y}>{y}</option>)}
-            </select>
-          </div>
-        </div>
-
-        {/* Status Filter */}
-        <div className="space-y-2 mb-4">
-          <label className="text-xs text-gray-600 block">Estado</label>
-          <select value={filterStatus} onChange={e=> setFilterStatus(e.target.value as StatusFilter)} className="w-full px-2 py-1 border rounded-none text-sm">
+          <select value={filterMonth} onChange={e=> setFilterMonth(Number(e.target.value))} className={`w-full px-2 py-1 border rounded-none text-sm transition-colors ${darkMode ? 'bg-gray-800 border-gray-600 text-gray-300' : 'bg-white border-gray-300 text-gray-900'}`}>
+            {months.map((m,i)=> <option key={i} value={i}>{m}</option>)}
+          </select>
+          <select value={filterYear} onChange={e=> setFilterYear(Number(e.target.value))} className={`w-full px-2 py-1 border rounded-none text-sm transition-colors ${darkMode ? 'bg-gray-800 border-gray-600 text-gray-300' : 'bg-white border-gray-300 text-gray-900'}`}>
+            {years.map(y=> <option key={y} value={y}>{y}</option>)}
+          </select>
+          <select value={filterStatus} onChange={e=> setFilterStatus(e.target.value as StatusFilter)} className={`w-full px-2 py-1 border rounded-none text-sm transition-colors ${darkMode ? 'bg-gray-800 border-gray-600 text-gray-300' : 'bg-white border-gray-300 text-gray-900'}`}>
             <option value="all">Todos</option>
             <option value="pending_approval">Pendiente de aprobación</option>
             <option value="pending_payment">Pendiente de pago</option>
@@ -341,18 +330,17 @@ const AdminCalendar: React.FC<AdminCalendarProps> = ({ darkMode = false }) => {
 
         {/* Phone Filter */}
         <div className="space-y-2 mb-4">
-          <label className="text-xs text-gray-600 block">Teléfono</label>
           <input
             type="text"
             value={filterPhone}
             onChange={e => setFilterPhone(e.target.value)}
-            placeholder="Filtrar..."
-            className="w-full px-2 py-1 border rounded-none text-sm"
+            placeholder="Teléfono..."
+            className={`w-full px-2 py-1 border rounded-none text-sm transition-colors ${darkMode ? 'bg-gray-800 border-gray-600 text-gray-300 placeholder-gray-500' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'}`}
           />
         </div>
 
         {/* Add Event Button */}
-        <button onClick={()=> setAdding(true)} className="w-full px-3 py-2 border-2 border-black text-black rounded-none hover:bg-black hover:text-white text-sm font-medium transition-colors inline-flex items-center justify-center gap-1"><Plus size={14}/> Añadir evento</button>
+        <button onClick={()=> setAdding(true)} className={`w-full px-3 py-2 border-2 rounded-none text-sm font-medium transition-colors inline-flex items-center justify-center gap-1 ${darkMode ? 'border-gray-500 text-gray-300 hover:bg-black hover:text-white' : 'border-black text-black hover:bg-black hover:text-white'}`}><Plus size={14}/> Añadir evento</button>
       </div>
 
       {/* Right Calendar Area */}
