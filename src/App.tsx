@@ -23,6 +23,7 @@ import lazyWithRetry from './utils/lazyWithRetry';
 const PackagesAdminPage = safeLazy(() => import('./pages/PackagesAdminPage'));
 const AdminStorePage = lazyWithRetry(() => import('./pages/AdminStorePage'));
 const AdminContractPreviewPage = safeLazy(() => import('./pages/AdminContractPreviewPage'));
+const PhotoSharingPage = safeLazy(() => import('./pages/PhotoSharingPage'));
 import './styles/globals.css';
 import ErrorBoundary from './components/ui/ErrorBoundary';
 
