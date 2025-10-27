@@ -333,8 +333,8 @@ const AdminCalendar: React.FC = () => {
                     })();
                     const label = `${(ev.eventTime || '00:00')} ${ev.clientName || 'Evento'}`;
                     return (
-                      <button key={ev.id} onClick={()=> setSelected(ev)} className={`w-full text-left px-2 py-1 rounded-md ${getEventColor(ev)} text-xs flex items-center gap-1`}>
-                        <IconCalendar size={12}/><span className="truncate">{label}</span>
+                      <button key={ev.id} onClick={()=> setSelected(ev)} className={`w-full text-left px-1 py-0.5 rounded-sm ${getEventColor(ev)} text-xs flex items-center gap-0.5`}>
+                        <span className="truncate text-xs">{label}</span>
                       </button>
                     );
                   })}
