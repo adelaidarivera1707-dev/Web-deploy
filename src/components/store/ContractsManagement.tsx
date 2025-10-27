@@ -197,6 +197,16 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
     if (editing || creating) fetchProducts();
   }, [editing, creating]);
 
+  const isPast = (c: ContractItem) => {
+    if (!c.eventDate) return false;
+    const d = new Date(c.eventDate);
+    if (isNaN(d.getTime())) return false;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    d.setHours(0, 0, 0, 0);
+    return d.getTime() < today.getTime();
+  };
+
   const filtered = useMemo(() => {
     const base = contracts.filter(c => {
       if (contractsTab === 'pending') {
