@@ -33,8 +33,6 @@ const AdminStoreDashboard: React.FC<AdminProps> = ({ onNavigate }) => {
   const [allOrders, setAllOrders] = useState<OrderItem[]>([]);
   const [products, setProducts] = useState<ProductLite[]>([]);
   const [contracts, setContracts] = useState<any[]>([]);
-  const [selectedProductId, setSelectedProductId] = useState<'all' | string>('all');
-  const [selectedProductIdB, setSelectedProductIdB] = useState<'none' | string>('none');
   const [investmentInstallments, setInvestmentInstallments] = useState<any[]>([]);
   const [period, setPeriod] = useState<{ type: 'all' | 'year' | 'month' | 'custom'; start?: string; end?: string }>({ type: 'all' });
   const [metric, setMetric] = useState<'revenue' | 'contracts'>('revenue');
