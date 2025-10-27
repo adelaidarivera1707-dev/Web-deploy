@@ -52,6 +52,9 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
               <ShoppingCart size={24} className="text-primary" />
               <h2 className="text-xl font-playfair font-medium">Carrinho</h2>
             </div>
+            <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded-full">
+              <X size={20} className="text-gray-500" />
+            </button>
           </div>
 
           {/* Content */}
