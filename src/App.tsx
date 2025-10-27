@@ -49,6 +49,7 @@ function App() {
                   <Route path="/store" element={<GuardedRoute page="store"><StorePage /></GuardedRoute>} />
                   <Route path="/admin" element={<AdminGuard><AdminStorePage /></AdminGuard>} />
                   <Route path="/admin/contract-preview" element={<AdminGuard><AdminContractPreviewPage /></AdminGuard>} />
+                  <Route path="/photo-sharing/:contractId" element={<GuardedRoute page="booking"><PhotoSharingPage /></GuardedRoute>} />
                   <Route path="/dashboard" element={<GuardedRoute page="clientDashboard"><ClientDashboardPage /></GuardedRoute>} />
                   <Route path="/packages-admin" element={<GuardedRoute page="packagesAdmin"><PackagesAdminPage /></GuardedRoute>} />
                   <Route path="/admin-store" element={<GuardedRoute page="admin"><AdminStorePage /></GuardedRoute>} />
