@@ -40,24 +40,24 @@ const Layout = ({ children }: LayoutProps) => {
     };
   }, []);
 
-  // Admin image overlay: enable when site_admin_mode is set
+  // Admin image overlay: disable when site_admin_mode is set
   useEffect(() => {
     const handler = (e: any) => {
       const val = e?.detail ?? (sessionStorage.getItem('site_admin_mode') ? true : false);
       if (val) {
-        ImageAdminOverlay.initImageAdminOverlay();
-      } else {
         ImageAdminOverlay.destroyImageAdminOverlay();
+      } else {
+        ImageAdminOverlay.initImageAdminOverlay();
       }
     };
     window.addEventListener('siteAdminModeChanged', handler as EventListener);
     // run once based on current value
     if (typeof window !== 'undefined' && sessionStorage.getItem('site_admin_mode')) {
-      ImageAdminOverlay.initImageAdminOverlay();
+      ImageAdminOverlay.destroyImageAdminOverlay();
     }
     return () => {
       window.removeEventListener('siteAdminModeChanged', handler as EventListener);
-      ImageAdminOverlay.destroyImageAdminOverlay();
+      ImageAdminOverlay.initImageAdminOverlay();
     };
   }, []);
 
