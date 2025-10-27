@@ -5,6 +5,7 @@ import { Camera } from 'lucide-react';
 import ImageAdminOverlay from '../admin/ImageAdminOverlay';
 import FloatingWhatsApp from './FloatingWhatsApp';
 import { fetchImageOverrides, applyImageOverrides } from '../../utils/siteImageOverrides';
+import { useLocation } from 'react-router-dom';
 
 interface LayoutProps {
   children: ReactNode;
@@ -12,6 +13,8 @@ interface LayoutProps {
 
 const Layout = ({ children }: LayoutProps) => {
   const [mounted, setMounted] = useState(false);
+  const location = useLocation();
+  const isAdmin = location.pathname.startsWith('/admin');
 
   useEffect(() => {
     setTimeout(() => {
