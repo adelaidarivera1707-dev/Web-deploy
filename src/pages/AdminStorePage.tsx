@@ -12,8 +12,10 @@ import { db, storage } from '../utils/firebaseClient';
 import { collection, getDocs, deleteDoc, doc, updateDoc, orderBy, query, addDoc } from 'firebase/firestore';
 import { Trash2 } from 'lucide-react';
 import AdminCalendar from '../components/store/AdminCalendar';
+import { useCart } from '../contexts/CartContext';
 
 const AdminStorePage: React.FC = () => {
+  const { setIsCartOpen } = useCart();
   const [adminView, setAdminView] = useState<'dashboard' | 'products' | 'orders' | 'contracts' | 'packages' | 'coupons' | 'settings' | 'calendar' | 'investments'>(() => {
     try { return (localStorage.getItem('admin_view') as any) || 'dashboard'; } catch { return 'dashboard'; }
   });
