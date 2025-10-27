@@ -814,7 +814,28 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
                   );
                 })()}
                 <div><span className="text-gray-600">Total:</span> <span className="font-medium">R$ {computeAmounts(viewing).totalAmount.toFixed(0)}</span></div>
-                <div><span className="text-gray-600">Deslocamento:</span> <span className="font-medium">R$ {(viewing.travelFee ?? 0).toFixed(0)}</span></div>
+                <div><span className="text-gray-600">Deslocamiento:</span> <span className="font-medium">R$ {(viewing.travelFee ?? 0).toFixed(0)}</span></div>
+              </div>
+
+              <div className="border-t pt-4">
+                <div className="text-sm font-medium mb-3">Progreso del evento</div>
+                <WorkflowStatusButtons
+                  depositPaid={viewing.depositPaid}
+                  finalPaymentPaid={viewing.finalPaymentPaid}
+                  isEditing={viewing.isEditing}
+                  eventCompleted={viewing.eventCompleted}
+                  onUpdate={async (updates) => {
+                    try {
+                      await updateDoc(doc(db, 'contracts', viewing.id), updates as any);
+                      setViewing(v => v ? { ...v, ...updates } : v);
+                      window.dispatchEvent(new CustomEvent('contractsUpdated'));
+                      window.dispatchEvent(new CustomEvent('adminToast', { detail: { message: 'Estado actualizado', type: 'success' } }));
+                    } catch (e) {
+                      console.error('Error updating contract status:', e);
+                      window.dispatchEvent(new CustomEvent('adminToast', { detail: { message: 'Error al actualizar', type: 'error' } }));
+                    }
+                  }}
+                />
               </div>
 
               <div>
