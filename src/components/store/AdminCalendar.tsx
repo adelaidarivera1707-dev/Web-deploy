@@ -459,7 +459,7 @@ const AdminCalendar: React.FC<AdminCalendarProps> = ({ darkMode = false }) => {
                       printWindow.document.close();
                       printWindow.print();
                     }
-                  }} className="flex-1 border-2 border-gray-600 text-gray-300 px-4 py-2 rounded-lg hover:bg-gray-800 inline-flex items-center justify-center gap-2 transition-colors">
+                  }} className={`flex-1 border-2 px-4 py-2 rounded-lg inline-flex items-center justify-center gap-2 transition-colors ${darkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-800' : 'border-gray-400 text-gray-700 hover:bg-gray-100'}`}>
                     <Printer size={18} /> Imprimir
                   </button>
                   <button onClick={async () => {
