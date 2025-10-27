@@ -190,7 +190,7 @@ const AdminStorePage: React.FC = () => {
     <section className={`overflow-hidden ${adminView === 'calendar' ? 'h-screen w-screen' : 'md:pt-4 p-0 md:pb-0 h-screen md:h-auto'} ${adminDark ? 'admin-dark' : ''}`}>
       {/* Calendar Full Screen View */}
       {adminView === 'calendar' && !adminFullscreen && (
-        <div className="w-full h-full bg-white flex flex-col">
+        <div className="w-[calc(100%-4%)] h-[calc(100%-4%)] bg-white flex flex-col m-[2%] rounded-lg shadow-lg">
           {/* Calendar Header Bar */}
           <div className="px-4 py-2 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
             <h1 className="text-xl font-semibold text-black">Calendario</h1>
