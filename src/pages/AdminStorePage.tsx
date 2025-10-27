@@ -187,7 +187,7 @@ const AdminStorePage: React.FC = () => {
   };
 
   return (
-    <section className={`pt-16 md:pt-20 pb-8 md:pb-12 ${adminDark ? 'admin-dark' : ''}`}>
+    <section className={`pt-16 md:pt-20 pb-8 md:pb-12 overflow-hidden ${adminDark ? 'admin-dark' : ''}`}>
       <div className="container-custom px-2 md:px-4">
         <div className="mb-3 space-y-2">
           {/* Mobile Dropdown */}
