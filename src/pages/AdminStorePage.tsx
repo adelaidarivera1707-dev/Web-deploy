@@ -16,6 +16,12 @@ import { useCart } from '../contexts/CartContext';
 
 const AdminStorePage: React.FC = () => {
   const { setIsCartOpen } = useCart();
+
+  // Close cart when entering admin page
+  useEffect(() => {
+    setIsCartOpen(false);
+  }, [setIsCartOpen]);
+
   const [adminView, setAdminView] = useState<'dashboard' | 'products' | 'orders' | 'contracts' | 'packages' | 'coupons' | 'settings' | 'calendar' | 'investments'>(() => {
     try { return (localStorage.getItem('admin_view') as any) || 'dashboard'; } catch { return 'dashboard'; }
   });
