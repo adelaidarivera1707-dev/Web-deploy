@@ -343,9 +343,9 @@ const AdminCalendar: React.FC<AdminCalendarProps> = ({ darkMode = false }) => {
               const key = cell.date ? `${cell.date.getFullYear()}-${String(cell.date.getMonth()+1).padStart(2,'0')}-${String(cell.date.getDate()).padStart(2,'0')}` : `empty-${idx}`;
               const dayEvents = cell.date ? (eventsByDay.get(key) || []) : [];
               return (
-                <button key={key} onClick={() => cell.date && setExpandedDay(key)} className="p-2 relative overflow-hidden flex flex-col bg-gray-900 lg:bg-gray-900 max-lg:bg-black border border-gray-800 hover:bg-gray-800 transition-colors text-left cursor-pointer group">
+                <button key={key} onClick={() => cell.date && setExpandedDay(key)} className={`p-2 relative overflow-hidden flex flex-col border transition-colors text-left cursor-pointer group ${darkMode ? 'bg-gray-900 lg:bg-gray-900 max-lg:bg-black border-gray-800 hover:bg-gray-800' : 'bg-white lg:bg-white max-lg:bg-white border-gray-200 hover:bg-gray-50'}`}>
                   <div className="flex items-center justify-between gap-1 mb-1 flex-shrink-0">
-                    <div className="text-sm font-medium text-gray-300">
+                    <div className={`text-sm font-medium transition-colors ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                       {cell.date ? (isToday ? (
                         <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-secondary text-black text-xs font-bold">
                           {cell.date.getDate()}
