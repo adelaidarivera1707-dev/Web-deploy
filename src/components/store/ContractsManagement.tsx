@@ -765,6 +765,10 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <div><span className="text-gray-600">Nombre:</span> <span className="font-medium">{viewing.clientName}</span></div>
                 <div><span className="text-gray-600">Email:</span> <span className="font-medium">{viewing.clientEmail}</span></div>
+                <div><span className="text-gray-600">Teléfono:</span> <span className="font-medium">{(viewing as any).clientPhone || (viewing as any).formSnapshot?.phone || '-'}</span></div>
+                <div><span className="text-gray-600">CPF:</span> <span className="font-medium">{(viewing as any).clientCPF || '-'}</span></div>
+                <div><span className="text-gray-600">RG:</span> <span className="font-medium">{(viewing as any).clientRG || '-'}</span></div>
+                <div className="col-span-2"><span className="text-gray-600">Endereço:</span> <span className="font-medium">{(viewing as any).clientAddress || '-'}</span></div>
                 <div><span className="text-gray-600">Tipo de evento:</span> <span className="font-medium">{viewing.eventType || '-'}</span></div>
                 <div><span className="text-gray-600">Fecha evento:</span> <span className="font-medium">{viewing.eventDate || '-'}</span></div>
                 <div><span className="text-gray-600">Hora:</span> <span className="font-medium">{(viewing as any).eventTime || '-'}</span></div>
@@ -773,7 +777,7 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
                 <div><span className="text-gray-600">Ubicación:</span> <span className="font-medium">{(viewing as any).eventLocation || '-'}</span></div>
                 <div><span className="text-gray-600">Paquete:</span> <span className="font-medium">{(viewing as any).packageTitle || '-'}</span></div>
                 <div><span className="text-gray-600">Duración:</span> <span className="font-medium">{(viewing as any).packageDuration || '-'}</span></div>
-                <div><span className="text-gray-600">M��todo de pago:</span> <span className="font-medium">{viewing.paymentMethod || '-'}</span></div>
+                <div><span className="text-gray-600">Método de pago:</span> <span className="font-medium">{viewing.paymentMethod || '-'}</span></div>
                 {(() => {
                   const calc = computeAmounts(viewing);
                   return (
