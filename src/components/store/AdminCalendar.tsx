@@ -131,7 +131,6 @@ const AdminCalendar: React.FC = () => {
             image: p.image_url || p.image || '',
             color: Array.isArray(p.tags) && p.tags.length ? String(p.tags[0]) : ''
           }));
-        console.log('Dresses loaded from Firestore:', list);
         setDressOptions(list);
       } catch (e) {
         console.error('Error loading dresses:', e);
@@ -144,9 +143,20 @@ const AdminCalendar: React.FC = () => {
   const monthDays = useMemo(() => {
     const first = startOfMonth(current.y, current.m);
     const last = endOfMonth(current.y, current.m);
-    const startWeekday = first.getDay(); // Sunday-first
+    const startWeekday = first.getDay();
     const total = last.getDate();
     const cells: Array<{ date: Date | null } > = [];
+    for (let i = 0; i < startWeekday; i++) cells.push({ date: null });
+    for (let d = 1; d <= total; d++) cells.push({ date: new Date(current.y, current.m, d) });
+    return cells;
+  }, [current]);
+
+  const miniMonthDays = useMemo(() => {
+    const first = startOfMonth(current.y, current.m);
+    const last = endOfMonth(current.y, current.m);
+    const startWeekday = first.getDay();
+    const total = last.getDate();
+    const cells: Array<{ date: Date | null }> = [];
     for (let i = 0; i < startWeekday; i++) cells.push({ date: null });
     for (let d = 1; d <= total; d++) cells.push({ date: new Date(current.y, current.m, d) });
     return cells;
@@ -166,7 +176,6 @@ const AdminCalendar: React.FC = () => {
       })();
       const statusMatch = filterStatus === 'all' ? true : status === filterStatus;
 
-      // Phone number filter
       let phoneMatch = true;
       if (filterPhone.trim()) {
         const phoneSource = ev.phone || (ev as any).formSnapshot?.phone || '';
@@ -190,7 +199,6 @@ const AdminCalendar: React.FC = () => {
       const key = ev.eventDate;
       map.set(key, [...(map.get(key) || []), ev]);
     });
-    // sort each day's events by time asc
     for (const [k, list] of Array.from(map.entries())) {
       list.sort((a, b) => {
         const ta = toMinutes(a.eventTime);
@@ -204,8 +212,8 @@ const AdminCalendar: React.FC = () => {
   }, [filteredEvents]);
 
   const goToday = () => { const t = new Date(); setCurrent({ y: t.getFullYear(), m: t.getMonth() }); setFilterMonth(t.getMonth()); setFilterYear(t.getFullYear()); };
-  const prevMonth = () => setCurrent(c => { const y = c.m === 0 ? c.y - 1 : c.y; const m = c.m === 0 ? 11 : c.m - 1; setFilterMonth(m); setFilterYear(y); return { y, m }; });
-  const nextMonth = () => setCurrent(c => { const y = c.m === 11 ? c.y + 1 : c.y; const m = c.m === 11 ? 0 : c.m + 1; setFilterMonth(m); setFilterYear(y); return { y, m }; });
+  const prevMonth = () => setCurrent(c => { const y = c.m === 0 ? c.y - 1 : c.y; const m = c.m === 0 ? 11 : c.m - 1; return { y, m }; });
+  const nextMonth = () => setCurrent(c => { const y = c.m === 11 ? c.y + 1 : c.y; const m = c.m === 11 ? 0 : c.m + 1; return { y, m }; });
 
   const months = Array.from({ length: 12 }, (_, i) => new Date(2000, i, 1).toLocaleString('es', { month: 'long' }));
   const years = Array.from({ length: 7 }, (_, i) => today.getFullYear() - 3 + i);
@@ -266,25 +274,56 @@ const AdminCalendar: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-full w-full bg-white">
-      {/* Filters / Controls */}
-      <div className="bg-white border-b border-gray-200 p-3 flex flex-wrap gap-2 items-center justify-between text-xs sm:text-sm flex-shrink-0">
-        <div className="flex items-center gap-2">
-          <button onClick={prevMonth} className="px-2 py-1 border rounded-none hover:bg-gray-100"><ChevronLeft size={16}/></button>
-          <div className="text-base font-semibold w-40 text-center">
-            {new Date(current.y, current.m, 1).toLocaleString('es', { month: 'long', year: 'numeric' })}
+    <div className="flex h-full w-full bg-white">
+      {/* Left Sidebar */}
+      <div className="w-64 border-r border-gray-200 p-4 flex flex-col overflow-y-auto flex-shrink-0">
+        {/* Mini Calendar */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between gap-2 mb-2">
+            <button onClick={prevMonth} className="px-1 py-1 border rounded-none hover:bg-gray-100 flex-shrink-0"><ChevronLeft size={14}/></button>
+            <div className="text-sm font-semibold text-center flex-1">
+              {new Date(current.y, current.m, 1).toLocaleString('es', { month: 'long', year: 'numeric' })}
+            </div>
+            <button onClick={nextMonth} className="px-1 py-1 border rounded-none hover:bg-gray-100 flex-shrink-0"><ChevronRight size={14}/></button>
           </div>
-          <button onClick={nextMonth} className="px-2 py-1 border rounded-none hover:bg-gray-100"><ChevronRight size={16}/></button>
-          <button onClick={goToday} className="ml-2 px-3 py-1 border-2 border-black text-black rounded-none hover:bg-black hover:text-white text-sm font-medium transition-colors">Hoy</button>
+          <div className="grid grid-cols-7 gap-px bg-gray-200 p-1 rounded">
+            {['D','L','M','X','J','V','S'].map(d => <div key={d} className="text-center text-xs font-medium py-1 text-gray-600">{d}</div>)}
+            {miniMonthDays.map((cell, idx) => {
+              const isToday = cell.date && new Date(cell.date.getFullYear(), cell.date.getMonth(), cell.date.getDate()).getTime() === new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+              const key = cell.date ? `${cell.date.getFullYear()}-${String(cell.date.getMonth()+1).padStart(2,'0')}-${String(cell.date.getDate()).padStart(2,'0')}` : `empty-${idx}`;
+              const hasEvents = cell.date ? (eventsByDay.get(key) || []).length > 0 : false;
+              return (
+                <button key={key} className={`text-center text-xs py-1 rounded transition-colors ${isToday ? 'bg-secondary text-black font-bold' : hasEvents ? 'bg-blue-100 text-blue-700 font-medium' : 'hover:bg-gray-100'}`}>
+                  {cell.date ? cell.date.getDate() : ''}
+                </button>
+              );
+            })}
+          </div>
         </div>
-        <div className="flex items-center gap-2 flex-wrap">
-          <select value={filterMonth} onChange={e=> setFilterMonth(Number(e.target.value))} className="px-2 py-1 border rounded-none text-sm">
-            {months.map((m,i)=> <option key={i} value={i}>{m}</option>)}
-          </select>
-          <select value={filterYear} onChange={e=> setFilterYear(Number(e.target.value))} className="px-2 py-1 border rounded-none text-sm">
-            {years.map(y=> <option key={y} value={y}>{y}</option>)}
-          </select>
-          <select value={filterStatus} onChange={e=> setFilterStatus(e.target.value as StatusFilter)} className="px-2 py-1 border rounded-none text-sm">
+
+        {/* Hoy Button */}
+        <button onClick={goToday} className="w-full mb-4 px-3 py-2 border-2 border-black text-black rounded-none hover:bg-black hover:text-white text-sm font-medium transition-colors">Hoy</button>
+
+        {/* Month/Year Selectors */}
+        <div className="space-y-2 mb-4">
+          <div>
+            <label className="text-xs text-gray-600 block mb-1">Mes</label>
+            <select value={filterMonth} onChange={e=> setFilterMonth(Number(e.target.value))} className="w-full px-2 py-1 border rounded-none text-sm">
+              {months.map((m,i)=> <option key={i} value={i}>{m}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="text-xs text-gray-600 block mb-1">Año</label>
+            <select value={filterYear} onChange={e=> setFilterYear(Number(e.target.value))} className="w-full px-2 py-1 border rounded-none text-sm">
+              {years.map(y=> <option key={y} value={y}>{y}</option>)}
+            </select>
+          </div>
+        </div>
+
+        {/* Status Filter */}
+        <div className="space-y-2 mb-4">
+          <label className="text-xs text-gray-600 block">Estado</label>
+          <select value={filterStatus} onChange={e=> setFilterStatus(e.target.value as StatusFilter)} className="w-full px-2 py-1 border rounded-none text-sm">
             <option value="all">Todos</option>
             <option value="pending_approval">Pendiente de aprobación</option>
             <option value="pending_payment">Pendiente de pago</option>
@@ -294,19 +333,35 @@ const AdminCalendar: React.FC = () => {
             <option value="cancelled">Cancelado</option>
             <option value="released">Liberado</option>
           </select>
+        </div>
+
+        {/* Phone Filter */}
+        <div className="space-y-2 mb-4">
+          <label className="text-xs text-gray-600 block">Teléfono</label>
           <input
             type="text"
             value={filterPhone}
             onChange={e => setFilterPhone(e.target.value)}
-            placeholder="Filtrar por teléfono"
-            className="px-2 py-1 border rounded-none text-sm w-32"
+            placeholder="Filtrar..."
+            className="w-full px-2 py-1 border rounded-none text-sm"
           />
-          <button onClick={()=> setAdding(true)} className="px-3 py-1 border-2 border-black text-black rounded-none hover:bg-black hover:text-white text-sm font-medium transition-colors inline-flex items-center gap-1"><Plus size={14}/> Añadir</button>
         </div>
+
+        {/* Add Event Button */}
+        <button onClick={()=> setAdding(true)} className="w-full px-3 py-2 border-2 border-black text-black rounded-none hover:bg-black hover:text-white text-sm font-medium transition-colors inline-flex items-center justify-center gap-1"><Plus size={14}/> Añadir evento</button>
       </div>
 
-      {/* Calendar grid */}
-      <div className="flex-1 overflow-hidden flex flex-col bg-white">
+      {/* Right Calendar Area */}
+      <div className="flex-1 flex flex-col overflow-hidden bg-white">
+        {/* Calendar header with month display */}
+        <div className="px-4 py-2 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
+          <div className="text-lg font-semibold">
+            {new Date(filterYear, filterMonth, 1).toLocaleString('es', { month: 'long', year: 'numeric' })}
+          </div>
+        </div>
+
+        {/* Calendar grid */}
+        <div className="flex-1 overflow-hidden flex flex-col bg-white">
         <div className="grid grid-cols-7 text-center text-xs text-gray-500 py-2 px-1 border-b border-gray-200 flex-shrink-0 bg-gray-50">
           {['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'].map((d)=> <div key={d} className="py-1 font-medium">{d}</div>)}
         </div>
@@ -333,12 +388,6 @@ const AdminCalendar: React.FC = () => {
                 </div>
                 <div className="space-y-1 flex-1 overflow-y-auto">
                   {dayEvents.slice(0, 5).map(ev => {
-                    const durationMin = parseDurationToMinutes(ev.packageDuration || '2 horas');
-                    const end = (() => {
-                      const d = ev.eventDate || key; const t = ev.eventTime || '00:00';
-                      const start = new Date(`${d}T${t}:00`);
-                      return new Date(start.getTime() + durationMin * 60000);
-                    })();
                     const label = `${(ev.eventTime || '00:00')} ${ev.clientName || 'Evento'}`;
                     return (
                       <button key={ev.id} onClick={()=> setSelected(ev)} className={`w-full text-left px-1.5 py-1 rounded text-xs ${getEventColor(ev)} flex items-start gap-1 truncate hover:shadow-md transition-shadow`}>
@@ -356,6 +405,7 @@ const AdminCalendar: React.FC = () => {
             );
           })}
         </div>
+      </div>
       </div>
 
       {/* Event modal */}
@@ -590,7 +640,6 @@ const AdminCalendar: React.FC = () => {
 
                   const dateStr = new Date(showDailyList).toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-                  // Title
                   pdf.setFontSize(16);
                   pdf.setFont(undefined, 'bold');
                   pdf.text('Eventos del día', margin, yPosition);
@@ -601,7 +650,6 @@ const AdminCalendar: React.FC = () => {
                   pdf.text(dateStr, margin, yPosition);
                   yPosition += 12;
 
-                  // Helper to load image as base64
                   const loadImageAsBase64 = (url: string): Promise<string | null> => {
                     return new Promise((resolve) => {
                       const img = new Image();
@@ -623,7 +671,6 @@ const AdminCalendar: React.FC = () => {
                     });
                   };
 
-                  // Events
                   for (const ev of events) {
                     if (yPosition > pageHeight - 30) {
                       pdf.addPage();
@@ -651,7 +698,6 @@ const AdminCalendar: React.FC = () => {
                       yPosition += 5;
                     });
 
-                    // Dresses with images
                     if (Array.isArray((ev as any).formSnapshot?.selectedDresses) && (ev as any).formSnapshot.selectedDresses.length > 0) {
                       yPosition += 3;
                       pdf.setFont(undefined, 'bold');
@@ -665,7 +711,7 @@ const AdminCalendar: React.FC = () => {
 
                       const dressImagesPerRow = 3;
                       const dressWidth = (contentWidth - 6) / dressImagesPerRow - 2;
-                      const dressHeight = dressWidth * 1.3; // 9:16 aspect ratio
+                      const dressHeight = dressWidth * 1.3;
 
                       let xOffset = margin + 3;
                       let dressCount = 0;
@@ -694,7 +740,6 @@ const AdminCalendar: React.FC = () => {
                           console.warn('Error loading dress image:', e);
                         }
 
-                        // Add dress name below image
                         pdf.setFontSize(8);
                         pdf.setFont(undefined, 'normal');
                         const dressName = (dress as any).name || 'Vestido';
@@ -712,7 +757,6 @@ const AdminCalendar: React.FC = () => {
                       yPosition += dressHeight + 12;
                     }
 
-                    // Payment summary
                     pdf.setFontSize(9);
                     pdf.setFont(undefined, 'bold');
                     pdf.text('Resumen de Pago:', margin + 3, yPosition);
@@ -744,7 +788,6 @@ const AdminCalendar: React.FC = () => {
               </button>
             </div>
 
-            {/* Hidden content for printing */}
             <div className="daily-list-print hidden">
               <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>Eventos del día</h1>
               <p style={{ textAlign: 'center', marginBottom: '20px' }}>{new Date(showDailyList).toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
@@ -782,7 +825,6 @@ const AdminCalendar: React.FC = () => {
               </table>
             </div>
 
-            {/* Hidden content for PDF */}
             <div className="daily-list-pdf hidden" style={{ padding: '20px', backgroundColor: '#fff' }}>
               <h1 style={{ textAlign: 'center', marginBottom: '10px', fontSize: '24px', fontWeight: 'bold' }}>Eventos del día</h1>
               <p style={{ textAlign: 'center', marginBottom: '20px', fontSize: '14px', color: '#666' }}>{new Date(showDailyList).toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
