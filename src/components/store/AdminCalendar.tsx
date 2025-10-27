@@ -57,6 +57,7 @@ const AdminCalendar: React.FC = () => {
   const [adding, setAdding] = useState(false);
   const [addForm, setAddForm] = useState<any>({ clientName: '', eventType: '', eventDate: '', eventTime: '', eventLocation: '', paymentMethod: 'pix' });
   const [dressOptions, setDressOptions] = useState<{ id: string; name: string; image: string; color?: string }[]>([]);
+  const [showDailyList, setShowDailyList] = useState<string | null>(null);
 
   const load = async () => {
     setLoading(true);
