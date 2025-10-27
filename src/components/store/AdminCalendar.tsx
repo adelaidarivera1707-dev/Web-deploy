@@ -560,8 +560,30 @@ const AdminCalendar: React.FC = () => {
                   pdf.text(dateStr, margin, yPosition);
                   yPosition += 12;
 
+                  // Helper to load image as base64
+                  const loadImageAsBase64 = (url: string): Promise<string | null> => {
+                    return new Promise((resolve) => {
+                      const img = new Image();
+                      img.crossOrigin = 'anonymous';
+                      img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        const ctx = canvas.getContext('2d');
+                        if (ctx) {
+                          ctx.drawImage(img, 0, 0);
+                          resolve(canvas.toDataURL('image/jpeg', 0.7));
+                        } else {
+                          resolve(null);
+                        }
+                      };
+                      img.onerror = () => resolve(null);
+                      img.src = url;
+                    });
+                  };
+
                   // Events
-                  events.forEach((ev, idx) => {
+                  for (const ev of events) {
                     if (yPosition > pageHeight - 30) {
                       pdf.addPage();
                       yPosition = margin;
@@ -569,7 +591,7 @@ const AdminCalendar: React.FC = () => {
 
                     pdf.setFontSize(11);
                     pdf.setFont(undefined, 'bold');
-                    pdf.text(`${idx + 1}. ${ev.clientName || 'Evento sin nombre'}`, margin, yPosition);
+                    pdf.text(`${events.indexOf(ev) + 1}. ${ev.clientName || 'Evento sin nombre'}`, margin, yPosition);
                     yPosition += 7;
 
                     pdf.setFontSize(9);
@@ -588,31 +610,69 @@ const AdminCalendar: React.FC = () => {
                       yPosition += 5;
                     });
 
-                    // Dresses list
+                    // Dresses with images
                     if (Array.isArray((ev as any).formSnapshot?.selectedDresses) && (ev as any).formSnapshot.selectedDresses.length > 0) {
+                      yPosition += 3;
                       pdf.setFont(undefined, 'bold');
                       pdf.text('Vestidos:', margin + 3, yPosition);
-                      yPosition += 5;
+                      yPosition += 8;
 
-                      pdf.setFont(undefined, 'normal');
-                      const dressNames = (ev as any).formSnapshot.selectedDresses
+                      const selectedDressIds = (ev as any).formSnapshot.selectedDresses;
+                      const selectedDressObjects = selectedDressIds
                         .map((id: string) => dressOptions.find(d => d.id === id))
-                        .filter(Boolean)
-                        .map((d: any) => (d as any).name)
-                        .join(', ');
+                        .filter(Boolean);
 
-                      const splitDresses = pdf.splitTextToSize(dressNames, contentWidth - 6);
-                      splitDresses.forEach((line: string) => {
-                        if (yPosition > pageHeight - 30) {
+                      const dressImagesPerRow = 3;
+                      const dressWidth = (contentWidth - 6) / dressImagesPerRow - 2;
+                      const dressHeight = dressWidth * 1.3; // 9:16 aspect ratio
+
+                      let xOffset = margin + 3;
+                      let dressCount = 0;
+
+                      for (const dress of selectedDressObjects) {
+                        if (yPosition + dressHeight > pageHeight - 20) {
                           pdf.addPage();
                           yPosition = margin;
+                          xOffset = margin + 3;
+                          dressCount = 0;
                         }
-                        pdf.text(line, margin + 3, yPosition);
-                        yPosition += 5;
-                      });
+
+                        if (dressCount > 0 && dressCount % dressImagesPerRow === 0) {
+                          xOffset = margin + 3;
+                          yPosition += dressHeight + 5;
+                        }
+
+                        try {
+                          if ((dress as any).image) {
+                            const imageBase64 = await loadImageAsBase64((dress as any).image);
+                            if (imageBase64) {
+                              pdf.addImage(imageBase64, 'JPEG', xOffset, yPosition, dressWidth, dressHeight);
+                            }
+                          }
+                        } catch (e) {
+                          console.warn('Error loading dress image:', e);
+                        }
+
+                        // Add dress name below image
+                        pdf.setFontSize(8);
+                        pdf.setFont(undefined, 'normal');
+                        const dressName = (dress as any).name || 'Vestido';
+                        const wrappedName = pdf.splitTextToSize(dressName, dressWidth - 1);
+                        let nameY = yPosition + dressHeight + 1;
+                        wrappedName.forEach((line: string) => {
+                          pdf.text(line, xOffset, nameY, { maxWidth: dressWidth - 1 });
+                          nameY += 3;
+                        });
+
+                        xOffset += dressWidth + 2;
+                        dressCount++;
+                      }
+
+                      yPosition += dressHeight + 12;
                     }
 
                     // Payment summary
+                    pdf.setFontSize(9);
                     pdf.setFont(undefined, 'bold');
                     pdf.text('Resumen de Pago:', margin + 3, yPosition);
                     yPosition += 5;
@@ -630,7 +690,7 @@ const AdminCalendar: React.FC = () => {
                     });
 
                     yPosition += 8;
-                  });
+                  }
 
                   const dateKey = new Date(showDailyList).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-');
                   pdf.save(`eventos_${dateKey}.pdf`);
