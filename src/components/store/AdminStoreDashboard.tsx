@@ -349,56 +349,20 @@ const AdminStoreDashboard: React.FC<AdminProps> = ({ onNavigate }) => {
 
       {/* Performance */}
       <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <h3 className="font-medium">Rendimiento</h3>
-            <select value={metric} onChange={e=> setMetric(e.target.value as any)} className="px-3 py-2 border rounded-none">
-              <option value="revenue">Ventas Mensuales</option>
-              <option value="contracts">Contratos firmados</option>
-            </select>
-          </div>
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-gray-600">Periodo</label>
-            <select value={period.type} onChange={e=> setPeriod({ type: e.target.value as any })} className="px-3 py-2 border rounded-none">
-              <option value="all">Global</option>
-              <option value="year">Este año</option>
-              <option value="month">Este mes</option>
-              <option value="custom">Personalizado</option>
-            </select>
-            {period.type === 'custom' && (
-              <>
-                <input type="date" value={period.start || ''} onChange={e=> setPeriod(p => ({ ...p, start: e.target.value }))} className="px-2 py-1 border rounded-none" />
-                <input type="date" value={period.end || ''} onChange={e=> setPeriod(p => ({ ...p, end: e.target.value }))} className="px-2 py-1 border rounded-none" />
-              </>
-            )}
-
-            {metric === 'revenue' && (
-              <>
-                <label className="text-sm text-gray-600">Producto A</label>
-                <select value={selectedProductId} onChange={e => setSelectedProductId(e.target.value)} className="px-3 py-2 border rounded-none">
-                  <option value="all">Todos</option>
-                  {products.map(p => (
-                    <option key={p.id} value={p.id}>{p.name}</option>
-                  ))}
-                </select>
-                <label className="text-sm text-gray-600">Producto B</label>
-                <select value={selectedProductIdB} onChange={e => setSelectedProductIdB(e.target.value as any)} className="px-3 py-2 border rounded-none">
-                  <option value="none">Ninguno</option>
-                  {products.map(p => (
-                    <option key={p.id} value={p.id}>{p.name}</option>
-                  ))}
-                </select>
-              </>
-            )}
-          </div>
+        <div className="flex items-center gap-2 mb-4">
+          <h3 className="font-medium">Rendimiento</h3>
+          <select value={metric} onChange={e=> setMetric(e.target.value as any)} className="px-3 py-2 border rounded-none">
+            <option value="revenue">Ventas Mensuales</option>
+            <option value="contracts">Contratos firmados</option>
+          </select>
         </div>
         <div className="h-64">
           <Suspense fallback={<div className="h-64 flex items-center justify-center">Cargando gráfico...</div>}>
             <ChartPerformance
-              data={metric === 'revenue' ? computeMonthlyCompare(allOrders, filteredContracts as any, selectedProductId, selectedProductIdB, period, investmentInstallments) : computeContractsCountByMonth(filteredContracts as any, period)}
+              data={metric === 'revenue' ? computeMonthlyCompare(allOrders, filteredContracts as any, 'all', 'none', period, investmentInstallments) : computeContractsCountByMonth(filteredContracts as any, period)}
               products={products}
-              selectedProductId={selectedProductId}
-              selectedProductIdB={selectedProductIdB}
+              selectedProductId="all"
+              selectedProductIdB="none"
               mode={metric as any}
             />
           </Suspense>
