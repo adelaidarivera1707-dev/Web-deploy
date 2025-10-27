@@ -198,7 +198,17 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
   }, [editing, creating]);
 
   const filtered = useMemo(() => {
-    const base = contracts.filter(c => contractsTab === 'pending' ? (String((c as any).status || '') === 'pending_approval') : true);
+    const base = contracts.filter(c => {
+      if (contractsTab === 'pending') {
+        return String((c as any).status || '') === 'pending_approval';
+      } else if (contractsTab === 'finished') {
+        return c.eventCompleted === true;
+      } else if (contractsTab === 'events') {
+        return c.eventCompleted !== true && !isPast(c);
+      }
+      return true;
+    });
+
     const list = (() => {
       if (!search.trim()) return base;
       const s = search.toLowerCase();
@@ -228,7 +238,7 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
     });
 
     return mapped.map(m => m.c);
-  }, [contracts, search]);
+  }, [contracts, search, contractsTab]);
 
   const computeAmounts = (c: ContractItem) => {
     const servicesList = Array.isArray(c.services) ? c.services : [];
