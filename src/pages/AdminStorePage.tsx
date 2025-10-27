@@ -187,28 +187,28 @@ const AdminStorePage: React.FC = () => {
   };
 
   return (
-    <section className={`pt-16 md:pt-20 pb-8 md:pb-12 overflow-hidden ${adminDark ? 'admin-dark' : ''}`}>
+    <section className={`pb-8 md:pb-12 overflow-hidden ${adminDark ? 'admin-dark' : ''}`}>
+      {/* Mobile Dropdown */}
+      <div className="md:hidden px-2 md:px-4">
+        <select
+          value={adminView}
+          onChange={(e) => setAdminView(e.target.value as any)}
+          className="w-full px-3 py-2 text-sm border-2 border-black rounded-none bg-black text-white cursor-pointer"
+        >
+          <option value="dashboard">Panel</option>
+          <option value="products">Productos</option>
+          <option value="orders">Órdenes</option>
+          <option value="contracts">Contratos</option>
+          <option value="calendar">Calendario</option>
+          <option value="packages">Paquetes</option>
+          <option value="coupons">Cupones</option>
+          <option value="settings">Ajustes</option>
+          <option value="investments">Inversiones</option>
+        </select>
+      </div>
+
       <div className="container-custom px-2 md:px-4">
         <div className="mb-3 space-y-2">
-          {/* Mobile Dropdown */}
-          <div className="md:hidden">
-            <select
-              value={adminView}
-              onChange={(e) => setAdminView(e.target.value as any)}
-              className="w-full px-3 py-2 text-sm border-2 border-black rounded-none bg-white cursor-pointer"
-            >
-              <option value="dashboard">Panel</option>
-              <option value="products">Productos</option>
-              <option value="orders">Órdenes</option>
-              <option value="contracts">Contratos</option>
-              <option value="calendar">Calendario</option>
-              <option value="packages">Paquetes</option>
-              <option value="coupons">Cupones</option>
-              <option value="settings">Ajustes</option>
-              <option value="investments">Inversiones</option>
-            </select>
-          </div>
-
           {/* Desktop Tabs */}
           <div className="hidden md:flex flex-wrap items-center gap-1 md:gap-2 admin-tabs">
             <button onClick={() => setAdminView('dashboard')} className={`px-4 py-2 rounded-none border-2 text-sm ${adminView==='dashboard' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Panel</button>
