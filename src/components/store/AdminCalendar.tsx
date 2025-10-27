@@ -52,6 +52,7 @@ const AdminCalendar: React.FC = () => {
   const [filterMonth, setFilterMonth] = useState<number>(today.getMonth());
   const [filterYear, setFilterYear] = useState<number>(today.getFullYear());
   const [filterStatus, setFilterStatus] = useState<StatusFilter>('all');
+  const [filterPhone, setFilterPhone] = useState<string>('');
   const [selected, setSelected] = useState<ContractItem | null>(null);
   const [adding, setAdding] = useState(false);
   const [addForm, setAddForm] = useState<any>({ clientName: '', eventType: '', eventDate: '', eventTime: '', eventLocation: '', paymentMethod: 'pix' });
