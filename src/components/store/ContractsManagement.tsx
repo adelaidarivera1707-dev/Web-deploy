@@ -1317,6 +1317,7 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
                 depositPaid: false,
                 finalPaymentPaid: false,
                 eventCompleted: false,
+                isEditing: false,
                 createdAt: new Date().toISOString(),
                 totalAmount: totalAmount,
                 travelFee: Number(createForm.travelFee || 0) || 0,
