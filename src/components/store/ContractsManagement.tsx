@@ -331,6 +331,10 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
       ...(merged.eventLocation !== undefined ? { eventLocation: merged.eventLocation } : {}),
       packageTitle: packageTitle,
       packageDuration: packageDuration,
+      ...(editForm.clientPhone ? { clientPhone: String(editForm.clientPhone) } : {}),
+      ...(editForm.clientCPF ? { clientCPF: String(editForm.clientCPF) } : {}),
+      ...(editForm.clientRG ? { clientRG: String(editForm.clientRG) } : {}),
+      ...(editForm.clientAddress ? { clientAddress: String(editForm.clientAddress) } : {}),
       ...( { depositAmount: calc.depositAmount, remainingAmount: calc.remainingAmount } as any )
     } as any;
 
