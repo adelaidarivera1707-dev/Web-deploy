@@ -272,16 +272,6 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
     return { servicesTotal, storeTotal, travel, totalAmount, depositAmount, remainingAmount };
   };
 
-  const isPast = (c: ContractItem) => {
-    if (!c.eventDate) return false;
-    const d = new Date(c.eventDate);
-    if (isNaN(d.getTime())) return false;
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    d.setHours(0, 0, 0, 0);
-    return d.getTime() < today.getTime();
-  };
-
   const toggleFlag = async (id: string, field: keyof ContractItem) => {
     const current = contracts.find(c => c.id === id);
     if (!current) return;
