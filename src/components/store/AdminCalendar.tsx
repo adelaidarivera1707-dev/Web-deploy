@@ -306,11 +306,11 @@ const AdminCalendar: React.FC = () => {
       </div>
 
       {/* Calendar grid */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div className="grid grid-cols-7 text-center text-xs text-gray-500 py-1 px-1 border-b">
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden flex-1 flex flex-col">
+        <div className="grid grid-cols-7 text-center text-xs text-gray-500 py-1 px-1 border-b flex-shrink-0">
           {['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'].map((d)=> <div key={d} className="py-0.5">{d}</div>)}
         </div>
-        <div className="grid grid-cols-7 gap-px bg-gray-200">
+        <div className="grid grid-cols-7 gap-px bg-gray-200 flex-1 auto-rows-fr">
           {monthDays.map((cell, idx)=>{
             const isToday = cell.date && new Date(cell.date.getFullYear(), cell.date.getMonth(), cell.date.getDate()).getTime() === new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
             const key = cell.date ? `${cell.date.getFullYear()}-${String(cell.date.getMonth()+1).padStart(2,'0')}-${String(cell.date.getDate()).padStart(2,'0')}` : `empty-${idx}`;
