@@ -20,10 +20,13 @@ interface ContractItem {
   depositPaid?: boolean;
   finalPaymentPaid?: boolean;
   eventCompleted?: boolean;
+  isEditing?: boolean;
   status?: 'pending' | 'booked' | 'delivered' | 'cancelled' | 'pending_payment' | 'confirmed' | 'pending_approval' | 'released';
   pdfUrl?: string | null;
   phone?: string;
   formSnapshot?: any;
+  totalAmount?: number;
+  travelFee?: number;
 }
 
 type StatusFilter = 'all' | 'pending' | 'booked' | 'delivered' | 'cancelled' | 'pending_payment' | 'pending_approval' | 'released';
