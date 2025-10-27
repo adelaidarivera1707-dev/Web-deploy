@@ -280,17 +280,43 @@ const AdminCalendar: React.FC<AdminCalendarProps> = ({ darkMode = false }) => {
 
   return (
     <div className="flex h-full w-full bg-white">
-      {/* Left Sidebar - Minimal */}
-      <div className="w-20 border-r border-black bg-black p-2 flex flex-col items-center gap-4 flex-shrink-0">
-        {/* Month Navigation */}
-        <button onClick={prevMonth} className="p-2 rounded-full text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"><ChevronLeft size={16}/></button>
-        <button onClick={nextMonth} className="p-2 rounded-full text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"><ChevronRight size={16}/></button>
+      {/* Left Sidebar - Mini Calendar */}
+      <div className="w-64 border-r border-gray-800 bg-black p-4 flex flex-col overflow-y-auto flex-shrink-0">
+        {/* Mini Calendar */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between gap-2 mb-3">
+            <button onClick={prevMonth} className="p-2 rounded-full text-gray-400 hover:text-white hover:bg-gray-800 transition-colors flex-shrink-0"><ChevronLeft size={16}/></button>
+            <div className="text-sm font-semibold text-center flex-1 text-gray-300">
+              {new Date(current.y, current.m, 1).toLocaleString('es', { month: 'short', year: '2-digit' })}
+            </div>
+            <button onClick={nextMonth} className="p-2 rounded-full text-gray-400 hover:text-white hover:bg-gray-800 transition-colors flex-shrink-0"><ChevronRight size={16}/></button>
+          </div>
+          <div className="grid grid-cols-7 gap-px p-2 bg-gray-900 rounded">
+            {['D','L','M','X','J','V','S'].map(d => <div key={d} className="text-center text-xs font-medium py-1 text-gray-500">{d}</div>)}
+            {miniMonthDays.map((cell, idx) => {
+              const isToday = cell.date && new Date(cell.date.getFullYear(), cell.date.getMonth(), cell.date.getDate()).getTime() === new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+              const key = cell.date ? `${cell.date.getFullYear()}-${String(cell.date.getMonth()+1).padStart(2,'0')}-${String(cell.date.getDate()).padStart(2,'0')}` : `empty-${idx}`;
+              const hasEvents = cell.date ? (eventsByDay.get(key) || []).length > 0 : false;
+              return (
+                <button key={key} className={`text-center text-xs py-1 rounded transition-colors font-medium ${isToday ? 'bg-secondary text-black' : hasEvents ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-800'}`}>
+                  {cell.date ? cell.date.getDate() : ''}
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
-        {/* Spacer */}
-        <div className="flex-1"></div>
-
-        {/* Add Event Button */}
-        <button onClick={()=> setAdding(true)} className="p-2 rounded-full text-gray-400 hover:text-white hover:bg-green-600 transition-colors" title="Añadir evento"><Plus size={18}/></button>
+        {/* Phone Filter */}
+        <div className="space-y-2 mb-4">
+          <label className="text-xs text-gray-500 block">Filtrar por teléfono</label>
+          <input
+            type="text"
+            value={filterPhone}
+            onChange={e => setFilterPhone(e.target.value)}
+            placeholder="Ej: 1234567890"
+            className="w-full px-3 py-2 border border-gray-700 rounded-lg text-sm bg-gray-900 text-gray-300 placeholder-gray-600"
+          />
+        </div>
       </div>
 
       {/* Right Calendar Area */}
