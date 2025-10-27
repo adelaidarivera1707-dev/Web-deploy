@@ -395,6 +395,29 @@ const AdminCalendar: React.FC = () => {
                 </select>
               </div>
             </div>
+
+            <div className="mt-4 pt-4 border-t">
+              <div className="text-sm font-medium mb-3">Progreso del evento</div>
+              <WorkflowStatusButtons
+                depositPaid={selected.depositPaid}
+                finalPaymentPaid={selected.finalPaymentPaid}
+                isEditing={selected.isEditing}
+                eventCompleted={selected.eventCompleted}
+                onUpdate={async (updates) => {
+                  try {
+                    const baseId = selected.id.includes('__') ? selected.id.split('__')[0] : selected.id;
+                    await updateDoc(doc(db, 'contracts', baseId), updates as any);
+                    setSelected(s => s ? { ...s, ...updates } : s);
+                    window.dispatchEvent(new CustomEvent('contractsUpdated'));
+                    window.dispatchEvent(new CustomEvent('adminToast', { detail: { message: 'Estado actualizado', type: 'success' } }));
+                  } catch (e) {
+                    console.error('Error updating contract status:', e);
+                    window.dispatchEvent(new CustomEvent('adminToast', { detail: { message: 'Error al actualizar', type: 'error' } }));
+                  }
+                }}
+              />
+            </div>
+
             <div className="mt-4 flex justify-end">
               <button onClick={()=> openContractPreview(selected)} className="px-4 py-2 rounded-md bg-blue-600 text-white inline-flex items-center gap-2 hover:bg-blue-700"><ExternalLink size={16}/> Ver Contrato</button>
             </div>
