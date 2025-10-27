@@ -6,6 +6,7 @@ import { defaultWorkflow, categoryColors, WorkflowTemplate } from './_contractsW
 import { generatePDF } from '../../utils/pdf';
 import { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { WorkflowStatusButtons } from './WorkflowStatusButtons';
 
 interface WorkflowTask { id: string; title: string; done: boolean; due?: string | null; note?: string }
 interface WorkflowCategory { id: string; name: string; tasks: WorkflowTask[] }
