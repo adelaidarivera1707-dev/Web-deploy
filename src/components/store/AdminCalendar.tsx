@@ -268,7 +268,7 @@ const AdminCalendar: React.FC = () => {
   return (
     <div className="space-y-4">
       {/* Filters / Controls */}
-      <div className="bg-white rounded-xl border border-gray-200 p-1 flex flex-wrap gap-1 items-center justify-between">
+      <div className="bg-white rounded-xl border border-gray-200 p-1 flex flex-wrap gap-1 items-center justify-between text-xs sm:text-sm">
         <div className="flex items-center gap-1">
           <button onClick={prevMonth} className="px-2 py-1 border rounded-none"><ChevronLeft size={16}/></button>
           <div className="text-base font-semibold w-32 text-center">
