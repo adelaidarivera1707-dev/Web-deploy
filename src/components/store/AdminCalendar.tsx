@@ -633,12 +633,17 @@ const AdminCalendar: React.FC = () => {
                       <h3 style={{ fontSize: '13px', fontWeight: 'bold', marginBottom: '8px' }}>Vestidos:</h3>
                       <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                         {(ev as any).formSnapshot.selectedDresses
-                          .map((id: string) => dressOptions.find(d => d.id === id))
+                          .map((id: string) => {
+                            const found = dressOptions.find(d => d.id === id);
+                            return found;
+                          })
                           .filter(Boolean)
                           .map((dress: any) => (
                             <div key={(dress as any).id} style={{ textAlign: 'center' }}>
-                              {(dress as any).image && (
+                              {(dress as any).image ? (
                                 <img src={(dress as any).image} alt={(dress as any).name} style={{ width: '60px', height: '80px', objectFit: 'cover', marginBottom: '4px', border: '1px solid #ccc' }} />
+                              ) : (
+                                <div style={{ width: '60px', height: '80px', backgroundColor: '#f0f0f0', marginBottom: '4px', border: '1px solid #ccc', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', color: '#999' }}>Sin foto</div>
                               )}
                               <div style={{ fontSize: '10px', maxWidth: '60px', overflow: 'hidden', textOverflow: 'ellipsis' }}>{(dress as any).name}</div>
                             </div>
