@@ -187,27 +187,47 @@ const AdminStorePage: React.FC = () => {
   };
 
   return (
-    <section className={`md:pt-4 p-0 md:pb-0 overflow-hidden h-screen md:h-auto ${adminDark ? 'admin-dark' : ''}`}>
-      {/* Mobile Dropdown */}
-      <div className="md:hidden px-2 md:px-4 lg:hidden">
-        <select
-          value={adminView}
-          onChange={(e) => setAdminView(e.target.value as any)}
-          className="w-full px-3 py-2 text-sm border-2 border-black rounded-none bg-black text-white cursor-pointer"
-        >
-          <option value="dashboard">Panel</option>
-          <option value="products">Productos</option>
-          <option value="orders">Órdenes</option>
-          <option value="contracts">Contratos</option>
-          <option value="calendar">Calendario</option>
-          <option value="packages">Paquetes</option>
-          <option value="coupons">Cupones</option>
-          <option value="settings">Ajustes</option>
-          <option value="investments">Inversiones</option>
-        </select>
-      </div>
+    <section className={`overflow-hidden ${adminView === 'calendar' ? 'h-screen w-screen' : 'md:pt-4 p-0 md:pb-0 h-screen md:h-auto'} ${adminDark ? 'admin-dark' : ''}`}>
+      {/* Calendar Full Screen View */}
+      {adminView === 'calendar' && !adminFullscreen && (
+        <div className="w-full h-full bg-white flex flex-col">
+          {/* Calendar Header Bar */}
+          <div className="px-4 py-2 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
+            <h1 className="text-xl font-semibold text-black">Calendario</h1>
+            <div className="flex items-center gap-2">
+              <button onClick={() => setAdminDark(v => !v)} className="px-3 py-1 rounded-none border border-black text-black hover:bg-black hover:text-white text-sm transition-colors">{adminDark ? 'Modo claro' : 'Modo oscuro'}</button>
+              <button onClick={() => setAdminView('dashboard')} className="px-3 py-1 rounded-none border border-black text-black hover:bg-black hover:text-white text-sm transition-colors">Volver</button>
+            </div>
+          </div>
+          {/* Calendar Component */}
+          <div className="flex-1 overflow-hidden">
+            <AdminCalendar />
+          </div>
+        </div>
+      )}
 
-      <div className="container-custom px-2 md:px-4 h-full flex flex-col">
+      {/* Mobile Dropdown */}
+      {adminView !== 'calendar' && (
+        <div className="md:hidden px-2 md:px-4 lg:hidden">
+          <select
+            value={adminView}
+            onChange={(e) => setAdminView(e.target.value as any)}
+            className="w-full px-3 py-2 text-sm border-2 border-black rounded-none bg-black text-white cursor-pointer"
+          >
+            <option value="dashboard">Panel</option>
+            <option value="products">Productos</option>
+            <option value="orders">Órdenes</option>
+            <option value="contracts">Contratos</option>
+            <option value="calendar">Calendario</option>
+            <option value="packages">Paquetes</option>
+            <option value="coupons">Cupones</option>
+            <option value="settings">Ajustes</option>
+            <option value="investments">Inversiones</option>
+          </select>
+        </div>
+      )}
+
+      <div className={`${adminView === 'calendar' ? 'hidden' : 'container-custom px-2 md:px-4 h-full flex flex-col'}`}>
         <div className="mb-2 space-y-2">
           {/* Desktop Tabs */}
           <div className="hidden md:flex flex-wrap items-center gap-1 md:gap-2 admin-tabs">
