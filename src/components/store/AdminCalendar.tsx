@@ -396,53 +396,53 @@ const AdminCalendar: React.FC<AdminCalendarProps> = ({ darkMode = false }) => {
             {(eventsByDay.get(expandedDay) || []).length > 0 ? (
               <div className="space-y-4">
                 {(eventsByDay.get(expandedDay) || []).map((ev, idx) => (
-                  <div key={ev.id} className={`border rounded-lg p-4 ${getEventColor(ev).split(' ')[0]} bg-opacity-20 border-opacity-30`}>
-                    <div className="font-semibold text-lg text-white">{idx + 1}. {ev.clientName || 'Evento sin nombre'}</div>
+                  <div key={ev.id} className={`border rounded-lg p-4 ${getEventColor(ev).split(' ')[0]} bg-opacity-20 border-opacity-30 transition-colors`}>
+                    <div className={`font-semibold text-lg transition-colors ${darkMode ? 'text-white' : 'text-black'}`}>{idx + 1}. {ev.clientName || 'Evento sin nombre'}</div>
                     <div className="grid grid-cols-2 gap-3 text-sm mt-3">
-                      <div><span className="text-gray-400">Hora:</span> <span className="text-white font-medium">{ev.eventTime || '-'}</span></div>
-                      <div><span className="text-gray-400">Tipo:</span> <span className="text-white font-medium">{ev.eventType || '-'}</span></div>
-                      <div><span className="text-gray-400">Teléfono:</span> <span className="text-white font-medium">{ev.phone || (ev as any).formSnapshot?.phone || '-'}</span></div>
-                      <div><span className="text-gray-400">Duración:</span> <span className="text-white font-medium">{ev.packageDuration || '-'}</span></div>
-                      <div className="col-span-2"><span className="text-gray-400">Ubicación:</span> <span className="text-white font-medium">{ev.eventLocation || '-'}</span></div>
+                      <div><span className={`transition-colors ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Hora:</span> <span className={`font-medium transition-colors ${darkMode ? 'text-white' : 'text-black'}`}>{ev.eventTime || '-'}</span></div>
+                      <div><span className={`transition-colors ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Tipo:</span> <span className={`font-medium transition-colors ${darkMode ? 'text-white' : 'text-black'}`}>{ev.eventType || '-'}</span></div>
+                      <div><span className={`transition-colors ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Teléfono:</span> <span className={`font-medium transition-colors ${darkMode ? 'text-white' : 'text-black'}`}>{ev.phone || (ev as any).formSnapshot?.phone || '-'}</span></div>
+                      <div><span className={`transition-colors ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Duración:</span> <span className={`font-medium transition-colors ${darkMode ? 'text-white' : 'text-black'}`}>{ev.packageDuration || '-'}</span></div>
+                      <div className="col-span-2"><span className={`transition-colors ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Ubicación:</span> <span className={`font-medium transition-colors ${darkMode ? 'text-white' : 'text-black'}`}>{ev.eventLocation || '-'}</span></div>
                     </div>
 
                     {Array.isArray((ev as any).formSnapshot?.selectedDresses) && (ev as any).formSnapshot.selectedDresses.length > 0 ? (
-                      <div className="mt-4 pt-4 border-t border-gray-700">
-                        <div className="text-sm font-medium text-white mb-3">Vestidos:</div>
+                      <div className={`mt-4 pt-4 border-t transition-colors ${darkMode ? 'border-gray-700' : 'border-gray-300'}`}>
+                        <div className={`text-sm font-medium mb-3 transition-colors ${darkMode ? 'text-white' : 'text-black'}`}>Vestidos:</div>
                         <div className="grid grid-cols-3 gap-3">
                           {(ev as any).formSnapshot.selectedDresses
                             .map((id: string) => dressOptions.find(d => d.id === id))
                             .filter(Boolean)
                             .map((dress: any) => (
                               <div key={(dress as any).id} className="flex flex-col items-center">
-                                <div className="w-20 h-24 rounded overflow-hidden bg-gray-800 mb-2 border border-gray-700">
+                                <div className={`w-20 h-24 rounded overflow-hidden mb-2 border transition-colors ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-200 border-gray-300'}`}>
                                   {(dress as any).image ? (
                                     <img src={(dress as any).image} alt={(dress as any).name} className="w-full h-full object-cover" />
                                   ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-xs text-gray-500">Sin foto</div>
+                                    <div className={`w-full h-full flex items-center justify-center text-xs transition-colors ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Sin foto</div>
                                   )}
                                 </div>
-                                <span className="text-xs text-gray-300 text-center truncate w-full">{(dress as any).name}</span>
+                                <span className={`text-xs text-center truncate w-full transition-colors ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{(dress as any).name}</span>
                               </div>
                             ))}
                         </div>
                       </div>
                     ) : null}
 
-                    <div className="mt-4 pt-4 border-t border-gray-700">
-                      <div className="text-sm font-medium text-white mb-2">Resumen de Pago:</div>
+                    <div className={`mt-4 pt-4 border-t transition-colors ${darkMode ? 'border-gray-700' : 'border-gray-300'}`}>
+                      <div className={`text-sm font-medium mb-2 transition-colors ${darkMode ? 'text-white' : 'text-black'}`}>Resumen de Pago:</div>
                       <div className="space-y-1 text-sm">
                         <div className="flex justify-between">
-                          <span className="text-gray-400">Total:</span>
-                          <span className="text-white font-medium">R$ {Number(ev.totalAmount || 0).toFixed(0)}</span>
+                          <span className={`transition-colors ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Total:</span>
+                          <span className={`font-medium transition-colors ${darkMode ? 'text-white' : 'text-black'}`}>R$ {Number(ev.totalAmount || 0).toFixed(0)}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-400">Entrada (20%):</span>
-                          <span className={`font-medium ${ev.depositPaid ? 'text-green-400' : 'text-red-400'}`}>R$ {(Number(ev.totalAmount || 0) * 0.2).toFixed(0)} {ev.depositPaid ? '✓' : ''}</span>
+                          <span className={`transition-colors ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Entrada (20%):</span>
+                          <span className={`font-medium ${ev.depositPaid ? (darkMode ? 'text-green-400' : 'text-green-600') : (darkMode ? 'text-red-400' : 'text-red-600')}`}>R$ {(Number(ev.totalAmount || 0) * 0.2).toFixed(0)} {ev.depositPaid ? '✓' : ''}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-400">Restante:</span>
-                          <span className={`font-medium ${ev.finalPaymentPaid ? 'text-green-400' : 'text-red-400'}`}>R$ {(Number(ev.totalAmount || 0) * 0.8).toFixed(0)} {ev.finalPaymentPaid ? '✓' : ''}</span>
+                          <span className={`transition-colors ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Restante:</span>
+                          <span className={`font-medium ${ev.finalPaymentPaid ? (darkMode ? 'text-green-400' : 'text-green-600') : (darkMode ? 'text-red-400' : 'text-red-600')}`}>R$ {(Number(ev.totalAmount || 0) * 0.8).toFixed(0)} {ev.finalPaymentPaid ? '✓' : ''}</span>
                         </div>
                       </div>
                     </div>
