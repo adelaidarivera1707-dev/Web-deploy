@@ -370,7 +370,7 @@ const AdminCalendar: React.FC<AdminCalendarProps> = ({ darkMode = false }) => {
                       );
                     })}
                     {dayEvents.length > 3 && (
-                      <div className="text-xs text-gray-400 px-1">
+                      <div className={`text-xs px-1 transition-colors ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                         +{dayEvents.length - 3} más
                       </div>
                     )}
