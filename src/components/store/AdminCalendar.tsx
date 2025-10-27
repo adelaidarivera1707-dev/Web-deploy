@@ -343,7 +343,7 @@ const AdminCalendar: React.FC<AdminCalendarProps> = ({ darkMode = false }) => {
               const key = cell.date ? `${cell.date.getFullYear()}-${String(cell.date.getMonth()+1).padStart(2,'0')}-${String(cell.date.getDate()).padStart(2,'0')}` : `empty-${idx}`;
               const dayEvents = cell.date ? (eventsByDay.get(key) || []) : [];
               return (
-                <button key={key} onClick={() => cell.date && setExpandedDay(key)} className="p-2 relative overflow-hidden flex flex-col bg-gray-900 border border-gray-800 hover:bg-gray-800 transition-colors text-left cursor-pointer group">
+                <button key={key} onClick={() => cell.date && setExpandedDay(key)} className="p-2 relative overflow-hidden flex flex-col bg-gray-900 lg:bg-gray-900 max-lg:bg-black border border-gray-800 hover:bg-gray-800 transition-colors text-left cursor-pointer group">
                   <div className="flex items-center justify-between gap-1 mb-1 flex-shrink-0">
                     <div className="text-sm font-medium text-gray-300">
                       {cell.date ? (isToday ? (
@@ -988,7 +988,7 @@ const AdminCalendar: React.FC<AdminCalendarProps> = ({ darkMode = false }) => {
                     pdf.setFont(undefined, 'normal');
                     const paymentLines = [
                       `Total: R$ ${Number(ev.totalAmount || 0).toFixed(0)}`,
-                      `Entrada (20%): R$ ${(Number(ev.totalAmount || 0) * 0.2).toFixed(0)} ${ev.depositPaid ? '�� Pago' : 'Pendiente'}`,
+                      `Entrada (20%): R$ ${(Number(ev.totalAmount || 0) * 0.2).toFixed(0)} ${ev.depositPaid ? '✓ Pago' : 'Pendiente'}`,
                       `Restante: R$ ${(Number(ev.totalAmount || 0) * 0.8).toFixed(0)} ${ev.finalPaymentPaid ? '✓ Pago' : 'Pendiente'}`
                     ];
 
