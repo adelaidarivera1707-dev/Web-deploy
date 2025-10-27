@@ -207,8 +207,8 @@ const AdminStorePage: React.FC = () => {
         </select>
       </div>
 
-      <div className="container-custom px-2 md:px-4">
-        <div className="mb-3 space-y-2">
+      <div className="container-custom px-2 md:px-4 h-full flex flex-col">
+        <div className="mb-2 space-y-2">
           {/* Desktop Tabs */}
           <div className="hidden md:flex flex-wrap items-center gap-1 md:gap-2 admin-tabs">
             <button onClick={() => setAdminView('dashboard')} className={`px-4 py-2 rounded-none border-2 text-sm ${adminView==='dashboard' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Panel</button>
