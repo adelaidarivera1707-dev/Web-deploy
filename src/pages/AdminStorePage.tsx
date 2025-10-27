@@ -182,19 +182,39 @@ const AdminStorePage: React.FC = () => {
     <section className={`pt-16 md:pt-20 pb-8 md:pb-12 ${adminDark ? 'admin-dark' : ''}`}>
       <div className="container-custom px-2 md:px-4">
         <div className="mb-3 space-y-2">
-          <div className="flex flex-wrap items-center gap-1 md:gap-2 admin-tabs">
-            <button onClick={() => setAdminView('dashboard')} className={`px-4 py-2 rounded-none border-2 ${adminView==='dashboard' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Panel</button>
-            <button onClick={() => setAdminView('products')} className={`px-4 py-2 rounded-none border-2 ${adminView==='products' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Productos</button>
-            <button onClick={() => setAdminView('orders')} className={`px-4 py-2 rounded-none border-2 ${adminView==='orders' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Órdenes</button>
-            <button onClick={() => setAdminView('contracts')} className={`px-4 py-2 rounded-none border-2 ${adminView==='contracts' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Contratos</button>
-            <button onClick={() => setAdminView('calendar')} className={`px-4 py-2 rounded-none border-2 ${adminView==='calendar' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Calendario</button>
-            <button onClick={() => setAdminView('packages')} className={`px-4 py-2 rounded-none border-2 ${adminView==='packages' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Paquetes</button>
-            <button onClick={() => setAdminView('coupons')} className={`px-4 py-2 rounded-none border-2 ${adminView==='coupons' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Cupones</button>
-            <button onClick={() => setAdminView('settings')} className={`px-4 py-2 rounded-none border-2 ${adminView==='settings' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Ajustes</button>
-            <button onClick={() => setAdminView('investments')} className={`px-4 py-2 rounded-none border-2 ${adminView==='investments' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Inversiones</button>
+          {/* Mobile Dropdown */}
+          <div className="md:hidden">
+            <select
+              value={adminView}
+              onChange={(e) => setAdminView(e.target.value as any)}
+              className="w-full px-3 py-2 text-sm border-2 border-black rounded-none bg-white cursor-pointer"
+            >
+              <option value="dashboard">Panel</option>
+              <option value="products">Productos</option>
+              <option value="orders">Órdenes</option>
+              <option value="contracts">Contratos</option>
+              <option value="calendar">Calendario</option>
+              <option value="packages">Paquetes</option>
+              <option value="coupons">Cupones</option>
+              <option value="settings">Ajustes</option>
+              <option value="investments">Inversiones</option>
+            </select>
+          </div>
+
+          {/* Desktop Tabs */}
+          <div className="hidden md:flex flex-wrap items-center gap-1 md:gap-2 admin-tabs">
+            <button onClick={() => setAdminView('dashboard')} className={`px-4 py-2 rounded-none border-2 text-sm ${adminView==='dashboard' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Panel</button>
+            <button onClick={() => setAdminView('products')} className={`px-4 py-2 rounded-none border-2 text-sm ${adminView==='products' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Productos</button>
+            <button onClick={() => setAdminView('orders')} className={`px-4 py-2 rounded-none border-2 text-sm ${adminView==='orders' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Órdenes</button>
+            <button onClick={() => setAdminView('contracts')} className={`px-4 py-2 rounded-none border-2 text-sm ${adminView==='contracts' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Contratos</button>
+            <button onClick={() => setAdminView('calendar')} className={`px-4 py-2 rounded-none border-2 text-sm ${adminView==='calendar' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Calendario</button>
+            <button onClick={() => setAdminView('packages')} className={`px-4 py-2 rounded-none border-2 text-sm ${adminView==='packages' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Paquetes</button>
+            <button onClick={() => setAdminView('coupons')} className={`px-4 py-2 rounded-none border-2 text-sm ${adminView==='coupons' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Cupones</button>
+            <button onClick={() => setAdminView('settings')} className={`px-4 py-2 rounded-none border-2 text-sm ${adminView==='settings' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Ajustes</button>
+            <button onClick={() => setAdminView('investments')} className={`px-4 py-2 rounded-none border-2 text-sm ${adminView==='investments' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Inversiones</button>
             <div className="ml-auto flex items-center gap-2">
-              <button onClick={() => setAdminDark(v => !v)} className="px-4 py-2 rounded-none border-2 border-black text-black hover:bg-black hover:text-white">{adminDark ? 'Modo claro' : 'Modo oscuro'}</button>
-              <button onClick={() => setAdminFullscreen(v => !v)} className="px-4 py-2 rounded-none border-2 border-black text-black hover:bg-black hover:text-white">{adminFullscreen ? 'Restaurar' : 'Maximizar'}</button>
+              <button onClick={() => setAdminDark(v => !v)} className="px-4 py-2 rounded-none border-2 border-black text-black hover:bg-black hover:text-white text-sm">{adminDark ? 'Modo claro' : 'Modo oscuro'}</button>
+              <button onClick={() => setAdminFullscreen(v => !v)} className="px-4 py-2 rounded-none border-2 border-black text-black hover:bg-black hover:text-white text-sm">{adminFullscreen ? 'Restaurar' : 'Maximizar'}</button>
             </div>
           </div>
 
