@@ -78,7 +78,7 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
   const [workflow, setWorkflow] = useState<WorkflowCategory[] | null>(null);
   const [savingWf, setSavingWf] = useState(false);
   const [wfEditMode, setWfEditMode] = useState(false);
-  const [contractsTab, setContractsTab] = useState<'all' | 'pending'>('all');
+  const [contractsTab, setContractsTab] = useState<'events' | 'finished' | 'pending'>('events');
 
   const [templatesOpen, setTemplatesOpen] = useState(false);
   const pdfRef = useRef<HTMLDivElement | null>(null);
