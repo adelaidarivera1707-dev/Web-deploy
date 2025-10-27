@@ -478,7 +478,7 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-1.5 mb-2">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 mb-2">
         <div className="bg-white rounded border border-gray-200 px-2 py-1 flex items-center justify-between">
           <div className="text-xs font-medium text-gray-600">Total</div>
           <div className="text-base font-bold text-black">{counts.total}</div>
@@ -1092,7 +1092,7 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
               <input value={editForm.eventType || ''} onChange={e => setEditForm((f: any) => ({ ...f, eventType: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
             </div>
             <div>
-              <label className="text-xs text-gray-600">Ubicaci��n</label>
+              <label className="text-xs text-gray-600">Ubicación</label>
               <input value={editForm.eventLocation || ''} onChange={e => setEditForm((f: any) => ({ ...f, eventLocation: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
             </div>
             <div>
