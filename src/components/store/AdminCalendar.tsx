@@ -316,7 +316,7 @@ const AdminCalendar: React.FC = () => {
             const key = cell.date ? `${cell.date.getFullYear()}-${String(cell.date.getMonth()+1).padStart(2,'0')}-${String(cell.date.getDate()).padStart(2,'0')}` : `empty-${idx}`;
             const dayEvents = cell.date ? (eventsByDay.get(key) || []) : [];
             return (
-              <div key={key} className="bg-white h-14 p-1 relative overflow-hidden flex flex-col">
+              <div key={key} className="bg-white p-1 relative overflow-hidden flex flex-col">
                 <div className="flex items-center justify-between text-xs gap-1">
                   <div>{cell.date ? (isToday ? <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-secondary text-black text-xs font-bold">{cell.date.getDate()}</span> : <span className="text-gray-500 text-xs">{cell.date.getDate()}</span>) : ''}</div>
                   {cell.date && (eventsByDay.get(key) || []).length > 0 && (
