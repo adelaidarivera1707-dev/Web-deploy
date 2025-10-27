@@ -305,7 +305,6 @@ const AdminStorePage: React.FC = () => {
 
           {adminView === 'orders' && <OrdersManagement />}
           {adminView === 'contracts' && <ContractsManagement openContractId={openContractId} onOpened={() => setOpenContractId(null)} />}
-          {adminView === 'calendar' && <AdminCalendar />}
           {adminView === 'packages' && <PhotoPackagesManagement />}
           {adminView === 'coupons' && <CouponsManagement />}
           {adminView === 'investments' && <InvestmentsManagement />}
@@ -391,7 +390,6 @@ const AdminStorePage: React.FC = () => {
 
               {adminView === 'orders' && <OrdersManagement />}
               {adminView === 'contracts' && <ContractsManagement openContractId={openContractId} onOpened={() => setOpenContractId(null)} />}
-              {adminView === 'calendar' && <AdminCalendar />}
               {adminView === 'packages' && <PhotoPackagesManagement />}
            {adminView === 'coupons' && <CouponsManagement />}
            {adminView === 'investments' && <InvestmentsManagement />}
