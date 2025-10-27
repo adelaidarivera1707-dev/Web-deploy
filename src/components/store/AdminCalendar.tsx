@@ -266,18 +266,18 @@ const AdminCalendar: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-full space-y-2">
+    <div className="flex flex-col h-full w-full bg-white">
       {/* Filters / Controls */}
-      <div className="bg-white rounded-xl border border-gray-200 p-1 flex flex-wrap gap-1 items-center justify-between text-xs sm:text-sm flex-shrink-0">
-        <div className="flex items-center gap-1">
-          <button onClick={prevMonth} className="px-2 py-1 border rounded-none"><ChevronLeft size={16}/></button>
-          <div className="text-base font-semibold w-32 text-center">
+      <div className="bg-white border-b border-gray-200 p-3 flex flex-wrap gap-2 items-center justify-between text-xs sm:text-sm flex-shrink-0">
+        <div className="flex items-center gap-2">
+          <button onClick={prevMonth} className="px-2 py-1 border rounded-none hover:bg-gray-100"><ChevronLeft size={16}/></button>
+          <div className="text-base font-semibold w-40 text-center">
             {new Date(current.y, current.m, 1).toLocaleString('es', { month: 'long', year: 'numeric' })}
           </div>
-          <button onClick={nextMonth} className="px-2 py-1 border rounded-none"><ChevronRight size={16}/></button>
-          <button onClick={goToday} className="ml-2 px-2 py-1 border-2 border-black text-black rounded-none hover:bg-black hover:text-white inline-flex items-center gap-1 text-sm">Hoy</button>
+          <button onClick={nextMonth} className="px-2 py-1 border rounded-none hover:bg-gray-100"><ChevronRight size={16}/></button>
+          <button onClick={goToday} className="ml-2 px-3 py-1 border-2 border-black text-black rounded-none hover:bg-black hover:text-white text-sm font-medium transition-colors">Hoy</button>
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2 flex-wrap">
           <select value={filterMonth} onChange={e=> setFilterMonth(Number(e.target.value))} className="px-2 py-1 border rounded-none text-sm">
             {months.map((m,i)=> <option key={i} value={i}>{m}</option>)}
           </select>
@@ -301,16 +301,16 @@ const AdminCalendar: React.FC = () => {
             placeholder="Filtrar por teléfono"
             className="px-2 py-1 border rounded-none text-sm w-32"
           />
-          <button onClick={()=> setAdding(true)} className="ml-2 px-2 py-1 border-2 border-black text-black rounded-none hover:bg-black hover:text-white inline-flex items-center gap-1 text-sm"><Plus size={14}/> Añadir evento</button>
+          <button onClick={()=> setAdding(true)} className="px-3 py-1 border-2 border-black text-black rounded-none hover:bg-black hover:text-white text-sm font-medium transition-colors inline-flex items-center gap-1"><Plus size={14}/> Añadir</button>
         </div>
       </div>
 
       {/* Calendar grid */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden flex-1 flex flex-col">
-        <div className="grid grid-cols-7 text-center text-xs text-gray-500 py-1 px-1 border-b flex-shrink-0">
-          {['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'].map((d)=> <div key={d} className="py-0.5">{d}</div>)}
+      <div className="flex-1 overflow-hidden flex flex-col bg-white">
+        <div className="grid grid-cols-7 text-center text-xs text-gray-500 py-2 px-1 border-b border-gray-200 flex-shrink-0 bg-gray-50">
+          {['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'].map((d)=> <div key={d} className="py-1 font-medium">{d}</div>)}
         </div>
-        <div className="grid grid-cols-7 gap-px bg-gray-200 flex-1 auto-rows-fr">
+        <div className="grid grid-cols-7 gap-px bg-gray-300 flex-1 auto-rows-fr overflow-hidden">
           {monthDays.map((cell, idx)=>{
             const isToday = cell.date && new Date(cell.date.getFullYear(), cell.date.getMonth(), cell.date.getDate()).getTime() === new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
             const key = cell.date ? `${cell.date.getFullYear()}-${String(cell.date.getMonth()+1).padStart(2,'0')}-${String(cell.date.getDate()).padStart(2,'0')}` : `empty-${idx}`;
