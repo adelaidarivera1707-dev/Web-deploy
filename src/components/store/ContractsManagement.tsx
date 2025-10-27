@@ -600,8 +600,8 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
         </div>
       </div>
     {viewing && workflow && (
-      <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={()=>setViewing(null)}>
-        <div className="bg-white rounded-xl border border-gray-200 w-full max-w-5xl p-0 overflow-hidden max-h-[90vh] overflow-y-auto" onClick={(e)=>e.stopPropagation()}>
+      <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-2 sm:p-4" onClick={()=>setViewing(null)}>
+        <div className="bg-white rounded-xl border border-gray-200 w-full max-w-5xl p-4 md:p-6 overflow-hidden max-h-[90vh] overflow-y-auto" onClick={(e)=>e.stopPropagation()}>
           <div className="flex items-center justify-between p-4 border-b">
             <div>
               <div className="text-lg font-medium">{viewing.clientName} — {viewing.eventType || 'Trabajo'}</div>
@@ -711,7 +711,7 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
                         <h3 className="text-base font-medium text-primary mb-2">CLÁUSULA 4ª – DO CANCELAMENTO E REAGENDAMENTO</h3>
                         <div className="space-y-2">
                           <p>4.1. Em caso de cancelamento pela contratante com mais de 30 dias de antecedência, será devolvido 50% do valor pago.</p>
-                          <p>4.2. Cancelamentos com menos de 30 dias não terão devolução do valor pago.</p>
+                          <p>4.2. Cancelamentos com menos de 30 dias não ter��o devolução do valor pago.</p>
                           <p>4.3. Reagendamentos estão sujeitos à disponibilidade da agenda da contratada.</p>
                           <p>4.4. Casos de força maior serão analisados individualmente.</p>
                         </div>
