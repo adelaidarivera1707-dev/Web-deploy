@@ -121,9 +121,16 @@ const AdminCalendar: React.FC = () => {
             const c = String((p as any).category || '').toLowerCase();
             return c.includes('vestid') || c.includes('dress');
           })
-          .map((p: any) => ({ id: p.id, name: p.name || 'Vestido', image: p.image_url || p.image || '', color: Array.isArray(p.tags) && p.tags.length ? String(p.tags[0]) : '' }));
+          .map((p: any) => ({
+            id: p.id,
+            name: p.name || 'Vestido',
+            image: p.image_url || p.image || '',
+            color: Array.isArray(p.tags) && p.tags.length ? String(p.tags[0]) : ''
+          }));
+        console.log('Dresses loaded from Firestore:', list);
         setDressOptions(list);
       } catch (e) {
+        console.error('Error loading dresses:', e);
         setDressOptions([]);
       }
     };
