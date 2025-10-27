@@ -117,7 +117,7 @@ export const WorkflowStatusButtons: React.FC<WorkflowStatusButtonsProps> = ({
   }
 
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex flex-wrap items-center gap-1">
       {statusButtons.map((btn) => {
         const Icon = btn.icon;
         const isLoading = updatingButton === btn.id;
