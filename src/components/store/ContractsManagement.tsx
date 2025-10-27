@@ -477,6 +477,21 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
         </div>
       </div>
 
+      <div className="grid grid-cols-3 gap-3 mb-4">
+        <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="text-sm font-medium text-gray-600 mb-1">Eventos</div>
+          <div className="text-2xl font-bold text-black">{counts.events}</div>
+        </div>
+        <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="text-sm font-medium text-gray-600 mb-1">Finalizados</div>
+          <div className="text-2xl font-bold text-green-600">{counts.finished}</div>
+        </div>
+        <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="text-sm font-medium text-gray-600 mb-1">Pendiente de Aprobacion</div>
+          <div className="text-2xl font-bold text-red-600">{counts.pending}</div>
+        </div>
+      </div>
+
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <div className="grid grid-cols-12 p-3 text-xs font-medium border-b">
           <div className="col-span-2">Fecha principal</div>
