@@ -179,10 +179,10 @@ const AdminStorePage: React.FC = () => {
   };
 
   return (
-    <section className={`pt-20 pb-12 ${adminDark ? 'admin-dark' : ''}`}>
-      <div className="container-custom">
+    <section className={`pt-16 md:pt-20 pb-8 md:pb-12 ${adminDark ? 'admin-dark' : ''}`}>
+      <div className="container-custom px-2 md:px-4">
         <div className="mb-3 space-y-2">
-          <div className="flex items-center gap-2 admin-tabs">
+          <div className="flex flex-wrap items-center gap-1 md:gap-2 admin-tabs">
             <button onClick={() => setAdminView('dashboard')} className={`px-4 py-2 rounded-none border-2 ${adminView==='dashboard' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Panel</button>
             <button onClick={() => setAdminView('products')} className={`px-4 py-2 rounded-none border-2 ${adminView==='products' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Productos</button>
             <button onClick={() => setAdminView('orders')} className={`px-4 py-2 rounded-none border-2 ${adminView==='orders' ? 'bg-black text-white border-black' : 'border-black text-black hover:bg-black hover:text-white'}`}>Órdenes</button>
