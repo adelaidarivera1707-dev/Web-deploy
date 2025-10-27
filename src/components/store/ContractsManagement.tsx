@@ -1296,6 +1296,10 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
                 status: 'booked' as const,
                 ...(packageTitle ? { packageTitle: packageTitle } : {}),
                 ...(packageDuration ? { packageDuration: packageDuration } : {}),
+                ...(createForm.clientPhone ? { clientPhone: String(createForm.clientPhone) } : {}),
+                ...(createForm.clientCPF ? { clientCPF: String(createForm.clientCPF) } : {}),
+                ...(createForm.clientRG ? { clientRG: String(createForm.clientRG) } : {}),
+                ...(createForm.clientAddress ? { clientAddress: String(createForm.clientAddress) } : {}),
                 storeItems: createStoreItems || [],
               };
 
