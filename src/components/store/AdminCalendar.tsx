@@ -633,13 +633,13 @@ const AdminCalendar: React.FC<AdminCalendarProps> = ({ darkMode = false }) => {
 
       {/* Event modal */}
       {selected && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={()=> setSelected(null)}>
-          <div className="bg-white rounded-xl w-full max-w-xl p-4" onClick={e=> e.stopPropagation()}>
+        <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-colors ${darkMode ? 'bg-black/50' : 'bg-white/50'}`} onClick={()=> setSelected(null)}>
+          <div className={`rounded-xl w-full max-w-xl p-4 transition-colors ${darkMode ? 'bg-gray-900' : 'bg-white'}`} onClick={e=> e.stopPropagation()}>
             <div className="flex items-center justify-between mb-2">
-              <div className="text-lg font-medium">{selected.clientName}</div>
-              <button onClick={()=> setSelected(null)} className="text-gray-500 hover:text-gray-900"><X/></button>
+              <div className={`text-lg font-medium transition-colors ${darkMode ? 'text-white' : 'text-black'}`}>{selected.clientName}</div>
+              <button onClick={()=> setSelected(null)} className={`transition-colors ${darkMode ? 'text-gray-500 hover:text-gray-300' : 'text-gray-500 hover:text-gray-900'}`}><X/></button>
             </div>
-            <div className="text-sm text-gray-700 space-y-2">
+            <div className={`text-sm space-y-2 transition-colors ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
               <div className="flex items-center gap-2"><FileText size={16}/> <span>Tipo:</span> <strong>{selected.eventType || '-'}</strong></div>
               <div className="flex items-center gap-2"><IconCalendar size={16}/> <span>Fecha:</span> <strong>{selected.eventDate}</strong> <Clock size={16}/> <span>Hora:</span> <strong>{selected.eventTime || '-'}</strong></div>
               <div className="flex items-center gap-2"><MapPin size={16}/> <span>Ubicación:</span> <strong>{selected.eventLocation || '-'}</strong></div>
