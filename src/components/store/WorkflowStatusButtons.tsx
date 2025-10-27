@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { DollarSign, CheckCircle, Pencil, Flag } from 'lucide-react';
 
 interface WorkflowStatusButtonsProps {
@@ -23,9 +23,9 @@ export const WorkflowStatusButtons: React.FC<WorkflowStatusButtonsProps> = ({
   onUpdate,
   disabled = false,
 }) => {
-  const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [tooltipVisible, setTooltipVisible] = useState<string | null>(null);
   const [updatingButton, setUpdatingButton] = useState<string | null>(null);
+  const tooltipTimers = useRef<Record<string, NodeJS.Timeout>>({});
 
   const statusButtons = [
     {
@@ -88,6 +88,23 @@ export const WorkflowStatusButtons: React.FC<WorkflowStatusButtonsProps> = ({
 
   const allActive = depositPaid && finalPaymentPaid && isEditing && eventCompleted;
 
+  const handleMouseEnter = (buttonId: string) => {
+    if (tooltipTimers.current[buttonId]) {
+      clearTimeout(tooltipTimers.current[buttonId]);
+    }
+    tooltipTimers.current[buttonId] = setTimeout(() => {
+      setTooltipVisible(buttonId);
+    }, 2000);
+  };
+
+  const handleMouseLeave = (buttonId: string) => {
+    if (tooltipTimers.current[buttonId]) {
+      clearTimeout(tooltipTimers.current[buttonId]);
+      delete tooltipTimers.current[buttonId];
+    }
+    setTooltipVisible(null);
+  };
+
   if (allActive) {
     return (
       <div className="flex items-center justify-center px-3 py-2">
@@ -104,26 +121,14 @@ export const WorkflowStatusButtons: React.FC<WorkflowStatusButtonsProps> = ({
       {statusButtons.map((btn) => {
         const Icon = btn.icon;
         const isLoading = updatingButton === btn.id;
-        
+
         return (
           <div key={btn.id} className="relative">
             <button
               onClick={btn.onClick}
               disabled={disabled || isLoading}
-              onMouseEnter={() => {
-                setHoveredButton(btn.id);
-                const timer = setTimeout(() => {
-                  setTooltipVisible(btn.id);
-                }, 2000);
-                (btn as any).__tooltipTimer = timer;
-              }}
-              onMouseLeave={() => {
-                setHoveredButton(null);
-                setTooltipVisible(null);
-                if ((btn as any).__tooltipTimer) {
-                  clearTimeout((btn as any).__tooltipTimer);
-                }
-              }}
+              onMouseEnter={() => handleMouseEnter(btn.id)}
+              onMouseLeave={() => handleMouseLeave(btn.id)}
               className={`p-2 rounded-lg transition-all duration-200 ${
                 btn.active
                   ? 'bg-green-100 text-green-600 border border-green-300'
@@ -139,7 +144,7 @@ export const WorkflowStatusButtons: React.FC<WorkflowStatusButtonsProps> = ({
                 <Icon size={18} />
               )}
             </button>
-            
+
             {/* Tooltip */}
             {tooltipVisible === btn.id && (
               <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 whitespace-nowrap z-10">
