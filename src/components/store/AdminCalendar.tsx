@@ -245,6 +245,7 @@ const AdminCalendar: React.FC = () => {
       depositPaid: false,
       finalPaymentPaid: false,
       eventCompleted: false,
+      isEditing: false,
       createdAt: new Date().toISOString(),
       totalAmount: Number(addForm.totalAmount || 0) || 0,
       travelFee: Number(addForm.travelFee || 0) || 0,
