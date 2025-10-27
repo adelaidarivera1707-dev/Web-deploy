@@ -260,6 +260,23 @@ const AdminStoreDashboard: React.FC<AdminProps> = ({ onNavigate }) => {
         <p className="text-gray-600">Gestiona tu tienda de productos personalizados</p>
       </div>
 
+      {/* Period Filter at the top */}
+      <div className="bg-white rounded-xl border border-gray-200 p-4 flex items-center gap-4">
+        <label className="text-sm font-medium text-gray-700">Periodo:</label>
+        <select value={period.type} onChange={e=> setPeriod({ type: e.target.value as any })} className="px-3 py-2 border rounded-none">
+          <option value="all">Global</option>
+          <option value="year">Este año</option>
+          <option value="month">Este mes</option>
+          <option value="custom">Personalizado</option>
+        </select>
+        {period.type === 'custom' && (
+          <>
+            <input type="date" value={period.start || ''} onChange={e=> setPeriod(p => ({ ...p, start: e.target.value }))} className="px-2 py-1 border rounded-none" />
+            <input type="date" value={period.end || ''} onChange={e=> setPeriod(p => ({ ...p, end: e.target.value }))} className="px-2 py-1 border rounded-none" />
+          </>
+        )}
+      </div>
+
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {statCards.map((s, i) => (
