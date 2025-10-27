@@ -294,12 +294,13 @@ const AdminCalendar: React.FC<AdminCalendarProps> = ({ darkMode = false }) => {
       </div>
 
       {/* Right Calendar Area */}
-      <div className={`flex-1 flex flex-col overflow-hidden transition-colors ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
+      <div className="flex-1 flex flex-col overflow-hidden bg-black">
         {/* Calendar header with month display */}
-        <div className={`px-4 py-2 border-b flex items-center justify-between flex-shrink-0 transition-colors ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-          <div className={`text-lg font-semibold transition-colors ${darkMode ? 'text-gray-300' : 'text-gray-900'}`}>
+        <div className="px-4 py-3 border-b border-gray-800 flex items-center justify-between flex-shrink-0">
+          <div className="text-lg font-semibold text-white">
             {new Date(filterYear, filterMonth, 1).toLocaleString('es', { month: 'long', year: 'numeric' })}
           </div>
+          <button onClick={goToday} className="px-4 py-2 rounded-full bg-secondary text-black font-medium hover:opacity-90 transition-opacity">Hoy</button>
         </div>
 
         {/* Calendar grid */}
