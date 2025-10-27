@@ -26,6 +26,7 @@ interface ContractItem {
   depositPaid?: boolean;
   finalPaymentPaid?: boolean;
   eventCompleted?: boolean;
+  isEditing?: boolean;
   services?: any[];
   storeItems?: any[];
   message?: string;
