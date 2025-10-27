@@ -344,10 +344,10 @@ const AdminCalendar: React.FC<AdminCalendarProps> = ({ darkMode = false }) => {
       </div>
 
       {/* Right Calendar Area */}
-      <div className="flex-1 flex flex-col overflow-hidden bg-white">
+      <div className={`flex-1 flex flex-col overflow-hidden transition-colors ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
         {/* Calendar header with month display */}
-        <div className="px-4 py-2 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
-          <div className="text-lg font-semibold">
+        <div className={`px-4 py-2 border-b flex items-center justify-between flex-shrink-0 transition-colors ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+          <div className={`text-lg font-semibold transition-colors ${darkMode ? 'text-gray-300' : 'text-gray-900'}`}>
             {new Date(filterYear, filterMonth, 1).toLocaleString('es', { month: 'long', year: 'numeric' })}
           </div>
         </div>
