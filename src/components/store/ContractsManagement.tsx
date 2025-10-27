@@ -551,6 +551,53 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
             );
           })}
         </div>
+
+        {/* Mobile view - Card layout */}
+        <div className="md:hidden space-y-2">
+          {filtered.map(c => (
+            <div key={c.id} className="p-3 border-b hover:bg-gray-50 cursor-pointer space-y-2" onClick={() => openView(c)}>
+              <div className="flex justify-between items-start gap-2">
+                <div className="flex-1">
+                  <div className="font-semibold text-sm">{c.clientName || 'Trabajo'}</div>
+                  <div className="text-xs text-gray-600">{c.eventDate || '-'}</div>
+                </div>
+                <div className="text-right">
+                  <div className="text-xs font-medium text-gray-600">Total</div>
+                  <div className="font-bold">R$ {Number(c.totalAmount || 0).toFixed(0)}</div>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div>
+                  <span className="font-medium text-gray-600">Tipo: </span>
+                  {c.eventType || '-'}
+                </div>
+                <div>
+                  <span className="font-medium text-gray-600">Tel: </span>
+                  {((c as any).clientPhone || (c as any).phone || (c as any).client_phone || (c as any).formSnapshot?.phone || '') || '-'}
+                </div>
+              </div>
+              <div className="pt-2 border-t" onClick={(e) => e.stopPropagation()}>
+                <WorkflowStatusButtons
+                  depositPaid={c.depositPaid}
+                  finalPaymentPaid={c.finalPaymentPaid}
+                  isEditing={c.isEditing}
+                  eventCompleted={c.eventCompleted}
+                  onUpdate={async (updates) => {
+                    try {
+                      await updateDoc(doc(db, 'contracts', c.id), updates as any);
+                      await fetchContracts();
+                      window.dispatchEvent(new CustomEvent('contractsUpdated'));
+                      window.dispatchEvent(new CustomEvent('adminToast', { detail: { message: 'Estado actualizado', type: 'success' } }));
+                    } catch (e) {
+                      console.error('Error updating contract status:', e);
+                      window.dispatchEvent(new CustomEvent('adminToast', { detail: { message: 'Error al actualizar', type: 'error' } }));
+                    }
+                  }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     {viewing && workflow && (
       <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={()=>setViewing(null)}>
