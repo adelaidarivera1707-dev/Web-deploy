@@ -440,16 +440,6 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
     try { window.dispatchEvent(new CustomEvent('contractsUpdated')); } catch {}
   };
 
-  const isPast = (c: ContractItem) => {
-    if (!c.eventDate) return false;
-    const d = new Date(c.eventDate);
-    if (isNaN(d.getTime())) return false;
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    d.setHours(0, 0, 0, 0);
-    return d.getTime() < today.getTime();
-  };
-
   const colorsFor = (len: number) => categoryColors(len);
 
   return (
