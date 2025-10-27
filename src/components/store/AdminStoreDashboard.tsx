@@ -445,6 +445,7 @@ function computeMonthlyCompare(orders: OrderItem[], contracts: any[], aId: 'all'
       const isFuture = d.getTime() >= today.getTime();
       if (completed) {
         months[m].a += amount;
+        months[m].earned += amount;
       } else if (isFuture) {
         months[m].forecast += amount;
       }
