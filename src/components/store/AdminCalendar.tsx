@@ -520,7 +520,39 @@ const AdminCalendar: React.FC = () => {
                   printWindow.print();
                 }
               }} className="border-2 border-black text-black px-4 py-2 rounded-none hover:bg-black hover:text-white inline-flex items-center gap-2">
-                🖨️ Imprimir
+                <Printer size={16} /> Imprimir
+              </button>
+              <button onClick={async () => {
+                const element = document.querySelector('.daily-list-pdf');
+                if (!element) return;
+                try {
+                  const canvas = await html2canvas(element as HTMLElement, { scale: 2, backgroundColor: '#ffffff' });
+                  const imgData = canvas.toDataURL('image/png');
+                  const pdf = new jsPDF('p', 'mm', 'a4');
+                  const imgWidth = 210;
+                  const pageHeight = 297;
+                  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                  let heightLeft = imgHeight;
+                  let position = 0;
+
+                  pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                  heightLeft -= pageHeight;
+
+                  while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                  }
+
+                  const dateStr = new Date(showDailyList).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-');
+                  pdf.save(`eventos_${dateStr}.pdf`);
+                } catch (error) {
+                  console.error('Error generating PDF:', error);
+                  alert('Error al generar PDF');
+                }
+              }} className="border-2 border-green-600 text-green-600 px-4 py-2 rounded-none hover:bg-green-600 hover:text-white inline-flex items-center gap-2">
+                <Download size={16} /> PDF
               </button>
             </div>
 
