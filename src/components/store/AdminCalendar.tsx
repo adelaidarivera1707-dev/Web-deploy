@@ -537,33 +537,106 @@ const AdminCalendar: React.FC = () => {
                 <Printer size={16} /> Imprimir
               </button>
               <button onClick={async () => {
-                const element = document.querySelector('.daily-list-pdf');
-                if (!element) return;
                 try {
-                  const canvas = await html2canvas(element as HTMLElement, { scale: 2, backgroundColor: '#ffffff' });
-                  const imgData = canvas.toDataURL('image/png');
+                  const events = eventsByDay.get(showDailyList) || [];
                   const pdf = new jsPDF('p', 'mm', 'a4');
-                  const imgWidth = 210;
-                  const pageHeight = 297;
-                  const imgHeight = (canvas.height * imgWidth) / canvas.width;
-                  let heightLeft = imgHeight;
-                  let position = 0;
 
-                  pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                  heightLeft -= pageHeight;
+                  const pageHeight = pdf.internal.pageSize.getHeight();
+                  const pageWidth = pdf.internal.pageSize.getWidth();
+                  const margin = 15;
+                  const contentWidth = pageWidth - 2 * margin;
+                  let yPosition = margin;
 
-                  while (heightLeft >= 0) {
-                    position = heightLeft - imgHeight;
-                    pdf.addPage();
-                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                    heightLeft -= pageHeight;
-                  }
+                  const dateStr = new Date(showDailyList).toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-                  const dateStr = new Date(showDailyList).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-');
-                  pdf.save(`eventos_${dateStr}.pdf`);
+                  // Title
+                  pdf.setFontSize(16);
+                  pdf.setFont(undefined, 'bold');
+                  pdf.text('Eventos del día', margin, yPosition);
+                  yPosition += 10;
+
+                  pdf.setFontSize(12);
+                  pdf.setFont(undefined, 'normal');
+                  pdf.text(dateStr, margin, yPosition);
+                  yPosition += 12;
+
+                  // Events
+                  events.forEach((ev, idx) => {
+                    if (yPosition > pageHeight - 30) {
+                      pdf.addPage();
+                      yPosition = margin;
+                    }
+
+                    pdf.setFontSize(11);
+                    pdf.setFont(undefined, 'bold');
+                    pdf.text(`${idx + 1}. ${ev.clientName || 'Evento sin nombre'}`, margin, yPosition);
+                    yPosition += 7;
+
+                    pdf.setFontSize(9);
+                    pdf.setFont(undefined, 'normal');
+
+                    const details = [
+                      `Hora: ${ev.eventTime || '-'}`,
+                      `Tipo: ${ev.eventType || '-'}`,
+                      `Teléfono: ${ev.phone || (ev as any).formSnapshot?.phone || '-'}`,
+                      `Duración: ${ev.packageDuration || '-'}`,
+                      `Ubicación: ${ev.eventLocation || '-'}`
+                    ];
+
+                    details.forEach(detail => {
+                      pdf.text(detail, margin + 3, yPosition);
+                      yPosition += 5;
+                    });
+
+                    // Dresses list
+                    if (Array.isArray((ev as any).formSnapshot?.selectedDresses) && (ev as any).formSnapshot.selectedDresses.length > 0) {
+                      pdf.setFont(undefined, 'bold');
+                      pdf.text('Vestidos:', margin + 3, yPosition);
+                      yPosition += 5;
+
+                      pdf.setFont(undefined, 'normal');
+                      const dressNames = (ev as any).formSnapshot.selectedDresses
+                        .map((id: string) => dressOptions.find(d => d.id === id))
+                        .filter(Boolean)
+                        .map((d: any) => (d as any).name)
+                        .join(', ');
+
+                      const splitDresses = pdf.splitTextToSize(dressNames, contentWidth - 6);
+                      splitDresses.forEach((line: string) => {
+                        if (yPosition > pageHeight - 30) {
+                          pdf.addPage();
+                          yPosition = margin;
+                        }
+                        pdf.text(line, margin + 3, yPosition);
+                        yPosition += 5;
+                      });
+                    }
+
+                    // Payment summary
+                    pdf.setFont(undefined, 'bold');
+                    pdf.text('Resumen de Pago:', margin + 3, yPosition);
+                    yPosition += 5;
+
+                    pdf.setFont(undefined, 'normal');
+                    const paymentLines = [
+                      `Total: R$ ${Number(ev.totalAmount || 0).toFixed(0)}`,
+                      `Entrada (20%): R$ ${(Number(ev.totalAmount || 0) * 0.2).toFixed(0)} ${ev.depositPaid ? '✓ Pago' : 'Pendiente'}`,
+                      `Restante: R$ ${(Number(ev.totalAmount || 0) * 0.8).toFixed(0)} ${ev.finalPaymentPaid ? '✓ Pago' : 'Pendiente'}`
+                    ];
+
+                    paymentLines.forEach(line => {
+                      pdf.text(line, margin + 3, yPosition);
+                      yPosition += 5;
+                    });
+
+                    yPosition += 8;
+                  });
+
+                  const dateKey = new Date(showDailyList).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-');
+                  pdf.save(`eventos_${dateKey}.pdf`);
                 } catch (error) {
                   console.error('Error generating PDF:', error);
-                  alert('Error al generar PDF');
+                  alert('Error al generar PDF. Intenta con Imprimir en su lugar.');
                 }
               }} className="border-2 border-green-600 text-green-600 px-4 py-2 rounded-none hover:bg-green-600 hover:text-white inline-flex items-center gap-2">
                 <Download size={16} /> PDF
