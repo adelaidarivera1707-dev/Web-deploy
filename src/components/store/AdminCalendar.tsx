@@ -337,7 +337,7 @@ const AdminCalendar: React.FC<AdminCalendarProps> = ({ darkMode = false }) => {
           <div className="grid grid-cols-7 text-center text-xs py-3 px-1 border-b border-gray-800 flex-shrink-0 bg-gray-950 lg:bg-gray-950 max-lg:bg-black">
             {['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'].map((d)=> <div key={d} className="py-1 font-medium text-gray-400">{d}</div>)}
           </div>
-          <div className="grid grid-cols-7 gap-px flex-1 auto-rows-fr overflow-hidden w-full h-full bg-gray-900">
+          <div className="grid grid-cols-7 gap-px flex-1 auto-rows-fr overflow-hidden w-full h-full bg-gray-900 lg:bg-gray-900 max-lg:bg-black">
             {monthDays.map((cell, idx)=>{
               const isToday = cell.date && new Date(cell.date.getFullYear(), cell.date.getMonth(), cell.date.getDate()).getTime() === new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
               const key = cell.date ? `${cell.date.getFullYear()}-${String(cell.date.getMonth()+1).padStart(2,'0')}-${String(cell.date.getDate()).padStart(2,'0')}` : `empty-${idx}`;
@@ -988,7 +988,7 @@ const AdminCalendar: React.FC<AdminCalendarProps> = ({ darkMode = false }) => {
                     pdf.setFont(undefined, 'normal');
                     const paymentLines = [
                       `Total: R$ ${Number(ev.totalAmount || 0).toFixed(0)}`,
-                      `Entrada (20%): R$ ${(Number(ev.totalAmount || 0) * 0.2).toFixed(0)} ${ev.depositPaid ? '✓ Pago' : 'Pendiente'}`,
+                      `Entrada (20%): R$ ${(Number(ev.totalAmount || 0) * 0.2).toFixed(0)} ${ev.depositPaid ? '�� Pago' : 'Pendiente'}`,
                       `Restante: R$ ${(Number(ev.totalAmount || 0) * 0.8).toFixed(0)} ${ev.finalPaymentPaid ? '✓ Pago' : 'Pendiente'}`
                     ];
 
