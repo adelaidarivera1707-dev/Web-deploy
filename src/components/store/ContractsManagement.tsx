@@ -415,7 +415,7 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <h2 className="section-title">Gesti��n de Contratos</h2>
+          <h2 className="section-title">Gestión de Contratos</h2>
           <div className="ml-2 inline-flex border rounded overflow-hidden">
             <button onClick={()=> setContractsTab('all')} className={`px-3 py-1 text-sm ${contractsTab==='all' ? 'bg-black text-white' : ''}`}>Todos</button>
             <button onClick={()=> setContractsTab('pending')} className={`px-3 py-1 text-sm ${contractsTab==='pending' ? 'bg-black text-white' : ''}`}>Pendiente de aprobación</button>
@@ -1144,17 +1144,44 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
               <label className="text-xs text-gray-600">Paquete</label>
               <select value={createForm.packageTitle} onChange={(e)=>{
                 const title = e.target.value;
-                const found = packagesList.find(p=>p.title===title);
-                setCreateForm((f:any)=> ({ ...f, packageTitle: title, packageDuration: found?.duration || f.packageDuration || '', totalAmount: (found?.price || 0) + Number(f.travelFee || 0) + (createStoreItems || []).reduce((s,it)=> s + (Number(it.price)||0) * (Number(it.quantity)||1), 0) }));
+                if (title === '__custom__') {
+                  setCreateForm((f:any)=> ({ ...f, packageTitle: '', isCustomPackage: true, customPackageType: '', customPackageDuration: '', customPackagePrice: 0, packageDuration: '' }));
+                } else {
+                  const found = packagesList.find(p=>p.title===title);
+                  setCreateForm((f:any)=> ({ ...f, packageTitle: title, packageDuration: found?.duration || f.packageDuration || '', totalAmount: (found?.price || 0) + Number(f.travelFee || 0) + (createStoreItems || []).reduce((s,it)=> s + (Number(it.price)||0) * (Number(it.quantity)||1), 0), isCustomPackage: false }));
+                }
               }} className="w-full px-3 py-2 border rounded-none">
                 <option value="">— Selecciona paquete —</option>
                 {packagesList.map(p=> (<option key={p.id} value={p.title}>{p.title} — R$ {Number(p.price||0).toFixed(0)}</option>))}
+                <option value="__custom__">Paquete Personalizado</option>
               </select>
             </div>
-            <div>
-              <label className="text-xs text-gray-600">Duración</label>
-              <input value={createForm.packageDuration} onChange={e=> setCreateForm((f:any)=> ({ ...f, packageDuration: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
-            </div>
+            {createForm.isCustomPackage ? (
+              <>
+                <div>
+                  <label className="text-xs text-gray-600">Tipo de servicio</label>
+                  <select value={createForm.customPackageType || ''} onChange={(e)=> setCreateForm((f:any)=> ({ ...f, customPackageType: e.target.value }))} className="w-full px-3 py-2 border rounded-none">
+                    <option value="">— Selecciona tipo —</option>
+                    <option value="foto">Fotos</option>
+                    <option value="video">Video</option>
+                    <option value="foto_video">Fotos + Video</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs text-gray-600">Duración</label>
+                  <input value={createForm.customPackageDuration || ''} onChange={e=> setCreateForm((f:any)=> ({ ...f, customPackageDuration: e.target.value }))} placeholder="Ej: 4 horas" className="w-full px-3 py-2 border rounded-none" />
+                </div>
+                <div>
+                  <label className="text-xs text-gray-600">Precio (R$)</label>
+                  <input type="number" step="0.01" value={createForm.customPackagePrice ?? 0} onChange={e => setCreateForm((f: any) => ({ ...f, customPackagePrice: e.target.value, totalAmount: Number(e.target.value) + Number(f.travelFee || 0) + (createStoreItems || []).reduce((s,it)=> s + (Number(it.price)||0) * (Number(it.quantity)||1), 0) }))} className="w-full px-3 py-2 border rounded-none" />
+                </div>
+              </>
+            ) : (
+              <div>
+                <label className="text-xs text-gray-600">Duración</label>
+                <input value={createForm.packageDuration} onChange={e=> setCreateForm((f:any)=> ({ ...f, packageDuration: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
+              </div>
+            )}
             <div>
               <label className="text-xs text-gray-600">Método de pago</label>
               <input value={createForm.paymentMethod} onChange={e=> setCreateForm((f:any)=> ({ ...f, paymentMethod: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
