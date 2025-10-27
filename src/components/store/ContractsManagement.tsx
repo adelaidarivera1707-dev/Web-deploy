@@ -448,13 +448,22 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
         <div className="flex items-center gap-3">
           <h2 className="section-title">Gestión de Contratos</h2>
           <div className="ml-2 inline-flex border rounded overflow-hidden">
-            <button onClick={()=> setContractsTab('all')} className={`px-3 py-1 text-sm ${contractsTab==='all' ? 'bg-black text-white' : ''}`}>Todos</button>
-            <button onClick={()=> setContractsTab('pending')} className={`px-3 py-1 text-sm ${contractsTab==='pending' ? 'bg-black text-white' : ''}`}>Pendiente de aprobación</button>
+            <button onClick={()=> setContractsTab('events')} className={`px-3 py-1 text-sm ${contractsTab==='events' ? 'bg-black text-white' : ''}`}>Eventos</button>
+            <button onClick={()=> setContractsTab('finished')} className={`px-3 py-1 text-sm ${contractsTab==='finished' ? 'bg-black text-white' : ''}`}>Finalizados</button>
+            <button onClick={()=> setContractsTab('pending')} className={`relative px-3 py-1 text-sm ${contractsTab==='pending' ? 'bg-black text-white' : ''}`}>
+              Pendiente de Aprobacion
+              {contracts.filter(c => String((c as any).status || '') === 'pending_approval').length > 0 && (
+                <span className={`absolute -top-2 -right-2 w-5 h-5 rounded-full text-xs font-bold flex items-center justify-center ${
+                  contractsTab === 'pending' ? 'bg-white text-black' : 'bg-red-600 text-white'
+                }`}>
+                  {contracts.filter(c => String((c as any).status || '') === 'pending_approval').length}
+                </span>
+              )}
+            </button>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <button onClick={()=> setCreating(true)} className="border-2 border-black bg-black text-white px-3 py-2 rounded-none hover:opacity-90 inline-flex items-center gap-2"><Plus size={14}/> Nuevo contrato</button>
-          <button onClick={async ()=>{ await fetchTemplates(); setTemplatesOpen(true); }} className="border-2 border-black text-black px-3 py-2 rounded-none hover:bg-black hover:text-white">Workflows</button>
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar por cliente/teléfono" className="px-3 py-2 border rounded-none" />
         </div>
       </div>
