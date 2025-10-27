@@ -65,7 +65,7 @@
 
 @layer components {
   .container-custom {
-    @apply container mx-auto px-4 md:px-8 max-w-full overflow-hidden;
+    @apply container mx-auto px-4 md:px-8 max-w-full overflow-x-hidden;
   }
 
   .btn-primary {
