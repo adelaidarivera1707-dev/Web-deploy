@@ -478,18 +478,22 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-2 mb-2">
-        <div className="bg-white rounded border border-gray-200 px-3 py-1.5">
-          <div className="text-xs font-medium text-gray-600">Eventos</div>
-          <div className="text-lg font-bold text-black">{counts.events}</div>
+      <div className="grid grid-cols-4 gap-1.5 mb-2">
+        <div className="bg-white rounded border border-gray-200 px-2 py-1 flex items-center justify-between">
+          <div className="text-xs font-medium text-gray-600">Total</div>
+          <div className="text-base font-bold text-black">{counts.total}</div>
         </div>
-        <div className="bg-white rounded border border-gray-200 px-3 py-1.5">
+        <div className="bg-white rounded border border-gray-200 px-2 py-1 flex items-center justify-between">
+          <div className="text-xs font-medium text-gray-600">Eventos futuros</div>
+          <div className="text-base font-bold text-black">{counts.events}</div>
+        </div>
+        <div className="bg-white rounded border border-gray-200 px-2 py-1 flex items-center justify-between">
           <div className="text-xs font-medium text-gray-600">Finalizados</div>
-          <div className="text-lg font-bold text-green-600">{counts.finished}</div>
+          <div className="text-base font-bold text-green-600">{counts.finished}</div>
         </div>
-        <div className="bg-white rounded border border-gray-200 px-3 py-1.5">
-          <div className="text-xs font-medium text-gray-600">Pendiente de Aprobacion</div>
-          <div className="text-lg font-bold text-red-600">{counts.pending}</div>
+        <div className="bg-white rounded border border-gray-200 px-2 py-1 flex items-center justify-between">
+          <div className="text-xs font-medium text-gray-600">Pendiente</div>
+          <div className="text-base font-bold text-red-600">{counts.pending}</div>
         </div>
       </div>
 
@@ -1088,7 +1092,7 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
               <input value={editForm.eventType || ''} onChange={e => setEditForm((f: any) => ({ ...f, eventType: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
             </div>
             <div>
-              <label className="text-xs text-gray-600">Ubicación</label>
+              <label className="text-xs text-gray-600">Ubicaci��n</label>
               <input value={editForm.eventLocation || ''} onChange={e => setEditForm((f: any) => ({ ...f, eventLocation: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
             </div>
             <div>
