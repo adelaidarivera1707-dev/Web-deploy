@@ -308,13 +308,13 @@ const AdminCalendar: React.FC<AdminCalendarProps> = ({ darkMode = false }) => {
 
         {/* Phone Filter */}
         <div className="space-y-2 mb-4">
-          <label className="text-xs text-gray-500 block">Filtrar por teléfono</label>
+          <label className={`text-xs block transition-colors ${darkMode ? 'text-gray-500' : 'text-gray-600'}`}>Filtrar por teléfono</label>
           <input
             type="text"
             value={filterPhone}
             onChange={e => setFilterPhone(e.target.value)}
             placeholder="Ej: 1234567890"
-            className="w-full px-3 py-2 border border-gray-700 rounded-lg text-sm bg-gray-900 text-gray-300 placeholder-gray-600"
+            className={`w-full px-3 py-2 border rounded-lg text-sm transition-colors ${darkMode ? 'border-gray-700 bg-gray-900 text-gray-300 placeholder-gray-600' : 'border-gray-300 bg-white text-gray-900 placeholder-gray-400'}`}
           />
         </div>
       </div>
@@ -645,7 +645,7 @@ const AdminCalendar: React.FC<AdminCalendarProps> = ({ darkMode = false }) => {
               <div className="flex items-center gap-2"><MapPin size={16}/> <span>Ubicación:</span> <strong>{selected.eventLocation || '-'}</strong></div>
               <div className="flex items-center gap-2"><Phone size={16}/> <span>Tel.:</span> <strong>{selected.formSnapshot?.phone || '-'}</strong></div>
               {(() => { const calc = computeAmounts(selected); return (
-                <div className="flex items-center gap-2"><DollarSign size={16}/> <span>Pago:</span> <strong>{selected.paymentMethod || '-'}</strong> • <span>Depósito:</span> <strong>{selected.depositPaid ? 'Pago' : `Pendiente (R$ ${calc.depositAmount.toFixed(0)})`}</strong> • <span>Saldo:</span> <strong>{selected.finalPaymentPaid ? 'Pago' : `Pendiente (R$ ${calc.remainingAmount.toFixed(0)})`}</strong></div>
+                <div className="flex items-center gap-2"><DollarSign size={16}/> <span>Pago:</span> <strong>{selected.paymentMethod || '-'}</strong> �� <span>Depósito:</span> <strong>{selected.depositPaid ? 'Pago' : `Pendiente (R$ ${calc.depositAmount.toFixed(0)})`}</strong> • <span>Saldo:</span> <strong>{selected.finalPaymentPaid ? 'Pago' : `Pendiente (R$ ${calc.remainingAmount.toFixed(0)})`}</strong></div>
               ); })()}
 
               {Array.isArray(selected.formSnapshot?.selectedDresses) && selected.formSnapshot!.selectedDresses.length > 0 && (
