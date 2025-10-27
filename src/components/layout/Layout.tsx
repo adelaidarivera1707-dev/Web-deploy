@@ -92,11 +92,11 @@ const Layout = ({ children }: LayoutProps) => {
 
   return (
     <div className="flex flex-col min-h-screen opacity-100 transition-opacity duration-500 bg-background text-primary">
-      <Header />
+      {!isAdmin && <Header />}
       <main className="flex-grow">
         {children}
       </main>
-      <Footer />
+      {!isAdmin && <Footer />}
 
       <FloatingWhatsApp />
     </div>
