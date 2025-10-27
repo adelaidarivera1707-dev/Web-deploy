@@ -617,7 +617,7 @@ const AdminCalendar: React.FC<AdminCalendarProps> = ({ darkMode = false }) => {
                       console.error('Error generating PDF:', error);
                       alert('Error al generar PDF. Intenta con Imprimir en su lugar.');
                     }
-                  }} className="flex-1 border-2 border-green-600 text-green-400 px-4 py-2 rounded-lg hover:bg-green-900 hover:bg-opacity-20 inline-flex items-center justify-center gap-2 transition-colors">
+                  }} className={`flex-1 border-2 px-4 py-2 rounded-lg inline-flex items-center justify-center gap-2 transition-colors ${darkMode ? 'border-green-600 text-green-400 hover:bg-green-900 hover:bg-opacity-20' : 'border-green-500 text-green-600 hover:bg-green-100'}`}>
                     <Download size={18} /> PDF
                   </button>
                 </div>
@@ -1124,7 +1124,7 @@ const AdminCalendar: React.FC<AdminCalendarProps> = ({ darkMode = false }) => {
         </div>
       )}
 
-      {loading && <div className="text-sm text-gray-500">Cargando…</div>}
+      {loading && <div className="text-sm text-gray-500">Cargando���</div>}
     </div>
   );
 };
