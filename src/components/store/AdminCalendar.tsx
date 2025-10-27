@@ -466,26 +466,33 @@ const AdminCalendar: React.FC = () => {
                     <div className="col-span-2"><span className="text-gray-600">Ubicación:</span> <span className="font-medium">{ev.eventLocation || '-'}</span></div>
                   </div>
 
-                  {Array.isArray((ev as any).formSnapshot?.selectedDresses) && (ev as any).formSnapshot.selectedDresses.length > 0 && (
+                  {Array.isArray((ev as any).formSnapshot?.selectedDresses) && (ev as any).formSnapshot.selectedDresses.length > 0 ? (
                     <div className="mt-3 pt-3 border-t">
                       <div className="text-sm font-medium mb-2">Vestidos:</div>
                       <div className="grid grid-cols-3 gap-2">
                         {(ev as any).formSnapshot.selectedDresses
-                          .map((id: string) => dressOptions.find(d => d.id === id))
+                          .map((id: string) => {
+                            const found = dressOptions.find(d => d.id === id);
+                            return found;
+                          })
                           .filter(Boolean)
                           .map((dress: any) => (
                             <div key={(dress as any).id} className="flex flex-col items-center">
-                              <div className="w-16 h-20 rounded overflow-hidden bg-gray-100 mb-1">
-                                {(dress as any).image && (
-                                  <img src={(dress as any).image} alt={(dress as any).name} className="w-full h-full object-cover" />
+                              <div className="w-16 h-20 rounded overflow-hidden bg-gray-100 mb-1 border border-gray-300">
+                                {(dress as any).image ? (
+                                  <img src={(dress as any).image} alt={(dress as any).name} className="w-full h-full object-cover" onError={(e) => {
+                                    (e.currentTarget as HTMLImageElement).style.display = 'none';
+                                  }} />
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center text-xs text-gray-400">Sin foto</div>
                                 )}
                               </div>
-                              <span className="text-xs text-gray-700 text-center">{(dress as any).name}</span>
+                              <span className="text-xs text-gray-700 text-center truncate w-full">{(dress as any).name}</span>
                             </div>
                           ))}
                       </div>
                     </div>
-                  )}
+                  ) : null}
 
                   <div className="mt-3 pt-3 border-t">
                     <div className="text-sm font-medium mb-2">Resumen de Pago:</div>
