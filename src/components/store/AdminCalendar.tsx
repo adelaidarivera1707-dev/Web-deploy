@@ -467,16 +467,41 @@ const AdminCalendar: React.FC = () => {
                   {Array.isArray((ev as any).formSnapshot?.selectedDresses) && (ev as any).formSnapshot.selectedDresses.length > 0 && (
                     <div className="mt-3 pt-3 border-t">
                       <div className="text-sm font-medium mb-2">Vestidos:</div>
-                      <div className="flex gap-2 flex-wrap">
+                      <div className="grid grid-cols-3 gap-2">
                         {(ev as any).formSnapshot.selectedDresses
                           .map((id: string) => dressOptions.find(d => d.id === id))
                           .filter(Boolean)
                           .map((dress: any) => (
-                            <span key={(dress as any).id} className="text-xs bg-gray-100 px-2 py-1 rounded">{(dress as any).name}</span>
+                            <div key={(dress as any).id} className="flex flex-col items-center">
+                              <div className="w-16 h-20 rounded overflow-hidden bg-gray-100 mb-1">
+                                {(dress as any).image && (
+                                  <img src={(dress as any).image} alt={(dress as any).name} className="w-full h-full object-cover" />
+                                )}
+                              </div>
+                              <span className="text-xs text-gray-700 text-center">{(dress as any).name}</span>
+                            </div>
                           ))}
                       </div>
                     </div>
                   )}
+
+                  <div className="mt-3 pt-3 border-t">
+                    <div className="text-sm font-medium mb-2">Resumen de Pago:</div>
+                    <div className="space-y-1 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Total:</span>
+                        <span className="font-medium">R$ {Number(ev.totalAmount || 0).toFixed(0)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Entrada (20%):</span>
+                        <span className={`font-medium ${ev.depositPaid ? 'text-green-600' : 'text-red-600'}`}>R$ {(Number(ev.totalAmount || 0) * 0.2).toFixed(0)} {ev.depositPaid ? '✓ Pago' : 'Pendiente'}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Restante:</span>
+                        <span className={`font-medium ${ev.finalPaymentPaid ? 'text-green-600' : 'text-red-600'}`}>R$ {(Number(ev.totalAmount || 0) * 0.8).toFixed(0)} {ev.finalPaymentPaid ? '✓ Pago' : 'Pendiente'}</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
