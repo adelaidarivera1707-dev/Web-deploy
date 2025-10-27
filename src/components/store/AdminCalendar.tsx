@@ -443,6 +443,101 @@ const AdminCalendar: React.FC = () => {
         </div>
       )}
 
+      {/* Daily List modal */}
+      {showDailyList && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={()=> setShowDailyList(null)}>
+          <div className="bg-white rounded-xl w-full max-w-2xl p-4 max-h-[80vh] overflow-y-auto" onClick={e=> e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <div className="text-lg font-medium">Eventos - {new Date(showDailyList).toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div>
+              <button onClick={()=> setShowDailyList(null)} className="text-gray-500 hover:text-gray-900">✕</button>
+            </div>
+
+            <div className="space-y-4">
+              {(eventsByDay.get(showDailyList) || []).map((ev, idx) => (
+                <div key={ev.id} className={`border rounded-lg p-4 ${getEventColor(ev).split(' ')[0]} bg-opacity-10`}>
+                  <div className="font-semibold text-lg">{(idx + 1)}. {ev.clientName || 'Evento sin nombre'}</div>
+                  <div className="grid grid-cols-2 gap-3 text-sm mt-2">
+                    <div><span className="text-gray-600">Hora:</span> <span className="font-medium">{ev.eventTime || '-'}</span></div>
+                    <div><span className="text-gray-600">Tipo:</span> <span className="font-medium">{ev.eventType || '-'}</span></div>
+                    <div><span className="text-gray-600">Teléfono:</span> <span className="font-medium">{ev.phone || (ev as any).formSnapshot?.phone || '-'}</span></div>
+                    <div><span className="text-gray-600">Duración:</span> <span className="font-medium">{ev.packageDuration || '-'}</span></div>
+                    <div className="col-span-2"><span className="text-gray-600">Ubicación:</span> <span className="font-medium">{ev.eventLocation || '-'}</span></div>
+                  </div>
+
+                  {Array.isArray((ev as any).formSnapshot?.selectedDresses) && (ev as any).formSnapshot.selectedDresses.length > 0 && (
+                    <div className="mt-3 pt-3 border-t">
+                      <div className="text-sm font-medium mb-2">Vestidos:</div>
+                      <div className="flex gap-2 flex-wrap">
+                        {(ev as any).formSnapshot.selectedDresses
+                          .map((id: string) => dressOptions.find(d => d.id === id))
+                          .filter(Boolean)
+                          .map((dress: any) => (
+                            <span key={(dress as any).id} className="text-xs bg-gray-100 px-2 py-1 rounded">{(dress as any).name}</span>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-4 flex justify-end gap-2">
+              <button onClick={() => {
+                const dateStr = new Date(showDailyList).toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                const content = document.querySelector('.daily-list-print');
+                if (!content) return;
+                const printWindow = window.open('', '', 'width=800,height=600');
+                if (printWindow) {
+                  printWindow.document.write(content.innerHTML);
+                  printWindow.document.close();
+                  printWindow.print();
+                }
+              }} className="border-2 border-black text-black px-4 py-2 rounded-none hover:bg-black hover:text-white inline-flex items-center gap-2">
+                🖨️ Imprimir
+              </button>
+            </div>
+
+            {/* Hidden content for printing */}
+            <div className="daily-list-print hidden">
+              <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>Eventos del día</h1>
+              <p style={{ textAlign: 'center', marginBottom: '20px' }}>{new Date(showDailyList).toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+              <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px' }}>
+                <thead>
+                  <tr style={{ borderBottom: '2px solid #000' }}>
+                    <th style={{ textAlign: 'left', padding: '8px', borderBottom: '1px solid #000' }}>Hora</th>
+                    <th style={{ textAlign: 'left', padding: '8px', borderBottom: '1px solid #000' }}>Cliente</th>
+                    <th style={{ textAlign: 'left', padding: '8px', borderBottom: '1px solid #000' }}>Tipo</th>
+                    <th style={{ textAlign: 'left', padding: '8px', borderBottom: '1px solid #000' }}>Teléfono</th>
+                    <th style={{ textAlign: 'left', padding: '8px', borderBottom: '1px solid #000' }}>Ubicación</th>
+                    <th style={{ textAlign: 'left', padding: '8px', borderBottom: '1px solid #000' }}>Vestidos</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(eventsByDay.get(showDailyList) || []).map((ev) => (
+                    <tr key={ev.id} style={{ borderBottom: '1px solid #ddd' }}>
+                      <td style={{ padding: '8px' }}>{ev.eventTime || '-'}</td>
+                      <td style={{ padding: '8px' }}>{ev.clientName || '-'}</td>
+                      <td style={{ padding: '8px' }}>{ev.eventType || '-'}</td>
+                      <td style={{ padding: '8px' }}>{ev.phone || (ev as any).formSnapshot?.phone || '-'}</td>
+                      <td style={{ padding: '8px' }}>{ev.eventLocation || '-'}</td>
+                      <td style={{ padding: '8px' }}>
+                        {Array.isArray((ev as any).formSnapshot?.selectedDresses) && (ev as any).formSnapshot.selectedDresses.length > 0
+                          ? (ev as any).formSnapshot.selectedDresses
+                              .map((id: string) => dressOptions.find(d => d.id === id))
+                              .filter(Boolean)
+                              .map((d: any) => (d as any).name)
+                              .join(', ')
+                          : '-'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
       {loading && <div className="text-sm text-gray-500">Cargando…</div>}
     </div>
   );
