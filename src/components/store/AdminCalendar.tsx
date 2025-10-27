@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight, Plus, X, ExternalLink, MapPin, Phone, Calend
 import { parseDurationToMinutes } from '../../utils/calendar';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { WorkflowStatusButtons } from './WorkflowStatusButtons';
 
 interface ContractItem {
   id: string;
