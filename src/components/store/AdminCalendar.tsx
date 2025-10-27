@@ -317,13 +317,13 @@ const AdminCalendar: React.FC = () => {
             const dayEvents = cell.date ? (eventsByDay.get(key) || []) : [];
             return (
               <div key={key} className="bg-white h-14 p-1 relative overflow-hidden flex flex-col">
-                <div className="flex items-center justify-between">
-                  <div className="text-xs">{cell.date ? (isToday ? <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-secondary text-black">{cell.date.getDate()}</span> : <span className="text-gray-500">{cell.date.getDate()}</span>) : ''}</div>
+                <div className="flex items-center justify-between text-xs gap-1">
+                  <div>{cell.date ? (isToday ? <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-secondary text-black text-xs font-bold">{cell.date.getDate()}</span> : <span className="text-gray-500 text-xs">{cell.date.getDate()}</span>) : ''}</div>
                   {cell.date && (eventsByDay.get(key) || []).length > 0 && (
-                    <button onClick={() => setShowDailyList(key)} className="text-xs px-1 py-0.5 border rounded-none hover:bg-gray-100" title="Ver día">📋</button>
+                    <button onClick={() => setShowDailyList(key)} className="text-xs px-0.5 py-0 border rounded-none hover:bg-gray-100 flex-shrink-0" title="Ver día">📋</button>
                   )}
                 </div>
-                <div className="mt-1 space-y-1">
+                <div className="mt-0.5 space-y-0.5 flex-1 overflow-hidden">
                   {dayEvents.map(ev => {
                     const durationMin = parseDurationToMinutes(ev.packageDuration || '2 horas');
                     const end = (() => {
