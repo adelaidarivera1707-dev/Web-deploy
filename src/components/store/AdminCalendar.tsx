@@ -285,20 +285,20 @@ const AdminCalendar: React.FC<AdminCalendarProps> = ({ darkMode = false }) => {
         {/* Mini Calendar */}
         <div className="mb-6">
           <div className="flex items-center justify-between gap-2 mb-3">
-            <button onClick={prevMonth} className="p-2 rounded-full text-gray-400 hover:text-white hover:bg-gray-800 transition-colors flex-shrink-0"><ChevronLeft size={16}/></button>
-            <div className="text-sm font-semibold text-center flex-1 text-gray-300">
+            <button onClick={prevMonth} className={`p-2 rounded-full transition-colors flex-shrink-0 ${darkMode ? 'text-gray-400 hover:text-white hover:bg-gray-800' : 'text-gray-600 hover:text-black hover:bg-gray-200'}`}><ChevronLeft size={16}/></button>
+            <div className={`text-sm font-semibold text-center flex-1 transition-colors ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
               {new Date(current.y, current.m, 1).toLocaleString('es', { month: 'short', year: '2-digit' })}
             </div>
-            <button onClick={nextMonth} className="p-2 rounded-full text-gray-400 hover:text-white hover:bg-gray-800 transition-colors flex-shrink-0"><ChevronRight size={16}/></button>
+            <button onClick={nextMonth} className={`p-2 rounded-full transition-colors flex-shrink-0 ${darkMode ? 'text-gray-400 hover:text-white hover:bg-gray-800' : 'text-gray-600 hover:text-black hover:bg-gray-200'}`}><ChevronRight size={16}/></button>
           </div>
-          <div className="grid grid-cols-7 gap-px p-2 bg-gray-900 lg:bg-gray-900 rounded max-lg:bg-black">
-            {['D','L','M','X','J','V','S'].map(d => <div key={d} className="text-center text-xs font-medium py-1 text-gray-500">{d}</div>)}
+          <div className={`grid grid-cols-7 gap-px p-2 rounded lg:rounded max-lg:rounded transition-colors ${darkMode ? 'bg-gray-900 max-lg:bg-black' : 'bg-gray-100 max-lg:bg-white'}`}>
+            {['D','L','M','X','J','V','S'].map(d => <div key={d} className={`text-center text-xs font-medium py-1 transition-colors ${darkMode ? 'text-gray-500' : 'text-gray-600'}`}>{d}</div>)}
             {miniMonthDays.map((cell, idx) => {
               const isToday = cell.date && new Date(cell.date.getFullYear(), cell.date.getMonth(), cell.date.getDate()).getTime() === new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
               const key = cell.date ? `${cell.date.getFullYear()}-${String(cell.date.getMonth()+1).padStart(2,'0')}-${String(cell.date.getDate()).padStart(2,'0')}` : `empty-${idx}`;
               const hasEvents = cell.date ? (eventsByDay.get(key) || []).length > 0 : false;
               return (
-                <button key={key} className={`text-center text-xs py-1 rounded transition-colors font-medium ${isToday ? 'bg-secondary text-black' : hasEvents ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-800'}`}>
+                <button key={key} className={`text-center text-xs py-1 rounded transition-colors font-medium ${isToday ? 'bg-secondary text-black' : hasEvents ? (darkMode ? 'bg-blue-600 text-white' : 'bg-blue-200 text-blue-800') : (darkMode ? 'text-gray-400 hover:bg-gray-800' : 'text-gray-600 hover:bg-gray-200')}`}>
                   {cell.date ? cell.date.getDate() : ''}
                 </button>
               );
