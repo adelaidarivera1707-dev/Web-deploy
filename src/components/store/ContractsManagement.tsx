@@ -442,6 +442,13 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
 
   const colorsFor = (len: number) => categoryColors(len);
 
+  const counts = useMemo(() => {
+    const events = contracts.filter(c => c.eventCompleted !== true && !isPast(c)).length;
+    const finished = contracts.filter(c => c.eventCompleted === true).length;
+    const pending = contracts.filter(c => String((c as any).status || '') === 'pending_approval').length;
+    return { events, finished, pending };
+  }, [contracts]);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
