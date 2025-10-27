@@ -50,7 +50,11 @@ function getEventColor(c: ContractItem): string {
   return 'bg-yellow-500 text-black hover:opacity-90';
 }
 
-const AdminCalendar: React.FC = () => {
+interface AdminCalendarProps {
+  darkMode?: boolean;
+}
+
+const AdminCalendar: React.FC<AdminCalendarProps> = ({ darkMode = false }) => {
   const today = new Date();
   const [current, setCurrent] = useState(() => ({ y: today.getFullYear(), m: today.getMonth() }));
   const [events, setEvents] = useState<ContractItem[]>([]);
