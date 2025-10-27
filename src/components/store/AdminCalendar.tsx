@@ -310,21 +310,29 @@ const AdminCalendar: React.FC = () => {
         <div className="grid grid-cols-7 text-center text-xs text-gray-500 py-2 px-1 border-b border-gray-200 flex-shrink-0 bg-gray-50">
           {['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'].map((d)=> <div key={d} className="py-1 font-medium">{d}</div>)}
         </div>
-        <div className="grid grid-cols-7 gap-px bg-gray-300 flex-1 auto-rows-fr overflow-hidden">
+        <div className="grid grid-cols-7 gap-px bg-gray-300 flex-1 auto-rows-fr overflow-hidden w-full h-full">
           {monthDays.map((cell, idx)=>{
             const isToday = cell.date && new Date(cell.date.getFullYear(), cell.date.getMonth(), cell.date.getDate()).getTime() === new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
             const key = cell.date ? `${cell.date.getFullYear()}-${String(cell.date.getMonth()+1).padStart(2,'0')}-${String(cell.date.getDate()).padStart(2,'0')}` : `empty-${idx}`;
             const dayEvents = cell.date ? (eventsByDay.get(key) || []) : [];
             return (
-              <div key={key} className="bg-white p-1 relative overflow-hidden flex flex-col">
-                <div className="flex items-center justify-between text-xs gap-1">
-                  <div>{cell.date ? (isToday ? <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-secondary text-black text-xs font-bold">{cell.date.getDate()}</span> : <span className="text-gray-500 text-xs">{cell.date.getDate()}</span>) : ''}</div>
+              <div key={key} className="bg-white p-2 relative overflow-hidden flex flex-col border-gray-300">
+                <div className="flex items-center justify-between gap-1 mb-1 flex-shrink-0">
+                  <div className="text-sm font-medium">
+                    {cell.date ? (isToday ? (
+                      <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-secondary text-black text-xs font-bold">
+                        {cell.date.getDate()}
+                      </span>
+                    ) : (
+                      <span className="text-gray-700">{cell.date.getDate()}</span>
+                    )) : ''}
+                  </div>
                   {cell.date && (eventsByDay.get(key) || []).length > 0 && (
-                    <button onClick={() => setShowDailyList(key)} className="text-xs px-0.5 py-0 border rounded-none hover:bg-gray-100 flex-shrink-0" title="Ver día">📋</button>
+                    <button onClick={() => setShowDailyList(key)} className="text-xs px-1 py-0.5 border rounded-none hover:bg-gray-200 flex-shrink-0 transition-colors" title={`${(eventsByDay.get(key) || []).length} eventos`}>📋</button>
                   )}
                 </div>
-                <div className="mt-0.5 space-y-0.5 flex-1 overflow-hidden">
-                  {dayEvents.map(ev => {
+                <div className="space-y-1 flex-1 overflow-y-auto">
+                  {dayEvents.slice(0, 5).map(ev => {
                     const durationMin = parseDurationToMinutes(ev.packageDuration || '2 horas');
                     const end = (() => {
                       const d = ev.eventDate || key; const t = ev.eventTime || '00:00';
@@ -333,11 +341,16 @@ const AdminCalendar: React.FC = () => {
                     })();
                     const label = `${(ev.eventTime || '00:00')} ${ev.clientName || 'Evento'}`;
                     return (
-                      <button key={ev.id} onClick={()=> setSelected(ev)} className={`w-full text-left px-1 py-0.5 rounded-sm ${getEventColor(ev)} text-xs flex items-center gap-0.5`}>
-                        <span className="truncate text-xs">{label}</span>
+                      <button key={ev.id} onClick={()=> setSelected(ev)} className={`w-full text-left px-1.5 py-1 rounded text-xs ${getEventColor(ev)} flex items-start gap-1 truncate hover:shadow-md transition-shadow`}>
+                        <span className="truncate flex-1">{label}</span>
                       </button>
                     );
                   })}
+                  {dayEvents.length > 5 && (
+                    <button onClick={() => setShowDailyList(key)} className="w-full text-left px-1.5 py-1 rounded text-xs bg-gray-200 text-gray-700 hover:bg-gray-300">
+                      +{dayEvents.length - 5} más
+                    </button>
+                  )}
                 </div>
               </div>
             );
