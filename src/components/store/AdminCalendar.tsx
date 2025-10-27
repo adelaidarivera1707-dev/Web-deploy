@@ -714,36 +714,36 @@ const AdminCalendar: React.FC<AdminCalendarProps> = ({ darkMode = false }) => {
 
       {/* Add modal */}
       {adding && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={()=> setAdding(false)}>
-          <div className="bg-white rounded-xl w-full max-w-xl p-4" onClick={e=> e.stopPropagation()}>
+        <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-colors ${darkMode ? 'bg-black/50' : 'bg-white/50'}`} onClick={()=> setAdding(false)}>
+          <div className={`rounded-xl w-full max-w-xl p-4 transition-colors ${darkMode ? 'bg-gray-900' : 'bg-white'}`} onClick={e=> e.stopPropagation()}>
             <div className="flex items-center justify-between mb-2">
-              <div className="text-lg font-medium">Añadir evento</div>
-              <button onClick={()=> setAdding(false)} className="text-gray-500 hover:text-gray-900"><X/></button>
+              <div className={`text-lg font-medium transition-colors ${darkMode ? 'text-white' : 'text-black'}`}>Añadir evento</div>
+              <button onClick={()=> setAdding(false)} className={`transition-colors ${darkMode ? 'text-gray-500 hover:text-gray-300' : 'text-gray-500 hover:text-gray-900'}`}><X/></button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
-                <label className="text-xs text-gray-600">Cliente</label>
-                <input value={addForm.clientName} onChange={e=> setAddForm((f:any)=> ({ ...f, clientName: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
+                <label className={`text-xs transition-colors ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Cliente</label>
+                <input value={addForm.clientName} onChange={e=> setAddForm((f:any)=> ({ ...f, clientName: e.target.value }))} className={`w-full px-3 py-2 border rounded-none transition-colors ${darkMode ? 'bg-gray-800 border-gray-700 text-gray-300' : 'bg-white border-gray-300 text-gray-900'}`} />
               </div>
               <div>
-                <label className="text-xs text-gray-600">Tipo de evento</label>
-                <input value={addForm.eventType} onChange={e=> setAddForm((f:any)=> ({ ...f, eventType: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
+                <label className={`text-xs transition-colors ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Tipo de evento</label>
+                <input value={addForm.eventType} onChange={e=> setAddForm((f:any)=> ({ ...f, eventType: e.target.value }))} className={`w-full px-3 py-2 border rounded-none transition-colors ${darkMode ? 'bg-gray-800 border-gray-700 text-gray-300' : 'bg-white border-gray-300 text-gray-900'}`} />
               </div>
               <div>
-                <label className="text-xs text-gray-600">Fecha</label>
-                <input type="date" value={addForm.eventDate} onChange={e=> setAddForm((f:any)=> ({ ...f, eventDate: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
+                <label className={`text-xs transition-colors ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Fecha</label>
+                <input type="date" value={addForm.eventDate} onChange={e=> setAddForm((f:any)=> ({ ...f, eventDate: e.target.value }))} className={`w-full px-3 py-2 border rounded-none transition-colors ${darkMode ? 'bg-gray-800 border-gray-700 text-gray-300' : 'bg-white border-gray-300 text-gray-900'}`} />
               </div>
               <div>
-                <label className="text-xs text-gray-600">Hora</label>
-                <input type="time" value={addForm.eventTime} onChange={e=> setAddForm((f:any)=> ({ ...f, eventTime: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
+                <label className={`text-xs transition-colors ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Hora</label>
+                <input type="time" value={addForm.eventTime} onChange={e=> setAddForm((f:any)=> ({ ...f, eventTime: e.target.value }))} className={`w-full px-3 py-2 border rounded-none transition-colors ${darkMode ? 'bg-gray-800 border-gray-700 text-gray-300' : 'bg-white border-gray-300 text-gray-900'}`} />
               </div>
               <div className="md:col-span-2">
-                <label className="text-xs text-gray-600">Ubicación</label>
-                <input value={addForm.eventLocation} onChange={e=> setAddForm((f:any)=> ({ ...f, eventLocation: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
+                <label className={`text-xs transition-colors ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Ubicación</label>
+                <input value={addForm.eventLocation} onChange={e=> setAddForm((f:any)=> ({ ...f, eventLocation: e.target.value }))} className={`w-full px-3 py-2 border rounded-none transition-colors ${darkMode ? 'bg-gray-800 border-gray-700 text-gray-300' : 'bg-white border-gray-300 text-gray-900'}`} />
               </div>
               <div>
-                <label className="text-xs text-gray-600">Método de pago</label>
-                <select value={addForm.paymentMethod} onChange={e=> setAddForm((f:any)=> ({ ...f, paymentMethod: e.target.value }))} className="w-full px-3 py-2 border rounded-none">
+                <label className={`text-xs transition-colors ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Método de pago</label>
+                <select value={addForm.paymentMethod} onChange={e=> setAddForm((f:any)=> ({ ...f, paymentMethod: e.target.value }))} className={`w-full px-3 py-2 border rounded-none transition-colors ${darkMode ? 'bg-gray-800 border-gray-700 text-gray-300' : 'bg-white border-gray-300 text-gray-900'}`}>
                   <option value="pix">PIX</option>
                   <option value="credit">Crédito</option>
                   <option value="cash">Efectivo</option>
