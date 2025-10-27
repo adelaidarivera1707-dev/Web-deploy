@@ -127,8 +127,8 @@ const AdminCalendar: React.FC = () => {
         setDressOptions([]);
       }
     };
-    if (selected) loadDresses();
-  }, [selected]);
+    loadDresses();
+  }, []);
 
   const monthDays = useMemo(() => {
     const first = startOfMonth(current.y, current.m);
