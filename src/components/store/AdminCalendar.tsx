@@ -322,19 +322,19 @@ const AdminCalendar: React.FC<AdminCalendarProps> = ({ darkMode = false }) => {
       {/* Right Calendar Area */}
       <div className={`flex-1 flex flex-col overflow-hidden transition-colors ${darkMode ? 'bg-black' : 'bg-white'}`}>
         {/* Calendar header with month display */}
-        <div className={`px-4 py-3 border-b flex items-center justify-between flex-shrink-0 transition-colors ${darkMode ? 'border-gray-800' : 'border-gray-200'}`}>
+        <div className={`px-4 py-0 border-b flex items-center justify-between flex-shrink-0 transition-colors ${darkMode ? 'border-gray-800' : 'border-gray-200'}`}>
           <div className={`text-lg font-semibold transition-colors ${darkMode ? 'text-white' : 'text-black'}`}>
             {new Date(filterYear, filterMonth, 1).toLocaleString('es', { month: 'long', year: 'numeric' })}
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={goToday} className="px-4 py-2 rounded-full bg-secondary text-black font-medium hover:opacity-90 transition-opacity">Hoy</button>
+            <button onClick={goToday} className="px-4 py-0.5 rounded-full bg-gray-600 text-white font-medium hover:opacity-90 transition-opacity mt-0.5">Hoy</button>
             <button onClick={()=> setAdding(true)} className="p-2 rounded-full bg-green-600 text-white hover:bg-green-700 transition-colors" title="Añadir evento"><Plus size={18}/></button>
           </div>
         </div>
 
         {/* Calendar grid */}
         <div className={`flex-1 overflow-hidden flex flex-col transition-colors ${darkMode ? 'bg-black' : 'bg-white'}`}>
-          <div className={`grid grid-cols-7 text-center text-xs py-3 px-1 border-b flex-shrink-0 transition-colors ${darkMode ? 'border-gray-800 bg-gray-950 lg:bg-gray-950 max-lg:bg-black text-gray-400' : 'border-gray-200 bg-gray-50 lg:bg-gray-50 max-lg:bg-white text-gray-600'}`}>
+          <div className={`grid grid-cols-7 text-center text-xs py-0 px-1 border-b flex-shrink-0 transition-colors ${darkMode ? 'border-gray-800 bg-gray-950 lg:bg-gray-950 max-lg:bg-black text-gray-400' : 'border-gray-200 bg-gray-50 lg:bg-gray-50 max-lg:bg-white text-gray-600'}`}>
             {['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'].map((d)=> <div key={d} className="py-1 font-medium">{d}</div>)}
           </div>
           <div className={`grid grid-cols-7 gap-px flex-1 auto-rows-fr overflow-hidden w-full h-full transition-colors ${darkMode ? 'bg-gray-900 lg:bg-gray-900 max-lg:bg-black' : 'bg-gray-100 lg:bg-gray-100 max-lg:bg-white'}`}>
