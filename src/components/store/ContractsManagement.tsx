@@ -477,18 +477,18 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-3 mb-4">
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <div className="text-sm font-medium text-gray-600 mb-1">Eventos</div>
-          <div className="text-2xl font-bold text-black">{counts.events}</div>
+      <div className="grid grid-cols-3 gap-2 mb-2">
+        <div className="bg-white rounded border border-gray-200 px-3 py-1.5">
+          <div className="text-xs font-medium text-gray-600">Eventos</div>
+          <div className="text-lg font-bold text-black">{counts.events}</div>
         </div>
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <div className="text-sm font-medium text-gray-600 mb-1">Finalizados</div>
-          <div className="text-2xl font-bold text-green-600">{counts.finished}</div>
+        <div className="bg-white rounded border border-gray-200 px-3 py-1.5">
+          <div className="text-xs font-medium text-gray-600">Finalizados</div>
+          <div className="text-lg font-bold text-green-600">{counts.finished}</div>
         </div>
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <div className="text-sm font-medium text-gray-600 mb-1">Pendiente de Aprobacion</div>
-          <div className="text-2xl font-bold text-red-600">{counts.pending}</div>
+        <div className="bg-white rounded border border-gray-200 px-3 py-1.5">
+          <div className="text-xs font-medium text-gray-600">Pendiente de Aprobacion</div>
+          <div className="text-lg font-bold text-red-600">{counts.pending}</div>
         </div>
       </div>
 
