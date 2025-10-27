@@ -396,7 +396,7 @@ const AdminCalendar: React.FC<AdminCalendarProps> = ({ darkMode = false }) => {
             {(eventsByDay.get(expandedDay) || []).length > 0 ? (
               <div className="space-y-4">
                 {(eventsByDay.get(expandedDay) || []).map((ev, idx) => (
-                  <div key={ev.id} className={`border rounded-lg p-4 ${getEventColor(ev).split(' ')[0]} bg-opacity-20 border-opacity-30 transition-colors`}>
+                  <div key={ev.id} className={`border rounded-lg p-4 transition-colors ${darkMode ? 'bg-black border-gray-700' : getEventColor(ev).split(' ')[0] + ' bg-opacity-20 border-opacity-30'}`}>
                     <div className={`font-semibold text-lg transition-colors ${darkMode ? 'text-white' : 'text-black'}`}>{idx + 1}. {ev.clientName || 'Evento sin nombre'}</div>
                     <div className="grid grid-cols-2 gap-3 text-sm mt-3">
                       <div><span className={`transition-colors ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Hora:</span> <span className={`font-medium transition-colors ${darkMode ? 'text-white' : 'text-black'}`}>{ev.eventTime || '-'}</span></div>
