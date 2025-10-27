@@ -399,7 +399,7 @@ function computeMonthlyCompare(orders: OrderItem[], contracts: any[], aId: 'all'
   const months = Array.from({ length: 12 }).map((_, i) => {
     const d = new Date(now.getFullYear(), i, 1);
     const label = d.toLocaleString('es', { month: 'short' });
-    return { key: i, month: label.charAt(0).toUpperCase() + label.slice(1), a: 0, b: 0, forecast: 0, investments: 0 } as any;
+    return { key: i, month: label.charAt(0).toUpperCase() + label.slice(1), a: 0, b: 0, forecast: 0, investments: 0, earned: 0 } as any;
   });
 
   const getItemAmount = (it: OrderLineItem) => {
