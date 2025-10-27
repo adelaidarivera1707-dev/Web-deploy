@@ -773,7 +773,7 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
                 <div><span className="text-gray-600">Ubicación:</span> <span className="font-medium">{(viewing as any).eventLocation || '-'}</span></div>
                 <div><span className="text-gray-600">Paquete:</span> <span className="font-medium">{(viewing as any).packageTitle || '-'}</span></div>
                 <div><span className="text-gray-600">Duración:</span> <span className="font-medium">{(viewing as any).packageDuration || '-'}</span></div>
-                <div><span className="text-gray-600">Método de pago:</span> <span className="font-medium">{viewing.paymentMethod || '-'}</span></div>
+                <div><span className="text-gray-600">M��todo de pago:</span> <span className="font-medium">{viewing.paymentMethod || '-'}</span></div>
                 {(() => {
                   const calc = computeAmounts(viewing);
                   return (
@@ -1146,6 +1146,18 @@ const ContractsManagement: React.FC<{ openContractId?: string | null; onOpened?:
             <div>
               <label className="text-xs text-gray-600">Teléfono</label>
               <input value={createForm.clientPhone} onChange={e => setCreateForm((f: any) => ({ ...f, clientPhone: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
+            </div>
+            <div>
+              <label className="text-xs text-gray-600">CPF</label>
+              <input value={createForm.clientCPF} onChange={e => setCreateForm((f: any) => ({ ...f, clientCPF: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
+            </div>
+            <div>
+              <label className="text-xs text-gray-600">RG</label>
+              <input value={createForm.clientRG} onChange={e => setCreateForm((f: any) => ({ ...f, clientRG: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
+            </div>
+            <div className="md:col-span-2">
+              <label className="text-xs text-gray-600">Endereço</label>
+              <input value={createForm.clientAddress} onChange={e => setCreateForm((f: any) => ({ ...f, clientAddress: e.target.value }))} className="w-full px-3 py-2 border rounded-none" />
             </div>
             <div>
               <label className="text-xs text-gray-600">Tipo de evento</label>
