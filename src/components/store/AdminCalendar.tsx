@@ -151,9 +151,18 @@ const AdminCalendar: React.FC = () => {
         return 'booked' as const;
       })();
       const statusMatch = filterStatus === 'all' ? true : status === filterStatus;
-      return monthMatch && yearMatch && statusMatch;
+
+      // Phone number filter
+      let phoneMatch = true;
+      if (filterPhone.trim()) {
+        const phoneSource = ev.phone || (ev as any).formSnapshot?.phone || '';
+        const onlyDigits = (v: string) => String(v || '').replace(/\D/g, '');
+        phoneMatch = onlyDigits(phoneSource).includes(onlyDigits(filterPhone));
+      }
+
+      return monthMatch && yearMatch && statusMatch && phoneMatch;
     });
-  }, [events, filterMonth, filterYear, filterStatus]);
+  }, [events, filterMonth, filterYear, filterStatus, filterPhone]);
 
   const eventsByDay = useMemo(() => {
     const map = new Map<string, ContractItem[]>();
