@@ -190,18 +190,20 @@ const AdminStorePage: React.FC = () => {
     <section className={`overflow-hidden ${adminView === 'calendar' ? 'h-screen w-screen' : 'md:pt-4 p-0 md:pb-0 h-screen md:h-auto'} ${adminDark ? 'admin-dark' : ''}`}>
       {/* Calendar Full Screen View */}
       {adminView === 'calendar' && !adminFullscreen && (
-        <div className="w-[calc(100%-4%)] h-[calc(100%-4%)] bg-white flex flex-col m-[2%] rounded-lg shadow-lg">
-          {/* Calendar Header Bar */}
-          <div className="px-4 py-2 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
-            <h1 className="text-xl font-semibold text-black">Calendario</h1>
-            <div className="flex items-center gap-2">
-              <button onClick={() => setAdminDark(v => !v)} className="px-3 py-1 rounded-none border border-black text-black hover:bg-black hover:text-white text-sm transition-colors">{adminDark ? 'Modo claro' : 'Modo oscuro'}</button>
-              <button onClick={() => setAdminView('dashboard')} className="px-3 py-1 rounded-none border border-black text-black hover:bg-black hover:text-white text-sm transition-colors">Volver</button>
+        <div className="w-full h-full p-[2%] flex flex-col overflow-hidden">
+          <div className="bg-white rounded-lg shadow-lg flex flex-col h-full overflow-hidden">
+            {/* Calendar Header Bar */}
+            <div className="px-4 py-2 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
+              <h1 className="text-xl font-semibold text-black">Calendario</h1>
+              <div className="flex items-center gap-2">
+                <button onClick={() => setAdminDark(v => !v)} className="px-3 py-1 rounded-none border border-black text-black hover:bg-black hover:text-white text-sm transition-colors">{adminDark ? 'Modo claro' : 'Modo oscuro'}</button>
+                <button onClick={() => setAdminView('dashboard')} className="px-3 py-1 rounded-none border border-black text-black hover:bg-black hover:text-white text-sm transition-colors">Volver</button>
+              </div>
             </div>
-          </div>
-          {/* Calendar Component */}
-          <div className="flex-1 overflow-hidden">
-            <AdminCalendar />
+            {/* Calendar Component */}
+            <div className="flex-1 overflow-hidden">
+              <AdminCalendar />
+            </div>
           </div>
         </div>
       )}
